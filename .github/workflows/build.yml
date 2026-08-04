@@ -1,4 +1,4 @@
-name: Build Andromeda .deb
+﻿name: Build Andromeda .deb
 
 on:
   push:
@@ -27,107 +27,64 @@ jobs:
         run: |
           SDK_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
           SDK_VERSION=$(xcrun --sdk iphoneos --show-sdk-version)
-          echo "Xcode SDK: $SDK_PATH (iOS $SDK_VERSION)"
           mkdir -p /tmp/theos/sdks
           ln -sf "$SDK_PATH" "/tmp/theos/sdks/iPhoneOS${SDK_VERSION}.sdk"
-          echo "SDKVERSION=$SDK_VERSION" >> $GITHUB_ENV
 
-      - name: Fix layout permissions
+      - name: Build
+        run: make messages=yes
+
+      - name: Package .deb
         run: |
-          mkdir -p layout/DEBIAN
-          printf 'Package: com.andromeda.bypass\nName: Andromeda\nDepends: firmware (>= 12.0), preferenceloader\nRecommends: mobilesubstrate\nVersion: 4.0.0\nArchitecture: iphoneos-arm\nDescription: Ultimate jailbreak detection bypass for dating apps and social media.\nMaintainer: AndromedaTeam\nAuthor: AndromedaTeam\nSection: System\n' > layout/DEBIAN/control
-          printf '#!/bin/sh\nset -e\nexit 0\n' > layout/DEBIAN/postinst
-          printf '#!/bin/sh\nset -e\nexit 0\n' > layout/DEBIAN/postrm
-          chmod 755 layout/DEBIAN/postinst
-          chmod 755 layout/DEBIAN/postrm
+          PKG="pack"
+          mkdir -p "$PKG/DEBIAN" "$PKG/Library/MobileSubstrate/DynamicLibraries" "$PKG/Library/PreferenceBundles" "$PKG/Library/PreferenceLoader/Preferences"
 
-      - name: Build and Package
-        run: |
-          make package messages=yes SDKVERSION=$SDKVERSION
+          DYLIB=$(find .theos/obj/debug -name "Andromeda.dylib" -type f | head -1)
+          BUNDLE=$(find .theos/obj/debug -name "AndromedaSettings.bundle" -type d | head -1)
+          cp "$DYLIB" "$PKG/Library/MobileSubstrate/DynamicLibraries/"
+          cp Andromeda.dylib/Andromeda.plist "$PKG/Library/MobileSubstrate/DynamicLibraries/"
+          cp -r "$BUNDLE" "$PKG/Library/PreferenceBundles/"
 
-      - name: Setup Cydia Repo
-        run: |
-          mkdir -p repodeploy/debs
-          cp packages/com.andromeda.bypass_*.deb repodeploy/debs/com.andromeda.bypass_4.0.0_iphoneos-arm.deb
-          
-          cd repodeploy/debs
-          DEB_FILE="com.andromeda.bypass_4.0.0_iphoneos-arm.deb"
-          DEB_SIZE=$(stat -f%z "$DEB_FILE")
-          DEB_MD5=$(md5 -q "$DEB_FILE")
-          DEB_SHA1=$(shasum -a 1 "$DEB_FILE" | cut -d' ' -f1)
-          DEB_SHA256=$(shasum -a 256 "$DEB_FILE" | cut -d' ' -f1)
-          
-          cat > ../Packages << PKGEOF
-          Package: com.andromeda.bypass
-          Name: Andromeda
-          Version: 4.0.0
-          Architecture: iphoneos-arm
-          Description: Ultimate jailbreak detection bypass for dating apps & social media. Neutralizes hardware fingerprinting, App Attest, DeviceCheck, anti-debugging, sandbox checks, filesystem detection, dylib enumeration, and behavioral biometrics.
-          Depiction: https://mpoukiarmel21-beep.github.io/Andromeda/depiction.html
-          Homepage: https://github.com/mpoukiarmel21-beep/Andromeda
-          Maintainer: AndromedaTeam
-          Author: AndromedaTeam
-          Section: System
-          Size: $DEB_SIZE
-          Filename: debs/com.andromeda.bypass_4.0.0_iphoneos-arm.deb
-          MD5sum: $DEB_MD5
-          SHA1: $DEB_SHA1
-          SHA256: $DEB_SHA256
-          PKGEOF
-          
-          bzip2 -kf ../Packages
-          
-          cat > ../Release << RELEOF
-          Origin: Andromeda Repo
-          Label: Andromeda
-          Suite: stable
-          Version: 1.0
-          Codename: andromeda
-          Architectures: iphoneos-arm
-          Components: main
-          Description: Jailbreak detection bypass for dating apps & social media
-          RELEOF
-          
-          cat > ../depiction.html << HTEOF
-          <!DOCTYPE html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Andromeda</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:linear-gradient(135deg,#1a0533,#2d1b69,#0f0c29);color:#e2e8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.card{background:rgba(255,255,255,0.05);border:1px solid rgba(167,139,250,0.2);border-radius:20px;padding:30px;max-width:500px;width:100%;text-align:center;backdrop-filter:blur(10px)}h1{font-size:24px;margin-bottom:8px;background:linear-gradient(90deg,#a855f7,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}p{margin:10px 0;opacity:0.8;line-height:1.5}.features{margin:20px 0;text-align:left}.features li{margin:8px 0;padding-left:20px;position:relative}.features li:before{content:' ';position:absolute;left:0;color:#4ade80}code{background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:6px;font-size:13px}.btn{display:inline-block;margin:15px 5px;padding:12px 24px;border-radius:12px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;text-decoration:none;font-weight:600;transition:transform .2s}.btn:hover{transform:scale(1.05)}</style></head><body><div class=card><h1>Andromeda v4.0</h1><p>Ultimate jailbreak detection bypass for dating apps & social media</p><ul class=features><li>11 dating apps (Tinder, Bumble, Hily, Badoo...)</li><li>5 social apps (Instagram, Threads, Facebook...)</li><li>28 hook modules</li><li>Hardware fingerprint spoofing</li><li>App Attest bypass</li></ul><a class=btn href=https://github.com/mpoukiarmel21-beep/Andromeda>GitHub</a></div></body></html>
-          HTEOF
-          
-          cat > ../sileo-featured.json << SILEOF
-          {
-            "class": "FeaturedBannersView",
-            "itemSize": "{263, 148}",
-            "itemCornerRadius": 13,
-            "banners": [
-              {
-                "url": "https://mpoukiarmel21-beep.github.io/Andromeda/depiction.html",
-                "title": "Andromeda",
-                "package": "com.andromeda.bypass",
-                "hideShadow": false
-              }
-            ]
-          }
-          SILEOF
-          
-          ls -la ../
+          cat > "$PKG/Library/PreferenceLoader/Preferences/Andromeda.plist" << 'EOF'
+          {"entry":{"bundle":"AndromedaSettings","cell":"PSLinkCell","detail":"AndromedaRootListController","isController":1,"label":"Andromeda"}}
+          EOF
 
-      - name: Deploy to Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: repodeploy
+          cat > "$PKG/DEBIAN/control" << 'CTRL'
+Package: com.andromeda.bypass
+Name: Andromeda
+Version: 4.0.0
+Architecture: iphoneos-arm
+Depends: firmware (>= 12.0), preferenceloader
+Recommends: mobilesubstrate
+Suggests: com.opa334.choicy
+Description: Ultimate jailbreak detection bypass for dating apps and social media.
+Maintainer: AndromedaTeam
+Author: AndromedaTeam
+Section: System
+CTRL
 
-      - name: Upload .deb Artifact
+          printf '#!/bin/sh\nset -e\nexit 0\n' > "$PKG/DEBIAN/postinst"
+          printf '#!/bin/sh\nset -e\nexit 0\n' > "$PKG/DEBIAN/postrm"
+          chmod 755 "$PKG/DEBIAN/postinst" "$PKG/DEBIAN/postrm"
+
+          echo "=== Package ===" && find "$PKG" -type f | head -20
+
+          cd "$PKG"
+          tar -czf ../data.tar.gz --owner=0 --group=0 Library
+          cd DEBIAN && tar -czf ../../control.tar.gz * && cd ../..
+          echo "2.0" > debian-binary
+          ar rc "com.andromeda.bypass_4.0.0_iphoneos-arm.deb" debian-binary control.tar.gz data.tar.gz
+          ls -la *.deb
+
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: Andromeda-deb
-          path: packages/com.andromeda.bypass_4.0.0*.deb
+          path: com.andromeda.bypass_4.0.0_iphoneos-arm.deb
 
-      - name: Create Release
+      - name: Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v4.0.0
-          name: "Andromeda v4.0.0"
-          body: "Ultimate jailbreak detection bypass for dating apps and social media."
-          files: packages/com.andromeda.bypass_4.0.0*.deb
+          files: com.andromeda.bypass_4.0.0_iphoneos-arm.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
