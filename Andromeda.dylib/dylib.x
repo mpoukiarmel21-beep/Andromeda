@@ -155,6 +155,8 @@
             @try { andromeda_hook_SocialApps(); } @catch(NSException *e) { NSLog(@"[Andromeda] SocialApps err: %@", e); }
         }
 
+        @try { andromeda_hook_DetectionBypass(); } @catch(NSException *e) { NSLog(@"[Andromeda] DetectionBypass err: %@", e); }
+
         val = [_andromeda preferences][@"Adaptive_Mode"];
         if(val && [val boolValue]) {
             @try { andromeda_hook_Adaptive(); } @catch(NSException *e) { NSLog(@"[Andromeda] Adaptive err: %@", e); }
