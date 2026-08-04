@@ -41,11 +41,13 @@ jobs:
 
       - name: Debug - Find built files
         run: |
-          echo "=== .theos directory ==="
-          find .theos -name "*.dylib" -o -name "*.bundle" 2>/dev/null || echo "No .dylib found"
-          echo "=== dylib debug ==="
-          ls -la .theos/obj/debug/ 2>/dev/null || echo "No debug dir"
-          ls -la .theos/obj/debug/arm64/ 2>/dev/null || echo "No arm64 dir"
+          echo "=== Find all built files ==="
+          find . -name "*.dylib" 2>/dev/null
+          find . -name "*.bundle" -type d 2>/dev/null
+          echo "=== .theos contents ==="
+          find .theos -type f 2>/dev/null | head -30
+          echo "=== ls .theos ==="
+          ls -laR .theos/ 2>/dev/null | head -50
 
       - name: Create .deb package
         run: |
