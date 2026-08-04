@@ -556,16 +556,6 @@
         ],
         @"com.zhiliaoapp.musically": @[
             @"TTSecurityManager", @"TTDeviceCheck"
-        ],
-        @"com.burbn.instagram": @[
-            @"IGSecurityManager", @"IGIntegrityCheck", @"IGAnalyticsSession",
-            @"IGDeviceChecker", @"FBDeviceInformation", @"FBAppIntegrity",
-            @"RCTDeviceInfo", @"IGDirectSecurity", @"IGUserSession",
-            @"IGRuntimeSecurity", @"IGDeviceFingerprint"
-        ],
-        @"com.instagram.barcelona": @[
-            @"THAppSecurityManager", @"THDeviceIntegrity", @"THSecurityCheck",
-            @"BHInstagramAppIntegrity", @"THRuntimeSecurity"
         ]
     };
 }
