@@ -219,6 +219,7 @@ static int hooked_rmdir(const char* path) {
 }
 
 void andromeda_hook_Filesystem(void) {
+    @try {
     MSHookFunction((void*)stat, (void*)hooked_stat, (void**)&orig_stat);
     MSHookFunction((void*)lstat, (void*)hooked_lstat, (void**)&orig_lstat);
     MSHookFunction((void*)statfs, (void*)hooked_statfs, (void**)&orig_statfs);
@@ -238,6 +239,7 @@ void andromeda_hook_Filesystem(void) {
     MSHookFunction((void*)readlink, (void*)hooked_readlink, (void**)&orig_readlink);
     MSHookFunction((void*)mkdir, (void*)hooked_mkdir, (void**)&orig_mkdir);
     MSHookFunction((void*)rmdir, (void*)hooked_rmdir, (void**)&orig_rmdir);
+    } @catch(NSException *e) { DLog(@"Filesystem hooks failed: %@", e); }
 }
 
 %hook NSFileManager

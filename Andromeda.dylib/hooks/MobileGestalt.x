@@ -58,15 +58,21 @@ static CFTypeRef hooked_MGCopyMultipleAnswers(CFArrayRef questions, CFDictionary
 }
 
 void andromeda_hook_MobileGestalt(void) {
-    void* lib = dlopen("/usr/lib/libMobileGestalt.dylib", RTLD_LAZY);
-    if(lib) {
-        void* mc = dlsym(lib, "MGCopyAnswer");
-        if(mc) {
-            MSHookFunction(mc, (void*)hooked_MGCopyAnswer, (void**)&orig_MGCopyAnswer);
+    @try {
+        const char* paths[] = {
+            "/usr/lib/libMobileGestalt.dylib",
+            "/var/jb/usr/lib/libMobileGestalt.dylib",
+            NULL
+        };
+        for(int i = 0; paths[i]; i++) {
+            void* lib = dlopen(paths[i], RTLD_LAZY);
+            if(lib) {
+                void* mc = dlsym(lib, "MGCopyAnswer");
+                if(mc) {
+                    MSHookFunction(mc, (void*)hooked_MGCopyAnswer, (void**)&orig_MGCopyAnswer);
+                }
+                break;
+            }
         }
-        void* mcm = dlsym(lib, "MGCopyMultipleAnswers");
-        if(mcm) {
-            MSHookFunction(mcm, (void*)hooked_MGCopyMultipleAnswers, (void**)&orig_MGCopyMultipleAnswers);
-        }
-    }
+    } @catch(NSException *e) {}
 }
