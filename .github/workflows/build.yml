@@ -33,9 +33,47 @@ jobs:
       - name: Setup layout
         run: |
           mkdir -p layout/DEBIAN
-          printf 'Package: com.andromeda.bypass\nName: Andromeda\nVersion: 4.0.0\nArchitecture: iphoneos-arm64\nDepends: firmware (>= 15.0), preferenceloader\nRecommends: mobilesubstrate\nSuggests: com.opa334.choicy\nDescription: Ultimate rootless jailbreak detection bypass for dating apps and social media.\nMaintainer: AndromedaTeam\nAuthor: AndromedaTeam\nSection: System\n' > layout/DEBIAN/control
-          printf '#!/bin/sh\nset -e\nexit 0\n' > layout/DEBIAN/postinst
-          printf '#!/bin/sh\nset -e\nexit 0\n' > layout/DEBIAN/postrm
+          mkdir -p layout/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle
+          mkdir -p layout/var/jb/Library/PreferenceLoader/Preferences
+          mkdir -p layout/Library/Andromeda
+          
+          cat > layout/DEBIAN/control << 'EOF'
+          Package: com.andromeda.bypass
+          Name: Andromeda
+          Pre-Depends: dpkg
+          Depends: firmware (>= 15.0), preferenceloader
+          Recommends: mobilesubstrate
+          Suggests: com.opa334.choicy
+          Version: 4.0.0
+          Architecture: iphoneos-arm64
+          Description: Ultimate rootless jailbreak detection bypass for dating apps and social media. Neutralizes hardware fingerprinting, App Attest, DeviceCheck, anti-debugging, sandbox checks, filesystem detection, dylib enumeration, behavioral biometrics, and adaptive auto-scanning.
+          Maintainer: AndromedaTeam
+          Author: AndromedaTeam
+          Section: Tweaks
+          Installed-Size: 10240
+          EOF
+          
+          cat > layout/DEBIAN/postinst << 'EOF'
+          #!/bin/sh
+          set -e
+          echo "[Andromeda] Post-installation setup..."
+          mkdir -p /var/mobile/Library/Caches/com.andromeda.bypass
+          mkdir -p /var/mobile/Library/Preferences
+          if [ -f /usr/bin/sbreload ]; then
+              echo "[Andromeda] Refreshing SpringBoard..."
+              /usr/bin/sbreload
+          fi
+          exit 0
+          EOF
+          
+          cat > layout/DEBIAN/postrm << 'EOF'
+          #!/bin/sh
+          set -e
+          echo "[Andromeda] Cleaning up..."
+          rm -rf /var/mobile/Library/Caches/com.andromeda.bypass
+          exit 0
+          EOF
+          
           chmod 755 layout/DEBIAN/postinst layout/DEBIAN/postrm
 
       - name: Build and Package
