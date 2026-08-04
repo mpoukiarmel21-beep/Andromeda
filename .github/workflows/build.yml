@@ -41,12 +41,13 @@ jobs:
 
       - name: Create .deb package
         run: |
-          mkdir -p build/deb/control build/deb/data
+          mkdir -p "build/deb/data/Library/Frameworks"
+          mkdir -p "build/deb/data/Library/MobileSubstrate/DynamicLibraries"
+          mkdir -p "build/deb/data/Library/PreferenceBundles"
           
-          cp -r Andromeda.framework/obj/Andromeda.framework build/deb/data/Library/Frameworks/
-          cp Andromeda.dylib/obj/Andromeda.dylib build/deb/data/Library/MobileSubstrate/DynamicLibraries/
-          cp Andromeda.dylib/Andromeda.plist build/deb/data/Library/MobileSubstrate/DynamicLibraries/
-          cp -r AndromedaSettings.bundle/obj/AndromedaSettings.bundle build/deb/data/Library/PreferenceBundles/
+          cp Andromeda.dylib/obj/Andromeda.dylib "build/deb/data/Library/MobileSubstrate/DynamicLibraries/"
+          cp Andromeda.dylib/Andromeda.plist "build/deb/data/Library/MobileSubstrate/DynamicLibraries/"
+          cp -r AndromedaSettings.bundle/obj/AndromedaSettings.bundle "build/deb/data/Library/PreferenceBundles/"
           
           mkdir -p "build/deb/data/Library/PreferenceLoader/Preferences"
           
