@@ -1,0 +1,15 @@
+Package: com.andromeda.bypass
+Name: Andromeda
+Version: 4.0.0
+Architecture: iphoneos-arm
+Description: Ultimate jailbreak detection bypass for dating apps & social media. Neutralizes hardware fingerprinting, App Attest, DeviceCheck, anti-debugging, sandbox checks, filesystem detection, dylib enumeration, and behavioral biometrics.
+Depiction: https://mpoukiarmel21-beep.github.io/Andromeda/depiction.html
+Homepage: https://github.com/mpoukiarmel21-beep/Andromeda
+Maintainer: AndromedaTeam
+Author: AndromedaTeam
+Section: System
+Size: 96750
+Filename: debs/com.andromeda.bypass_4.0.0_iphoneos-arm.deb
+MD5sum: 911a908fa0ffd3576126d9df5a775c5a
+SHA1: 1e389d06d8d9293737d8df2366ed017f22ee89fa
+SHA256: 2abb143127e384faf411512a014af6ec9d11e8ae28689da29df7ce2b47bbbc2c

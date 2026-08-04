@@ -1,0 +1,8 @@
+Origin: Andromeda Repo
+Label: Andromeda
+Suite: stable
+Version: 1.0
+Codename: andromeda
+Architectures: iphoneos-arm
+Components: main
+Description: Jailbreak detection bypass for dating apps & social media

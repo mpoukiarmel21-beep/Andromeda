@@ -1,0 +1,13 @@
+{
+  "class": "FeaturedBannersView",
+  "itemSize": "{263, 148}",
+  "itemCornerRadius": 13,
+  "banners": [
+    {
+      "url": "https://mpoukiarmel21-beep.github.io/Andromeda/depiction.html",
+      "title": "Andromeda",
+      "package": "com.andromeda.bypass",
+      "hideShadow": false
+    }
+  ]
+}
