@@ -23,10 +23,21 @@ static int hooked_uname(struct utsname* name) {
 
 %hook UIScreen
 
-- (CGRect)bounds { return %orig; }
-- (CGRect)nativeBounds { return %orig; }
-- (CGFloat)nativeScale { return %orig; }
-- (CGFloat)scale { return %orig; }
+- (CGRect)bounds {
+    return %orig;
+}
+
+- (CGRect)nativeBounds {
+    return %orig;
+}
+
+- (CGFloat)nativeScale {
+    return %orig;
+}
+
+- (CGFloat)scale {
+    return %orig;
+}
 
 %end
 
