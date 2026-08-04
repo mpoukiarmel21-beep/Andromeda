@@ -44,23 +44,9 @@ jobs:
           cp Andromeda.dylib/Andromeda.plist "$PKG/Library/MobileSubstrate/DynamicLibraries/"
           cp -r "$BUNDLE" "$PKG/Library/PreferenceBundles/"
 
-          cat > "$PKG/Library/PreferenceLoader/Preferences/Andromeda.plist" << 'EOF'
-          {"entry":{"bundle":"AndromedaSettings","cell":"PSLinkCell","detail":"AndromedaRootListController","isController":1,"label":"Andromeda"}}
-          EOF
+          printf '{"entry":{"bundle":"AndromedaSettings","cell":"PSLinkCell","detail":"AndromedaRootListController","isController":1,"label":"Andromeda"}}\n' > "$PKG/Library/PreferenceLoader/Preferences/Andromeda.plist"
 
-          cat > "$PKG/DEBIAN/control" << 'CTRL'
-Package: com.andromeda.bypass
-Name: Andromeda
-Version: 4.0.0
-Architecture: iphoneos-arm
-Depends: firmware (>= 12.0), preferenceloader
-Recommends: mobilesubstrate
-Suggests: com.opa334.choicy
-Description: Ultimate jailbreak detection bypass for dating apps and social media.
-Maintainer: AndromedaTeam
-Author: AndromedaTeam
-Section: System
-CTRL
+          printf 'Package: com.andromeda.bypass\nName: Andromeda\nVersion: 4.0.0\nArchitecture: iphoneos-arm\nDepends: firmware (>= 12.0), preferenceloader\nRecommends: mobilesubstrate\nSuggests: com.opa334.choicy\nDescription: Ultimate jailbreak detection bypass for dating apps and social media.\nMaintainer: AndromedaTeam\nAuthor: AndromedaTeam\nSection: System\n' > "$PKG/DEBIAN/control"
 
           printf '#!/bin/sh\nset -e\nexit 0\n' > "$PKG/DEBIAN/postinst"
           printf '#!/bin/sh\nset -e\nexit 0\n' > "$PKG/DEBIAN/postrm"
