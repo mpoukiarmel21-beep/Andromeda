@@ -168,16 +168,16 @@ void andromeda_hook_SocialApps(void) {
     if([bid isEqualToString:@"com.burbn.instagram"]) {
         %init(andromeda_instagram);
     }
-    else if([bid isEqualToString:@"com.instagram.barcelona"] || [bid isEqualToString:@"com.burbn.barcelona"]) {
+    else if([bid isEqualToString:@"com.instagram.barcelona"]) {
         %init(andromeda_threads);
     }
     else if([bid isEqualToString:@"com.facebook.Facebook"]) {
         %init(andromeda_facebook);
     }
-    else if([bid isEqualToString:@"com.toyopagroup.picaboo"] || [bid isEqualToString:@"com.snapchat.Snapchat"]) {
+    else if([bid isEqualToString:@"com.snapchat.Snapchat"]) {
         %init(andromeda_snapchat);
     }
-    else if([bid isEqualToString:@"com.zhiliaoapp.musically"] || [bid isEqualToString:@"com.ss.iphone.ugc.Aweme"]) {
+    else if([bid isEqualToString:@"com.zhiliaoapp.musically"]) {
         %init(andromeda_tiktok);
     }
 }

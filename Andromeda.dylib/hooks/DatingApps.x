@@ -244,41 +244,143 @@
 
 %end
 
+%group andromeda_match
+%end
+
+%group andromeda_pof
+%end
+
+%group andromeda_eharmony
+%end
+
+%group andromeda_zoosk
+%end
+
+%group andromeda_lex
+%end
+
+%group andromeda_bumble_bff
+%end
+
+%group andromeda_once
+%end
+
+%group andromeda_theleague
+%end
+
+%group andromeda_clover
+%end
+
+%group andromeda_hud
+%end
+
+%group andromeda_turnup
+%end
+
+%group andromeda_boo
+%end
+
+%group andromeda_iris
+%end
+
+%group andromeda_lovoo
+%end
+
+%group andromeda_adopte
+%end
+
+%group andromeda_jaumo
+%end
+
+%group andromeda_tantan
+%end
+
 void andromeda_hook_DatingApps(void) {
     NSString* bid = [[AndromedaCore sharedInstance] bundleIdentifier];
     DLog(@"Setting up dating app hooks for: %@", bid);
 
-    if([bid isEqualToString:@"com.cardify.tinder"] || [bid isEqualToString:@"com.tinder.tinder"]) {
+    if([bid isEqualToString:@"com.cardify.tinder"]) {
         %init(andromeda_tinder);
     }
-    else if([bid isEqualToString:@"com.bumble.bumble"] || [bid isEqualToString:@"com.bumblecorp.bumble"]) {
+    else if([bid isEqualToString:@"com.bumble.app"]) {
         %init(andromeda_bumble);
     }
-    else if([bid isEqualToString:@"com.hily.app"] || [bid isEqualToString:@"com.hily.corp"]) {
+    else if([bid isEqualToString:@"co.hily.app"]) {
         %init(andromeda_hily);
     }
-    else if([bid isEqualToString:@"com.badoo.iphone"] || [bid isEqualToString:@"com.badoo.enterprise"]) {
+    else if([bid isEqualToString:@"com.badoo.badoo"]) {
         %init(andromeda_badoo);
     }
-    else if([bid isEqualToString:@"com.fruitz.app"] || [bid isEqualToString:@"com.getfruitz.Fruitz"]) {
+    else if([bid isEqualToString:@"com.ftw-and-co.fruitz"]) {
         %init(andromeda_fruitz);
     }
-    else if([bid isEqualToString:@"com.feels.frn"] || [bid isEqualToString:@"com.feels.app"]) {
+    else if([bid isEqualToString:@"com.feels.Feels"]) {
         %init(andromeda_feels);
     }
-    else if([bid isEqualToString:@"com.hinge.co"] || [bid isEqualToString:@"com.hinge.Hinge"]) {
+    else if([bid isEqualToString:@"co.hinge.app"]) {
         %init(andromeda_hinge);
     }
-    else if([bid isEqualToString:@"com.grindrguy.grindrx"] || [bid isEqualToString:@"com.grindr.inc"]) {
+    else if([bid isEqualToString:@"com.grindrapp.ios"]) {
         %init(andromeda_grindr);
     }
-    else if([bid isEqualToString:@"com.happn.ios"] || [bid isEqualToString:@"com.ftw_and_co.happn"]) {
+    else if([bid isEqualToString:@"com.happn.happn"]) {
         %init(andromeda_happn);
     }
-    else if([bid isEqualToString:@"com.okcupid.OKCupid"] || [bid isEqualToString:@"com.okcupid.app"]) {
+    else if([bid isEqualToString:@"com.okcupid.okcupid"]) {
         %init(andromeda_okcupid);
     }
-    else if([bid isEqualToString:@"com.meetic.iphone"] || [bid isEqualToString:@"com.meetic.Meetic"]) {
+    else if([bid isEqualToString:@"com.meetic.meetic"]) {
         %init(andromeda_meetic);
+    }
+    else if([bid isEqualToString:@"com.match.Match"]) {
+        %init(andromeda_match);
+    }
+    else if([bid isEqualToString:@"com.pof.pof"]) {
+        %init(andromeda_pof);
+    }
+    else if([bid isEqualToString:@"com.eharmony.eharmony"]) {
+        %init(andromeda_eharmony);
+    }
+    else if([bid isEqualToString:@"com.zoosk.zoosk"]) {
+        %init(andromeda_zoosk);
+    }
+    else if([bid isEqualToString:@"com.lex.lex"]) {
+        %init(andromeda_lex);
+    }
+    else if([bid isEqualToString:@"com.bumble.bff"]) {
+        %init(andromeda_bumble_bff);
+    }
+    else if([bid isEqualToString:@"com.once.once"]) {
+        %init(andromeda_once);
+    }
+    else if([bid isEqualToString:@"com.theleague.ios"]) {
+        %init(andromeda_theleague);
+    }
+    else if([bid isEqualToString:@"com.clover.ios"]) {
+        %init(andromeda_clover);
+    }
+    else if([bid isEqualToString:@"com.hud.ios"]) {
+        %init(andromeda_hud);
+    }
+    else if([bid isEqualToString:@"com.turnup.app"]) {
+        %init(andromeda_turnup);
+    }
+    else if([bid isEqualToString:@"com.boo.app"]) {
+        %init(andromeda_boo);
+    }
+    else if([bid isEqualToString:@"com.iris.dating"]) {
+        %init(andromeda_iris);
+    }
+    else if([bid isEqualToString:@"com.lovoo.ios"]) {
+        %init(andromeda_lovoo);
+    }
+    else if([bid isEqualToString:@"com.adopteunmec.ios"]) {
+        %init(andromeda_adopte);
+    }
+    else if([bid isEqualToString:@"com.jaumo.ios"]) {
+        %init(andromeda_jaumo);
+    }
+    else if([bid isEqualToString:@"com.tantan.ios"]) {
+        %init(andromeda_tantan);
     }
 }

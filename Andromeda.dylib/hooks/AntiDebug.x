@@ -4,7 +4,8 @@ static int (*orig_ptrace)(int, pid_t, caddr_t, int) = NULL;
 static int (*orig_csops)(pid_t, unsigned int, void*, size_t) = NULL;
 static int (*orig_sysctl)(int*, u_int, void*, size_t*, void*, size_t) = NULL;
 static int (*orig_sysctlbyname)(const char*, void*, size_t*, void*, size_t) = NULL;
-static pid_t (*orig_fork)(void) = NULL;
+static pid_t (*orig_getppid)(void) = NULL;
+static int (*orig_fork)(void) = NULL;
 static int (*orig_kill)(pid_t, int) = NULL;
 static kern_return_t (*orig_task_get_exception_ports)(task_t, exception_mask_t, exception_mask_array_t, mach_msg_type_number_t*, exception_handler_array_t, exception_behavior_array_t, exception_flavor_array_t) = NULL;
 static kern_return_t (*orig_task_info)(task_t, task_flavor_t, task_info_t, mach_msg_type_number_t*) = NULL;
@@ -23,8 +24,9 @@ static int hooked_ptrace(int request, pid_t pid, caddr_t addr, int data) {
 }
 
 static int hooked_csops(pid_t pid, unsigned int ops, void* useraddr, size_t usersize) {
+    if(isCallerTweak()) return orig_csops(pid, ops, useraddr, usersize);
     int result = orig_csops(pid, ops, useraddr, usersize);
-    if(result == 0 && ops == CS_OPS_STATUS && useraddr && usersize >= sizeof(uint32_t)) {
+    if(result == 0 && pid == getpid() && ops == CS_OPS_STATUS && useraddr && usersize >= sizeof(uint32_t)) {
         uint32_t* flags = (uint32_t*)useraddr;
         *flags &= ~CS_DEBUGGED;
         *flags &= ~CS_KILL;
@@ -37,6 +39,7 @@ static int hooked_csops(pid_t pid, unsigned int ops, void* useraddr, size_t user
 }
 
 static int hooked_sysctl(int* name, u_int namelen, void* oldp, size_t* oldlenp, void* newp, size_t newlen) {
+    if(isCallerTweak()) return orig_sysctl(name, namelen, oldp, oldlenp, newp, newlen);
     int result = orig_sysctl(name, namelen, oldp, oldlenp, newp, newlen);
     if(result == 0 && oldp && oldlenp && namelen >= 4 && name[0] == CTL_KERN) {
         if(name[1] == KERN_PROC && name[2] == KERN_PROC_PID && name[3] == getpid()) {
@@ -48,9 +51,9 @@ static int hooked_sysctl(int* name, u_int namelen, void* oldp, size_t* oldlenp, 
 }
 
 static int hooked_sysctlbyname(const char* name, void* oldp, size_t* oldlenp, void* newp, size_t newlen) {
-    int result = orig_sysctlbyname(name, oldp, oldlenp, newp, newlen);
-    if(result == 0 && name && oldp && oldlenp) {
-        if(strcmp(name, "kern.bootargs") == 0) {
+    if(isCallerTweak()) return orig_sysctlbyname(name, oldp, oldlenp, newp, newlen);
+    if(name && strcmp(name, "kern.bootargs") == 0) {
+        if(oldp && oldlenp) {
             const char* clean = "vm_compressor=2";
             size_t cleanLen = strlen(clean) + 1;
             if(*oldlenp >= cleanLen) {
@@ -58,7 +61,11 @@ static int hooked_sysctlbyname(const char* name, void* oldp, size_t* oldlenp, vo
                 *oldlenp = cleanLen;
             }
         }
-        else if(strcmp(name, "hw.machine") == 0 || strcmp(name, "hw.model") == 0) {
+        return 0;
+    }
+    int result = orig_sysctlbyname(name, oldp, oldlenp, newp, newlen);
+    if(result == 0 && name && oldp && oldlenp) {
+        if(strcmp(name, "hw.machine") == 0 || strcmp(name, "hw.model") == 0) {
             const char* spoofed = [_spoofer spoofedDeviceModel].UTF8String;
             size_t spoofedLen = strlen(spoofed) + 1;
             if(*oldlenp >= spoofedLen) {
@@ -78,7 +85,13 @@ static int hooked_sysctlbyname(const char* name, void* oldp, size_t* oldlenp, vo
     return result;
 }
 
-static pid_t hooked_fork(void) {
+static pid_t hooked_getppid(void) {
+    if(isCallerTweak()) return orig_getppid();
+    return 1;
+}
+
+static int hooked_fork(void) {
+    if(isCallerTweak()) return orig_fork();
     DLog(@"fork() blocked");
     errno = EPERM;
     return -1;
@@ -104,6 +117,7 @@ void andromeda_hook_AntiDebug(void) {
     MSHookFunction((void*)csops, (void*)hooked_csops, (void**)&orig_csops);
     MSHookFunction((void*)sysctl, (void*)hooked_sysctl, (void**)&orig_sysctl);
     MSHookFunction((void*)sysctlbyname, (void*)hooked_sysctlbyname, (void**)&orig_sysctlbyname);
+    MSHookFunction((void*)getppid, (void*)hooked_getppid, (void**)&orig_getppid);
     MSHookFunction((void*)fork, (void*)hooked_fork, (void**)&orig_fork);
     MSHookFunction((void*)kill, (void*)hooked_kill, (void**)&orig_kill);
     MSHookFunction((void*)task_get_exception_ports, (void*)hooked_task_get_exception_ports, (void**)&orig_task_get_exception_ports);

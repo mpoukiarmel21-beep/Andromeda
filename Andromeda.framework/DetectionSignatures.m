@@ -338,126 +338,117 @@
     return @{
         @"tinder": @[
             @"com.cardify.tinder",
-            @"com.tinder.tinder"
+            @"co.hinge.app",
+            @"com.bumble.app",
+            @"co.hily.app",
+            @"com.badoo.badoo",
+            @"com.ftw-and-co.fruitz",
+            @"com.feels.Feels",
+            @"com.happn.happn",
+            @"com.match.Match",
+            @"com.pof.pof",
+            @"com.eharmony.eharmony",
+            @"com.okcupid.okcupid",
+            @"com.zoosk.zoosk",
+            @"com.lex.lex",
+            @"com.grindrapp.ios",
+            @"com.jackd.ios",
+            @"com.once.once",
+            @"com.theleague.ios",
+            @"com.clover.ios",
+            @"com.boo.app",
+            @"com.iris.dating",
+            @"com.lovoo.ios",
+            @"com.adopteunmec.ios",
+            @"com.jaumo.ios",
+            @"com.tantan.ios",
+            @"com.hud.ios",
+            @"com.turnup.app"
         ],
         @"bumble": @[
-            @"com.bumble.bumble",
-            @"com.bumblecorp.bumble"
+            @"com.bumble.app",
+            @"com.bumble.bff"
         ],
         @"badoo": @[
-            @"com.badoo.iphone",
-            @"com.badoo.enterprise"
+            @"com.badoo.badoo"
         ],
         @"hily": @[
-            @"com.hily.app",
-            @"com.hily.corp"
+            @"co.hily.app"
         ],
         @"fruitz": @[
-            @"com.fruitz.app",
-            @"com.getfruitz.Fruitz"
+            @"com.ftw-and-co.fruitz"
         ],
         @"feels": @[
-            @"com.feels.frn",
-            @"com.feels.app"
+            @"com.feels.Feels"
         ],
         @"hinge": @[
-            @"com.hinge.co",
-            @"com.hinge.Hinge"
+            @"co.hinge.app"
         ],
         @"happn": @[
-            @"com.happn.ios",
-            @"com.ftw_and_co.happn"
+            @"com.happn.happn"
         ],
         @"okcupid": @[
-            @"com.okcupid.OKCupid",
-            @"com.okcupid.app"
+            @"com.okcupid.okcupid"
         ],
         @"pof": @[
-            @"com.plentyoffish.app",
-            @"com.plentyoffish.PlentyOfFish"
+            @"com.pof.pof"
         ],
         @"match": @[
-            @"com.match.ios.matchapp",
             @"com.match.Match"
         ],
         @"meetic": @[
-            @"com.meetic.iphone",
-            @"com.meetic.Meetic"
+            @"com.meetic.meetic"
         ],
         @"once": @[
-            @"com.once.once",
-            @"com.onceapp.Once"
-        ],
-        @"bumble_bff": @[
-            @"com.bumble.bff",
-            @"com.bumble.bizz"
+            @"com.once.once"
         ],
         @"grindr": @[
-            @"com.grindrguy.grindrx",
-            @"com.grindr.inc"
+            @"com.grindrapp.ios"
         ],
         @"her": @[
-            @"com.weareher.HER",
-            @"com.hersocial.app"
+            @"com.weareher.HER"
         ],
         @"scruff": @[
-            @"com.scruff.scruff",
-            @"com.appspot.scruffapp"
+            @"com.scruff.scruff"
         ],
         @"jackd": @[
-            @"com.jackd.ios",
-            @"com.jackd.mobi"
+            @"com.jackd.ios"
         ],
         @"zoosk": @[
-            @"com.zoosk.Zoosk",
-            @"com.zoosk.iphone"
+            @"com.zoosk.zoosk"
         ],
         @"innercircle": @[
-            @"com.innercircle.ios",
-            @"com.circleit.innercircle"
+            @"com.innercircle.ios"
         ],
         @"theleague": @[
-            @"com.theleague.ios",
-            @"com.theleague.TheLeague"
+            @"com.theleague.ios"
         ],
         @"clover": @[
-            @"com.clover.ios",
-            @"com.clover.Clover"
+            @"com.clover.ios"
         ],
         @"hud": @[
-            @"com.hud.ios",
-            @"com.hudapp.HUDApp"
+            @"com.hud.ios"
         ],
         @"turnup": @[
-            @"com.turnup.app",
-            @"com.turnup.TurnUp"
+            @"com.turnup.app"
         ],
         @"boo": @[
-            @"com.boo.app",
-            @"com.boo.Boo"
+            @"com.boo.app"
         ],
         @"iris": @[
-            @"com.iris.dating",
-            @"com.irisdating.Iris"
+            @"com.iris.dating"
         ],
         @"lovoo": @[
-            @"com.lovoo.ios",
-            @"com.lovoo.LOVOO"
+            @"com.lovoo.ios"
         ],
         @"adopte": @[
-            @"com.adopteunmec.ios",
-            @"com.adopteunmec.AdopteUnMec"
+            @"com.adopteunmec.ios"
         ],
         @"jaumo": @[
-            @"com.jaumo.ios",
-            @"com.jaumo.Jaumo"
+            @"com.jaumo.ios"
         ],
         @"tantan": @[
-            @"com.tantan.ios",
-            @"com.tantan.Tantan"
-        ],
-        @"bumble_date": @[
-            @"com.bumble.date"
+            @"com.tantan.ios"
         ]
     };
 }
@@ -468,8 +459,7 @@
             @"com.burbn.instagram"
         ],
         @"threads": @[
-            @"com.instagram.barcelona",
-            @"com.burbn.barcelona"
+            @"com.instagram.barcelona"
         ],
         @"facebook": @[
             @"com.facebook.Facebook"
@@ -481,28 +471,22 @@
             @"net.whatsapp.WhatsApp"
         ],
         @"snapchat": @[
-            @"com.toyopagroup.picaboo",
             @"com.snapchat.Snapchat"
         ],
         @"tiktok": @[
-            @"com.zhiliaoapp.musically",
-            @"com.ss.iphone.ugc.Aweme"
+            @"com.zhiliaoapp.musically"
         ],
         @"twitter": @[
-            @"com.atebits.Tweetie2",
-            @"com.twitter.twitter"
+            @"com.atebits.Tweetie2"
         ],
         @"bereal": @[
-            @"com.bereal.ios",
-            @"com.bereal.Bereal"
+            @"com.bereal.ios"
         ],
         @"telegram": @[
-            @"ph.telegra.Telegraph",
-            @"org.telegram.Telegram"
+            @"ph.telegra.Telegraph"
         ],
         @"signal": @[
-            @"org.whispersystems.signal",
-            @"org.thoughtcrime.securesms"
+            @"org.whispersystems.signal"
         ],
         @"discord": @[
             @"com.hammerandchisel.discord"
@@ -518,7 +502,7 @@
 
 + (NSDictionary<NSString*,NSArray<NSString*>*>*)appSpecificDetectionClasses {
     return @{
-        @"com.hily.app": @[
+        @"co.hily.app": @[
             @"HLYSecurityManager", @"HLYDeviceIntegrity", @"HLYAppIntegrityCheck",
             @"HLYRuntimeSecurity", @"HLYFingerprintManager", @"HLYTrustEvaluator"
         ],
@@ -526,18 +510,52 @@
             @"TNDRSecurityManager", @"TNDRDeviceIntegrity", @"TNDRAppIntegrity",
             @"TNDRUser", @"TNDRDeletionDetector", @"TNDRMetaManager"
         ],
-        @"com.bumble.bumble": @[
+        @"com.bumble.app": @[
             @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
             @"BMBLAccountManager"
         ],
-        @"com.badoo.iphone": @[
+        @"com.badoo.badoo": @[
             @"BDODeviceInfo", @"BDOSecurity", @"BDOIntegrityCheck"
         ],
-        @"com.fruitz.app": @[
+        @"com.ftw-and-co.fruitz": @[
             @"FRZSecurityCheck", @"FRZIntegrityValidator"
         ],
-        @"com.feels.frn": @[
+        @"com.feels.Feels": @[
             @"FLSSecurityManager", @"FLSIntegrityCheck", @"FLSDeviceFingerprint"
+        ],
+        @"com.burbn.instagram": @[
+            @"IGSecurityManager", @"IGIntegrityCheck", @"IGAnalyticsSession",
+            @"IGDeviceChecker", @"FBDeviceInformation", @"FBAppIntegrity",
+            @"RCTDeviceInfo", @"IGDirectSecurity", @"IGUserSession",
+            @"IGRuntimeSecurity", @"IGDeviceFingerprint"
+        ],
+        @"com.instagram.barcelona": @[
+            @"THAppSecurityManager", @"THDeviceIntegrity", @"THSecurityCheck",
+            @"BHInstagramAppIntegrity", @"THRuntimeSecurity"
+        ],
+        @"com.happn.happn": @[
+            @"HPNDeviceSecurity"
+        ],
+        @"com.okcupid.okcupid": @[
+            @"OKCDeviceCheck"
+        ],
+        @"com.match.Match": @[
+            @"MatchSecurityManager"
+        ],
+        @"com.pof.pof": @[
+            @"POFSecurityManager"
+        ],
+        @"com.grindrapp.ios": @[
+            @"GRDRSecurityManager"
+        ],
+        @"com.meetic.meetic": @[
+            @"MTCSecurityManager"
+        ],
+        @"co.hinge.app": @[
+            @"HNGDeviceCheck", @"HNGSecurityIntegration"
+        ],
+        @"com.zhiliaoapp.musically": @[
+            @"TTSecurityManager", @"TTDeviceCheck"
         ],
         @"com.burbn.instagram": @[
             @"IGSecurityManager", @"IGIntegrityCheck", @"IGAnalyticsSession",
@@ -593,7 +611,7 @@
 
 + (NSDictionary<NSString*,NSDictionary*>*)appSpecificConfigurations {
     return @{
-        @"com.hily.app": @{
+        @"co.hily.app": @{
             @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
@@ -614,7 +632,17 @@
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt"
             ]
         },
-        @"com.bumble.bumble": @{
+        @"co.hinge.app": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt"
+            ]
+        },
+        @"com.bumble.app": @{
             @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
@@ -624,7 +652,7 @@
                 @"vnodebypass", @"uiimage", @"mobilegestalt"
             ]
         },
-        @"com.badoo.iphone": @{
+        @"com.badoo.badoo": @{
             @"level": @"high",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
@@ -633,7 +661,7 @@
                 @"behavioral", @"vnodebypass", @"uiimage"
             ]
         },
-        @"com.fruitz.app": @{
+        @"com.ftw-and-co.fruitz": @{
             @"level": @"high",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
@@ -642,7 +670,7 @@
                 @"vnodebypass"
             ]
         },
-        @"com.feels.frn": @{
+        @"com.feels.Feels": @{
             @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
