@@ -1,5 +1,6 @@
 #import "Headers/AndromedaCore.h"
 #import "Headers/DetectionSignatures.h"
+#import "../common.h"
 #import <dlfcn.h>
 #import <sys/stat.h>
 #import <mach-o/dyld.h>
