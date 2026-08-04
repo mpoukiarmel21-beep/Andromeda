@@ -46,10 +46,10 @@
 #import <CoreMotion/CoreMotion.h>
 #import <CoreLocation/CoreLocation.h>
 
-#import "../common.h"
-#import "../vendor/apple/dyld_priv.h"
-#import "../vendor/apple/codesign.h"
-#import "../vendor/apple/ptrace.h"
+#import "common.h"
+#import "vendor/apple/dyld_priv.h"
+#import "vendor/apple/codesign.h"
+#import "vendor/apple/ptrace.h"
 
 #import <Andromeda.h>
 
