@@ -22,8 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)shouldDisableTweakForApp:(NSString*)bundleId;
 - (BOOL)isDatingAppBundleId:(NSString*)bundleId;
 - (BOOL)isSocialAppBundleId:(NSString*)bundleId;
-- (void)applyVnodeBypass;
-- (void)restoreVnodeBypass;
 
 @end
 

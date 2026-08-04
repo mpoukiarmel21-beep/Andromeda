@@ -200,12 +200,4 @@
     return NO;
 }
 
-- (void)applyVnodeBypass {
-    DLog(@"vnode bypass: requested to hide jailbreak files");
-}
-
-- (void)restoreVnodeBypass {
-    DLog(@"vnode bypass: restoring hidden files");
-}
-
 @end

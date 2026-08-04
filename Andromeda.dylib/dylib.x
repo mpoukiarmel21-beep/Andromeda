@@ -15,13 +15,10 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [[AndromedaCore sharedInstance] loadPreferences];
         DLog(@"Andromeda loaded in SpringBoard");
-        [[AndromedaCore sharedInstance] applyVnodeBypass];
     });
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-    DLog(@"Andromeda: restoring vnode bypass");
-    [[AndromedaCore sharedInstance] restoreVnodeBypass];
     %orig;
 }
 
@@ -109,7 +106,6 @@
         andromeda_hook_NetworkInterface();
         andromeda_hook_ProcFiles();
         andromeda_hook_IOHID();
-        andromeda_hook_VnodeBypass();
     }
 
     if(isDating) {

@@ -103,7 +103,6 @@ extern void andromeda_hook_ObjCRuntime(void);
 extern void andromeda_hook_Syscall(void);
 extern void andromeda_hook_TweakClasses(void);
 extern void andromeda_hook_Behavioral(void);
-extern void andromeda_hook_VnodeBypass(void);
 extern void andromeda_hook_UIImage(void);
 extern void andromeda_hook_Sensors(void);
 extern void andromeda_hook_MobileGestalt(void);
