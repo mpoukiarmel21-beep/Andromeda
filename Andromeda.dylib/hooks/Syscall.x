@@ -4,7 +4,7 @@ static int (*orig_syscall)(int, ...) = NULL;
 
 static int hooked_syscall(int number, ...) {
     if(number == SYS_ptrace || number == SYS_fork
-    || number == SYS_vfork || number == SYS_rfork) {
+    || number == SYS_vfork) {
         DLog(@"Blocked syscall: %d", number);
         errno = EPERM;
         return -1;
