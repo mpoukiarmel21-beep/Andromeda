@@ -23,28 +23,16 @@ jobs:
 
       - name: Setup SDK
         run: |
-          curl -LO https://github.com/theos/sdks/raw/master/iPhoneOS16.5.sdk.tar.xz
+          SDK_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
+          SDK_VERSION=$(xcrun --sdk iphoneos --show-sdk-version)
+          echo "Xcode SDK: $SDK_PATH (iOS $SDK_VERSION)"
           mkdir -p /tmp/theos/sdks
-          mv iPhoneOS16.5.sdk.tar.xz /tmp/theos/sdks/
-          cd /tmp/theos/sdks && tar -xf iPhoneOS16.5.sdk.tar.xz
+          cp -a "$SDK_PATH" "/tmp/theos/sdks/iPhoneOS${SDK_VERSION}.sdk"
+          echo "SDKVERSION=$SDK_VERSION" >> $GITHUB_ENV
 
-      - name: Build Andromeda Framework
+      - name: Build All
         run: |
-          cd Andromeda.framework
-          make clean 2>/dev/null || true
-          make package messages=yes
-
-      - name: Build Andromeda Dylib
-        run: |
-          cd Andromeda.dylib
-          make clean 2>/dev/null || true
-          make package messages=yes
-
-      - name: Build Settings Bundle
-        run: |
-          cd AndromedaSettings.bundle
-          make clean 2>/dev/null || true
-          make package messages=yes
+          make package messages=yes SDKVERSION=$SDKVERSION
 
       - name: Create .deb package
         run: |
