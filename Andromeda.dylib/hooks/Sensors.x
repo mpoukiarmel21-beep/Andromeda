@@ -2,25 +2,49 @@
 
 %hook CMMotionManager
 
-- (BOOL)isDeviceMotionAvailable { return YES; }
-- (BOOL)isAccelerometerAvailable { return YES; }
-- (BOOL)isGyroAvailable { return YES; }
-- (BOOL)isMagnetometerAvailable { return YES; }
+- (BOOL)isDeviceMotionAvailable {
+    return YES;
+}
+
+- (BOOL)isAccelerometerAvailable {
+    return YES;
+}
+
+- (BOOL)isGyroAvailable {
+    return YES;
+}
+
+- (BOOL)isMagnetometerAvailable {
+    return YES;
+}
 
 %end
 
 %hook AVCaptureDevice
 
-- (BOOL)hasFlash { return YES; }
-- (BOOL)hasTorch { return YES; }
-- (BOOL)isFlashAvailable { return YES; }
+- (BOOL)hasFlash {
+    return YES;
+}
+
+- (BOOL)hasTorch {
+    return YES;
+}
+
+- (BOOL)isFlashAvailable {
+    return YES;
+}
 
 %end
 
 %hook CLLocationManager
 
-+ (BOOL)locationServicesEnabled { return YES; }
-+ (CLAuthorizationStatus)authorizationStatus { return kCLAuthorizationStatusAuthorizedWhenInUse; }
++ (BOOL)locationServicesEnabled {
+    return YES;
+}
+
++ (CLAuthorizationStatus)authorizationStatus {
+    return kCLAuthorizationStatusAuthorizedWhenInUse;
+}
 
 %end
 
