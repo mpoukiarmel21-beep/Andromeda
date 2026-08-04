@@ -194,7 +194,6 @@ static id hooked_id_return_nil(id self, SEL _cmd) {
                     if ([hookedSelectors containsObject:key]) continue;
 
                     Method method = methods[j];
-                    IMP imp = method_getImplementation(method);
                     const char *typeEncoding = method_getTypeEncoding(method);
 
                     if (!typeEncoding) continue;
@@ -203,7 +202,6 @@ static id hooked_id_return_nil(id self, SEL _cmd) {
 
                     IMP newImp = NULL;
                     if ([retType isEqualToString:@"B"]) {
-                        SEL cmd = method_getSelector(method);
                         if ([self shouldReturnYESForSelector:selName]) {
                             newImp = (IMP)hooked_bool_return_YES;
                         } else {
