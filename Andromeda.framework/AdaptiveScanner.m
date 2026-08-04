@@ -133,10 +133,6 @@ static NSMutableArray<NSDictionary *>* scanResults = nil;
 
 #pragma mark - Generic Hook Implementations
 
-static BOOL hooked_jailbreak_return_NO(id self, SEL _cmd) {
-    return NO;
-}
-
 static BOOL hooked_bool_return_NO(id self, SEL _cmd) {
     return NO;
 }
