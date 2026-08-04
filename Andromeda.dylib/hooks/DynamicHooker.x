@@ -115,11 +115,7 @@ static void scanAndHookDetectionClasses(void) {
                 char retType;
                 method_getReturnType(methods[j], &retType, sizeof(retType));
 
-                if(retType == 'B' || retType == 'c') { // BOOL
-                    // Déterminer si c'est un class method ou instance method
-                    const char* typeEncoding = method_getTypeEncoding(methods[j]);
-                    BOOL isClassMethod = typeEncoding && typeEncoding[0] == '@';
-
+                if(retType == 'B' || retType == 'c') {
                     IMP newIMP;
                     if([selStr containsString:@"isJailbroken"]
                     || [selStr containsString:@"isRooted"]
