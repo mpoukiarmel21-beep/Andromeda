@@ -1,75 +1,47 @@
 #import "hooks.h"
 
-%group andromeda_appattest
+// DCAppAttestService
+typedef BOOL (*isSupported_t)(id, SEL);
+static isSupported_t orig_isSupported = NULL;
 
-%hook DCAppAttestService
-
-+ (BOOL)isSupported {
-    if(isCallerTweak()) return %orig;
+static BOOL hooked_isSupported(id self, SEL _cmd) {
+    if(isCallerTweak()) return orig_isSupported(self, _cmd);
     return NO;
 }
 
-- (void)generateKeyWithCompletionHandler:(void(^)(id, NSError*))handler {
-    if(isCallerTweak()) { %orig; return; }
-    if(handler) {
-        NSError* error = [NSError errorWithDomain:@"com.andromeda"
-                                             code:-1
-                                         userInfo:@{NSLocalizedDescriptionKey: @"App Attest not supported"}];
-        handler(nil, error);
-    }
-}
+// DCDevice
+typedef BOOL (*supportsDeviceCheck_t)(id, SEL);
+static supportsDeviceCheck_t orig_supportsDeviceCheck = NULL;
 
-- (void)attestKey:(NSString*)clientDataHash completionHandler:(void(^)(NSData*, NSError*))handler {
-    if(isCallerTweak()) { %orig; return; }
-    if(handler) {
-        NSError* error = [NSError errorWithDomain:@"com.andromeda"
-                                             code:-1
-                                         userInfo:@{NSLocalizedDescriptionKey: @"App Attest not supported"}];
-        handler(nil, error);
-    }
-}
-
-%end
-
-%hook DCDevice
-
-+ (BOOL)currentDeviceSupportsDeviceCheck {
-    if(isCallerTweak()) return %orig;
+static BOOL hooked_supportsDeviceCheck(id self, SEL _cmd) {
+    if(isCallerTweak()) return orig_supportsDeviceCheck(self, _cmd);
     return NO;
 }
-
-- (void)generateTokenWithCompletionHandler:(void(^)(NSData*, NSError*))handler {
-    if(isCallerTweak()) { %orig; return; }
-    if(handler) {
-        NSError* error = [NSError errorWithDomain:@"com.andromeda"
-                                             code:-1
-                                         userInfo:@{NSLocalizedDescriptionKey: @"Device check not supported"}];
-        handler(nil, error);
-    }
-}
-
-%end
-
-%hook ASDeviceIdentity
-
-+ (void)deviceIdentityWithCompletion:(void(^)(id, NSError*))completion {
-    if(isCallerTweak()) { %orig; return; }
-    if(completion) {
-        NSError* error = [NSError errorWithDomain:@"com.andromeda"
-                                             code:-1
-                                         userInfo:@{NSLocalizedDescriptionKey: @"Device identity not available"}];
-        completion(nil, error);
-    }
-}
-
-%end
-
-%end
 
 void andromeda_hook_AppAttest(void) {
     NSLog(@"[Andromeda] AppAttestBypass: Installing...");
 
-    if(NSClassFromString(@"DCAppAttestService") || NSClassFromString(@"DCDevice") || NSClassFromString(@"ASDeviceIdentity")) {
-        %init(andromeda_appattest);
+    Class cls;
+
+    cls = NSClassFromString(@"DCAppAttestService");
+    if(cls) {
+        Method m = class_getClassMethod(cls, @selector(isSupported));
+        if(m) {
+            orig_isSupported = (isSupported_t)method_getImplementation(m);
+            method_setImplementation(m, (IMP)hooked_isSupported);
+            NSLog(@"[Andromeda] AppAttestBypass: DCAppAttestService.isSupported hooked");
+        }
     }
+
+    cls = NSClassFromString(@"DCDevice");
+    if(cls) {
+        Method m = class_getClassMethod(cls, @selector(currentDeviceSupportsDeviceCheck));
+        if(m) {
+            orig_supportsDeviceCheck = (supportsDeviceCheck_t)method_getImplementation(m);
+            method_setImplementation(m, (IMP)hooked_supportsDeviceCheck);
+            NSLog(@"[Andromeda] AppAttestBypass: DCDevice hooked");
+        }
+    }
+
+    NSLog(@"[Andromeda] AppAttestBypass: Done");
 }
