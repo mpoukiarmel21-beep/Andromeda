@@ -9,7 +9,8 @@ Andromeda_INSTALL_PATH = /Library/Frameworks
 Andromeda_FILES = \
     Core.m \
     DetectionSignatures.m \
-    DeviceFingerprintSpoofer.m
+    DeviceFingerprintSpoofer.m \
+    AdaptiveScanner.m
 
 Andromeda_FRAMEWORKS = Foundation UIKit Security IOKit CoreTelephony SystemConfiguration
 Andromeda_CFLAGS = -fobjc-arc -I.. -Wno-unguarded-availability -Wno-deprecated-declarations

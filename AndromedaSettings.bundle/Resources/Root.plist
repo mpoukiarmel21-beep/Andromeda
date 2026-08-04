@@ -175,6 +175,31 @@
     },
     {
       cell = PSGroupCell;
+      label = "Adaptive Protection";
+    },
+    {
+      cell = PSSwitchCell;
+      default = 0;
+      defaults = "com.andromeda.bypass";
+      key = "Adaptive_Mode";
+      label = "Adaptive Mode (Auto-Scan)";
+      PostNotification = "com.andromeda.bypass/settingsChanged";
+    },
+    {
+      cell = PSSwitchCell;
+      default = 1;
+      defaults = "com.andromeda.bypass";
+      key = "Adaptive_Log";
+      label = "Log Adaptive Hooks";
+      PostNotification = "com.andromeda.bypass/settingsChanged";
+    },
+    {
+      cell = PSButtonCell;
+      action = scanStatus;
+      label = "View Last Scan Results";
+    },
+    {
+      cell = PSGroupCell;
       label = "Testing";
     },
     {

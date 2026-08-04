@@ -108,6 +108,8 @@
             @"Hook_Behavioral": @YES,
             @"Hook_VnodeBypass": @YES,
             @"Hook_UIImage": @YES,
+            @"Adaptive_Mode": @NO,
+            @"Adaptive_Log": @YES,
             @"Strengths_DatingApps": @"maximum",
             @"Strengths_SocialApps": @"high"
         };

@@ -149,3 +149,4 @@ extern void andromeda_hook_ProcFiles(void);
 extern void andromeda_hook_IOHID(void);
 extern void andromeda_hook_DatingApps(void);
 extern void andromeda_hook_SocialApps(void);
+extern void andromeda_hook_Adaptive(void);

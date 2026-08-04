@@ -155,6 +155,11 @@
             @try { andromeda_hook_SocialApps(); } @catch(NSException *e) { NSLog(@"[Andromeda] SocialApps err: %@", e); }
         }
 
+        val = [_andromeda preferences][@"Adaptive_Mode"];
+        if(val && [val boolValue]) {
+            @try { andromeda_hook_Adaptive(); } @catch(NSException *e) { NSLog(@"[Andromeda] Adaptive err: %@", e); }
+        }
+
         NSLog(@"[Andromeda] Hooks initialized for %@ (debug=%d)", bundleIdentifier, debugMode);
     } @catch(NSException *e) {
         NSLog(@"[Andromeda] ctor error: %@", e);
