@@ -39,6 +39,14 @@ jobs:
         run: |
           make messages=yes SDKVERSION=$SDKVERSION
 
+      - name: Debug - Find built files
+        run: |
+          echo "=== .theos directory ==="
+          find .theos -name "*.dylib" -o -name "*.bundle" 2>/dev/null || echo "No .dylib found"
+          echo "=== dylib debug ==="
+          ls -la .theos/obj/debug/ 2>/dev/null || echo "No debug dir"
+          ls -la .theos/obj/debug/arm64/ 2>/dev/null || echo "No arm64 dir"
+
       - name: Create .deb package
         run: |
           mkdir -p build/deb/DEBIAN
