@@ -1,11 +1,11 @@
 Package: com.andromeda.bypass
 Name: Andromeda
 Pre-Depends: dpkg
-Depends: firmware (>= 12.0), preferenceloader
+Depends: firmware (>= 15.0), preferenceloader
 Recommends: mobilesubstrate, com.opa334.altlist
 Suggests: com.opa334.choicy
-Version: 4.1.0
-Architecture: iphoneos-arm
+Version: 4.1.2
+Architecture: iphoneos-arm64
 Description: Ultimate jailbreak detection bypass for dating apps & social media. Neutralizes hardware fingerprinting, App Attest, DeviceCheck, anti-debugging, sandbox checks, filesystem detection, dylib enumeration, and behavioral biometrics.
 Maintainer: AndromedaTeam
 Author: AndromedaTeam
