@@ -12,6 +12,7 @@ Andromeda_FILES = \
     DeviceFingerprintSpoofer.m
 
 Andromeda_FRAMEWORKS = Foundation UIKit Security IOKit CoreTelephony SystemConfiguration
+Andromeda_CFLAGS = -fobjc-arc -I.. -Wno-unguarded-availability -Wno-deprecated-declarations
 Andromeda_LDFLAGS = -rpath /Library/Frameworks -rpath /var/jb/Library/Frameworks
 
 include $(THEOS_MAKE_PATH)/framework.mk
