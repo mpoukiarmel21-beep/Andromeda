@@ -34,11 +34,13 @@ static void andromeda_runHook(NSString* prefKey, void (^block)(void), NSString* 
 
         NSNumber* globalEnabled = andromeda_prefs()[@"Global_Enabled"];
         if(globalEnabled && ![globalEnabled boolValue]) {
+            NSLog(@"[Andromeda] Skipping %@: Andromeda disabled in Settings (Global_Enabled=NO).", bundleIdentifier);
             return;
         }
 
         NSNumber* autoPatch = andromeda_prefs()[@"AutoPatch_Enabled"];
         if(autoPatch && ![autoPatch boolValue]) {
+            NSLog(@"[Andromeda] Skipping %@: Auto-Patch disabled in Settings.", bundleIdentifier);
             return;
         }
 
@@ -55,7 +57,10 @@ static void andromeda_runHook(NSString* prefKey, void (^block)(void), NSString* 
             isProtected = [appOverride boolValue];
         }
 
-        if(!isProtected && !debugMode && !applyToAll) return;
+        if(!isProtected && !debugMode && !applyToAll) {
+            NSLog(@"[Andromeda] Skipping %@: not in supported app list. Enable Debug Mode or Apply to All to force patching.", bundleIdentifier);
+            return;
+        }
 
         NSString* executablePath = [[NSBundle mainBundle] executablePath];
         BOOL isSystemProcess = NO;

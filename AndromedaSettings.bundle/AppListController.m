@@ -67,6 +67,7 @@ static void SavePrefs(NSMutableDictionary* prefs) {
         NSArray* datingApps = @[
             @[@"Tinder", @"com.cardify.tinder"],
             @[@"Bumble", @"com.bumble.app"],
+            @[@"Bumble BFF", @"com.bumble.bff"],
             @[@"Hinge", @"co.hinge.app"],
             @[@"Hily", @"co.hily.app"],
             @[@"Badoo", @"com.badoo.badoo"],
@@ -77,6 +78,8 @@ static void SavePrefs(NSMutableDictionary* prefs) {
             @[@"OkCupid", @"com.okcupid.okcupid"],
             @[@"POF", @"com.pof.pof"],
             @[@"Grindr", @"com.grindrapp.ios"],
+            @[@"Jack'd", @"com.jackd.ios"],
+            @[@"Scruff", @"com.scruff.scruff"],
             @[@"HER", @"com.weareher.HER"],
             @[@"Meetic", @"com.meetic.meetic"],
             @[@"AdopteUnMec", @"com.adopteunmec.ios"],
@@ -102,6 +105,7 @@ static void SavePrefs(NSMutableDictionary* prefs) {
             @[@"Reddit", @"com.reddit.Reddit"],
             @[@"WhatsApp", @"net.whatsapp.WhatsApp"],
             @[@"Telegram", @"ph.telegra.Telegraph"],
+            @[@"Signal", @"org.whispersystems.signal"],
             @[@"BeReal", @"com.bereal.ios"],
             @[@"LinkedIn", @"com.linkedin.LinkedIn"]
         ];
