@@ -9,7 +9,7 @@ TARGET = iphone:clang:latest:15.0
 TWEAK_NAME = Andromeda
 
 Andromeda_FILES = dylib.x
-Andromeda_FRAMEWORKS = Foundation UIKit Security IOKit CoreTelephony SystemConfiguration CoreMotion CoreLocation
+Andromeda_FRAMEWORKS = Foundation UIKit
 Andromeda_CFLAGS = -fobjc-arc -I.. -I../Andromeda.framework/Headers -Wno-unguarded-availability -Wno-deprecated-declarations
 Andromeda_GO_EASY_ON_ME = 1
 Andromeda_LDFLAGS = -rpath /Library/Frameworks -rpath /var/jb/Library/Frameworks -rpath /usr/lib -rpath /var/jb/usr/lib
