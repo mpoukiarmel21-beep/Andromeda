@@ -6,10 +6,6 @@
 #import "hooks/hooks.h"
 #import <Andromeda.h>
 
-static NSDictionary* andromeda_prefs(void) {
-    return [[AndromedaCore sharedInstance] preferences];
-}
-
 static BOOL andromeda_hookEnabled(NSString* key) {
     NSNumber* val = andromeda_prefs()[key];
     if(!val) return YES;
