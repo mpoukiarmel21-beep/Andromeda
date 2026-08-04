@@ -82,7 +82,7 @@ static void AndromedaSavePrefs(NSMutableDictionary* prefs);
         [self textFieldForKey:@"Spoof_MLBSerial" title:@"MLB Serial Number" placeholder:@"e.g. F2LQ1234ABCD"],
         [self textFieldForKey:@"Spoof_OSVersion" title:@"iOS Version" placeholder:@"e.g. 18.4.1"],
         [self textFieldForKey:@"Spoof_BuildVersion" title:@"Build Version" placeholder:@"e.g. 22E240"],
-        [self textFieldForKey:@"Spoof_DeviceName" title:@"Device Name" placeholder:@"e.g. iPhone de Andromeda"],
+        [self textFieldForKey:@"Spoof_DeviceName" title:@"Device Name" placeholder:@"e.g. iPhone"],
         [self textFieldForKey:@"Spoof_WiFiMAC" title:@"Wi-Fi MAC Address" placeholder:@"e.g. AA:BB:CC:DD:EE:FF"],
         [self textFieldForKey:@"Spoof_BluetoothMAC" title:@"Bluetooth MAC Address" placeholder:@"e.g. AA:BB:CC:DD:EE:FF"]
     ];
@@ -299,7 +299,7 @@ static void AndromedaSavePrefs(NSMutableDictionary* prefs) {
     prefs[@"Spoof_MLBSerial"] = mlb;
     prefs[@"Spoof_OSVersion"] = version;
     prefs[@"Spoof_BuildVersion"] = build;
-    prefs[@"Spoof_DeviceName"] = @"iPhone de Andromeda";
+    prefs[@"Spoof_DeviceName"] = @"iPhone";
     prefs[@"Spoof_WiFiMAC"] = mac1;
     prefs[@"Spoof_BluetoothMAC"] = mac2;
     AndromedaSavePrefs(prefs);

@@ -392,7 +392,7 @@
     },
     {
       cell = PSStaticTextCell;
-      label = "Andromeda v4.1.8";
+      label = "Andromeda v4.1.9";
     },
     {
       cell = PSStaticTextCell;

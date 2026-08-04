@@ -2,15 +2,17 @@
 
 // ============================================================================
 // ANDROMEDA DETECTION BYPASS — Système central de bypass
-// Couvre les 8 vecteurs de détection standards 2025-2026:
+// Couvre les vecteurs de détection standards 2025-2026:
 //   1. NSFileManager (ObjC)
 //   2. C-level stat/lstat/access/fstatat
 //   3. URL scheme probing (canOpenURL)
-//   4. dyld image walk
-//   5. fork()/vfork() detection
-//   6. sysctl KERN_PROC_ALL
-//   7. dlopen/dlsym probing
-//   8. Frida/Substrate detection
+//   4. fork()/vfork() detection
+//   5. sysctl KERN_PROC_ALL
+//   6. dlopen/dlsym probing
+//   7. Frida/Substrate detection
+// NOTE: Le walk des dyld images est géré par Dyld.x (masking index-safe).
+//       Un double hook ici causait un remapping d'index incohérent
+//       (count filtré vs headers réels) => crash (Tinder).
 // ============================================================================
 
 // ============================================================================
@@ -241,7 +243,7 @@ static BOOL hooked_UI_canOpenURL(id self, SEL _cmd, NSURL* url) {
 }
 
 // ============================================================================
-// VECTOR 7: dlopen/dlsym hooks
+// VECTOR 6: dlopen/dlsym hooks
 // ============================================================================
 
 static int (*orig_dlopen)(const char*, int) = NULL;
@@ -302,77 +304,7 @@ static void* hooked_dlsym(void* handle, const char* symbol) {
 }
 
 // ============================================================================
-// VECTOR 4: dyld image walk hooks
-// ============================================================================
-
-static uint32_t (*orig_dyld_image_count)(void) = NULL;
-static const char* (*orig_dyld_get_image_name)(uint32_t) = NULL;
-static const struct mach_header* (*orig_dyld_get_image_header)(uint32_t) = NULL;
-
-static BOOL isHiddenImage(const char* name) {
-    if(!name) return NO;
-    return strstr(name, "Substrate")
-        || strstr(name, "substitute")
-        || strstr(name, "TweakInject")
-        || strstr(name, "Andromeda")
-        || strstr(name, "MobileSubstrate")
-        || strstr(name, "CydiaSubstrate")
-        || strstr(name, "ellekit")
-        || strstr(name, "libhooker")
-        || strstr(name, "Cephei")
-        || strstr(name, "preferenceloader")
-        || strstr(name, "rocketbootstrap")
-        || strstr(name, "AppList")
-        || strstr(name, "Flipswitch")
-        || strstr(name, "Activator")
-        || strstr(name, "SubstrateLoader")
-        || strstr(name, "SubstrateInserter")
-        || strstr(name, "substitute-loader")
-        || strstr(name, "DynamicLibraries")
-        || strstr(name, "PreferenceBundles")
-        || strstr(name, "FridaGadget")
-        || strstr(name, "frida")
-        || strstr(name, "libcycript")
-        || strstr(name, "cycript")
-        || strstr(name, "Shadow")
-        || strstr(name, "ABypass")
-        || strstr(name, "Liberty")
-        || strstr(name, "FlyJB")
-        || strstr(name, "Choicy")
-        || strstr(name, "HideJB");
-}
-
-static uint32_t hooked_dyld_image_count(void) {
-    if(isCallerTweak()) return orig_dyld_image_count();
-    uint32_t count = orig_dyld_image_count();
-    uint32_t filtered = 0;
-    for(uint32_t i = 0; i < count; i++) {
-        const char* name = orig_dyld_get_image_name(i);
-        if(!isHiddenImage(name)) filtered++;
-    }
-    return filtered;
-}
-
-static const char* hooked_dyld_get_image_name(uint32_t index) {
-    if(isCallerTweak()) return orig_dyld_get_image_name(index);
-    uint32_t count = orig_dyld_image_count();
-    uint32_t filtered = 0;
-    for(uint32_t i = 0; i < count; i++) {
-        const char* name = orig_dyld_get_image_name(i);
-        if(!isHiddenImage(name)) {
-            if(filtered == index) return name;
-            filtered++;
-        }
-    }
-    return orig_dyld_get_image_name(index);
-}
-
-static const struct mach_header* hooked_dyld_get_image_header(uint32_t index) {
-    return orig_dyld_get_image_header(index);
-}
-
-// ============================================================================
-// VECTOR 5: fork/vfork bypass
+// VECTOR 4: fork/vfork bypass
 // ============================================================================
 
 static pid_t (*orig_fork)(void) = NULL;
@@ -387,7 +319,7 @@ static pid_t hooked_vfork(void) {
 }
 
 // ============================================================================
-// VECTOR 6: sysctl process hiding
+// VECTOR 5: sysctl process hiding
 // ============================================================================
 
 static int (*orig_sysctl)(int*, u_int, void*, size_t*, void*, size_t) = NULL;
@@ -405,7 +337,7 @@ static int hooked_sysctl(int* name, u_int namelen, void* oldp, size_t* oldlenp, 
 }
 
 // ============================================================================
-// VECTOR 8: getenv hook for DYLD_INSERT_LIBRARIES (Frida detection)
+// VECTOR 7: getenv hook for DYLD_INSERT_LIBRARIES (Frida detection)
 // ============================================================================
 
 static char* (*orig_getenv)(const char*) = NULL;
@@ -527,7 +459,7 @@ static void installUIApplicationHooks(void) {
 // ============================================================================
 
 void andromeda_hook_DetectionBypass(void) {
-    NSLog(@"[Andromeda] DetectionBypass: Installing 8-vector bypass system...");
+    NSLog(@"[Andromeda] DetectionBypass: Installing 7-vector bypass system...");
 
     // Vector 1: NSFileManager (ObjC)
     installNSFileManagerHooks();
@@ -535,29 +467,23 @@ void andromeda_hook_DetectionBypass(void) {
     // Vector 3: canOpenURL (ObjC)
     installUIApplicationHooks();
 
-    // Vector 4: dyld image walk (C)
-    MSHookFunction((void*)_dyld_image_count, (void*)hooked_dyld_image_count, (void**)&orig_dyld_image_count);
-    MSHookFunction((void*)_dyld_get_image_name, (void*)hooked_dyld_get_image_name, (void**)&orig_dyld_get_image_name);
-    MSHookFunction((void*)_dyld_get_image_header, (void*)hooked_dyld_get_image_header, (void**)&orig_dyld_get_image_header);
-    NSLog(@"[Andromeda] Vector 4 (dyld) hooked");
-
-    // Vector 5: fork/vfork (C)
+    // Vector 4: fork/vfork (C)
     MSHookFunction((void*)fork, (void*)hooked_fork, (void**)&orig_fork);
     MSHookFunction((void*)vfork, (void*)hooked_vfork, (void**)&orig_vfork);
-    NSLog(@"[Andromeda] Vector 5 (fork) hooked");
+    NSLog(@"[Andromeda] Vector 4 (fork) hooked");
 
-    // Vector 6: sysctl (C)
+    // Vector 5: sysctl (C)
     MSHookFunction((void*)sysctl, (void*)hooked_sysctl, (void**)&orig_sysctl);
-    NSLog(@"[Andromeda] Vector 6 (sysctl) hooked");
+    NSLog(@"[Andromeda] Vector 5 (sysctl) hooked");
 
-    // Vector 7: dlopen/dlsym (C)
+    // Vector 6: dlopen/dlsym (C)
     MSHookFunction((void*)dlopen, (void*)hooked_dlopen, (void**)&orig_dlopen);
     MSHookFunction((void*)dlsym, (void*)hooked_dlsym, (void**)&orig_dlsym);
-    NSLog(@"[Andromeda] Vector 7 (dlopen/dlsym) hooked");
+    NSLog(@"[Andromeda] Vector 6 (dlopen/dlsym) hooked");
 
-    // Vector 8: getenv (C) — Frida/Substrate detection
+    // Vector 7: getenv (C) — Frida/Substrate detection
     MSHookFunction((void*)getenv, (void*)hooked_getenv, (void**)&orig_getenv);
-    NSLog(@"[Andromeda] Vector 8 (getenv) hooked");
+    NSLog(@"[Andromeda] Vector 7 (getenv) hooked");
 
-    NSLog(@"[Andromeda] DetectionBypass: All 8 vectors hooked successfully");
+    NSLog(@"[Andromeda] DetectionBypass: All 7 vectors hooked successfully");
 }

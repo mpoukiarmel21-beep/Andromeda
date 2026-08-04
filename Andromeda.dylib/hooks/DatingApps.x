@@ -179,17 +179,65 @@
 - (BOOL)isRooted { return NO; }
 - (BOOL)isCompromised { return NO; }
 - (BOOL)isDeviceSafe { return YES; }
+- (BOOL)isTampered { return NO; }
+- (BOOL)isDebuggerPresent { return NO; }
+- (BOOL)hasSuspiciousLibraries { return NO; }
+- (BOOL)isEmulator { return NO; }
+- (BOOL)isRuntimePatched { return NO; }
+- (BOOL)isAppSignatureValid { return YES; }
 %end
 
 %hook BDOSecurity
 - (BOOL)checkDeviceSecurity { return YES; }
 - (BOOL)isSafeEnvironment { return YES; }
 - (BOOL)isJailbroken { return NO; }
+- (BOOL)isDeviceRooted { return NO; }
+- (BOOL)isTampered { return NO; }
+- (BOOL)isDebuggerPresent { return NO; }
+- (BOOL)isAttestationValid { return YES; }
+- (BOOL)checkRuntimeIntegrity { return YES; }
+- (BOOL)hasDetectedSuspicion { return NO; }
+- (BOOL)isAppEnvironmentTrusted { return YES; }
 %end
 
 %hook BDOIntegrityCheck
 - (BOOL)isValid { return YES; }
 - (BOOL)checkIntegrity { return YES; }
+- (BOOL)isTampered { return NO; }
+- (BOOL)isDebuggerPresent { return NO; }
+- (BOOL)hasSuspiciousLibraries { return NO; }
+- (BOOL)checkCodeSignature { return YES; }
+- (BOOL)validateAppSignature { return YES; }
+- (BOOL)isRuntimePatched { return NO; }
+%end
+
+%hook BDORuntimeSecurity
+- (BOOL)isSubstrateLoaded { return NO; }
+- (BOOL)isSubstituteLoaded { return NO; }
+- (BOOL)hasInjectedDynamicLibraries { return NO; }
+- (BOOL)isHooked { return NO; }
+- (BOOL)isRuntimePatched { return NO; }
+%end
+
+%hook BDODeviceFingerprint
+- (NSDictionary*)deviceFingerprint {
+    return @{
+        @"model": [_spoofer spoofedDeviceModel],
+        @"os_version": [_spoofer spoofedOSVersion],
+        @"screen_resolution": [_spoofer spoofedScreenResolution],
+        @"device_type": @"iPhone",
+        @"is_jailbroken": @NO,
+        @"is_compromised": @NO,
+        @"is_rooted": @NO
+    };
+}
+- (NSDictionary*)fingerprint {
+    return @{
+        @"model": [_spoofer spoofedDeviceModel],
+        @"os_version": [_spoofer spoofedOSVersion],
+        @"is_jailbroken": @NO
+    };
+}
 %end
 
 %hook IOSSecuritySuite
@@ -214,11 +262,51 @@
 - (BOOL)isDeviceSafe { return YES; }
 - (BOOL)isJailbroken { return NO; }
 - (BOOL)isCompromised { return NO; }
+- (BOOL)isRooted { return NO; }
+- (BOOL)isTampered { return NO; }
+- (BOOL)isDebuggerPresent { return NO; }
+- (BOOL)hasSuspiciousLibraries { return NO; }
+- (BOOL)isEmulator { return NO; }
 %end
 
 %hook FRZIntegrityValidator
 - (BOOL)validate { return YES; }
 - (BOOL)checkIntegrity { return YES; }
+- (BOOL)isTampered { return NO; }
+- (BOOL)isDebuggerPresent { return NO; }
+- (BOOL)hasSuspiciousLibraries { return NO; }
+- (BOOL)checkCodeSignature { return YES; }
+- (BOOL)validateAppSignature { return YES; }
+- (BOOL)isRuntimePatched { return NO; }
+%end
+
+%hook FRZRuntimeSecurity
+- (BOOL)isSubstrateLoaded { return NO; }
+- (BOOL)isSubstituteLoaded { return NO; }
+- (BOOL)hasInjectedDynamicLibraries { return NO; }
+- (BOOL)isHooked { return NO; }
+- (BOOL)isRuntimePatched { return NO; }
+%end
+
+%hook FRZDeviceFingerprint
+- (NSDictionary*)deviceFingerprint {
+    return @{
+        @"model": [_spoofer spoofedDeviceModel],
+        @"os_version": [_spoofer spoofedOSVersion],
+        @"screen_resolution": [_spoofer spoofedScreenResolution],
+        @"device_type": @"iPhone",
+        @"is_jailbroken": @NO,
+        @"is_compromised": @NO,
+        @"is_rooted": @NO
+    };
+}
+- (NSDictionary*)fingerprint {
+    return @{
+        @"model": [_spoofer spoofedDeviceModel],
+        @"os_version": [_spoofer spoofedOSVersion],
+        @"is_jailbroken": @NO
+    };
+}
 %end
 
 %hook IOSSecuritySuite

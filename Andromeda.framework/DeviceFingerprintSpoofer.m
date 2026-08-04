@@ -2,6 +2,7 @@
 #import <UIKit/UIKit.h>
 #import <Security/Security.h>
 #import <dlfcn.h>
+#import "../common.h"
 
 static NSArray* _andromedaDeviceProfiles(void) {
     static NSArray* s_profiles = nil;
@@ -45,9 +46,31 @@ static NSArray* _andromedaDeviceProfiles(void) {
 - (instancetype)init {
     if(self = [super init]) {
         _overrides = [NSMutableDictionary dictionary];
-        [self generateSpoofProfile];
+        [self loadOrGenerateSpoofProfile];
     }
     return self;
+}
+
+- (void)loadOrGenerateSpoofProfile {
+    @try {
+        NSDictionary* saved = [NSDictionary dictionaryWithContentsOfFile:@ANDROMEDA_PREFS];
+        NSDictionary* profile = saved[@"Internal_DeviceProfile"];
+        if([profile isKindOfClass:[NSDictionary class]] && [profile count] > 0) {
+            _spoofProfile = profile;
+            DLog(@"using persisted spoof profile (stable fingerprint)");
+            return;
+        }
+
+        [self generateSpoofProfile];
+
+        NSMutableDictionary* prefs = [NSMutableDictionary dictionaryWithContentsOfFile:@ANDROMEDA_PREFS];
+        if(!prefs) prefs = [NSMutableDictionary dictionary];
+        prefs[@"Internal_DeviceProfile"] = _spoofProfile;
+        [prefs writeToFile:@ANDROMEDA_PREFS atomically:YES];
+        DLog(@"generated + persisted spoof profile");
+    } @catch(NSException *e) {
+        [self generateSpoofProfile];
+    }
 }
 
 - (void)generateSpoofProfile {
@@ -64,7 +87,7 @@ static NSArray* _andromedaDeviceProfiles(void) {
         @"buildVersion": base[@"buildVersion"] ?: @"22F76",
         @"advertisingUUID": [advId UUIDString],
         @"batteryLevel": @(arc4random_uniform(80) + 20),
-        @"name": @"iPhone de Andromeda"
+        @"name": @"iPhone"
     };
 }
 
