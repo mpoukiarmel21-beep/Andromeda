@@ -12,6 +12,10 @@
 #define DLog(...) (void)0
 #endif
 
+#ifndef kCFCoreFoundationVersionNumber_iOS_14_0
+#define kCFCoreFoundationVersionNumber_iOS_14_0 1740.00
+#endif
+
 #ifndef kCFCoreFoundationVersionNumber_iOS_15_0
 #define kCFCoreFoundationVersionNumber_iOS_15_0 1854.00
 #endif
