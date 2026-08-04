@@ -19,7 +19,6 @@ static int (*orig_symlink)(const char *, const char *) = NULL;
 static int (*orig_readlink)(const char *, char *, size_t) = NULL;
 static int (*orig_mkdir)(const char *, mode_t) = NULL;
 static int (*orig_rmdir)(const char *) = NULL;
-static int (*orig_getdirentries64)(int, void *, int, long *) = NULL;
 
 static BOOL is_path_restricted(const char* path) {
     if(!path) return NO;
@@ -219,42 +218,6 @@ static int hooked_rmdir(const char* path) {
     return orig_rmdir(path);
 }
 
-static int hooked_getdirentries64(int fd, void* buf, int bufsize, long* basep) {
-    int result = orig_getdirentries64(fd, buf, bufsize, basep);
-    if(result <= 0 || !buf) return result;
-
-    char* src = (char*)buf;
-    char* dst = (char*)buf;
-    int remaining = result;
-
-    while(remaining > 0) {
-        struct dirent* entry = (struct dirent*)src;
-        if(entry->d_reclen == 0) break;
-
-        BOOL skip = NO;
-        if(entry->d_name[0] != '.' ||
-           (entry->d_name[0] == '.' && entry->d_name[1] != '\0' &&
-            !(entry->d_name[1] == '.' && entry->d_name[2] == '\0'))) {
-            NSString* name = @(entry->d_name);
-            if([_andromeda isPathJailbreakRelated:name]) {
-                skip = YES;
-            }
-        }
-
-        if(!skip) {
-            if(src != dst) {
-                memmove(dst, src, entry->d_reclen);
-            }
-            dst += entry->d_reclen;
-        }
-
-        remaining -= entry->d_reclen;
-        src += entry->d_reclen;
-    }
-
-    return (int)(dst - (char*)buf);
-}
-
 void andromeda_hook_Filesystem(void) {
     MSHookFunction((void*)stat, (void*)hooked_stat, (void**)&orig_stat);
     MSHookFunction((void*)lstat, (void*)hooked_lstat, (void**)&orig_lstat);
@@ -275,7 +238,6 @@ void andromeda_hook_Filesystem(void) {
     MSHookFunction((void*)readlink, (void*)hooked_readlink, (void**)&orig_readlink);
     MSHookFunction((void*)mkdir, (void*)hooked_mkdir, (void**)&orig_mkdir);
     MSHookFunction((void*)rmdir, (void*)hooked_rmdir, (void**)&orig_rmdir);
-    MSHookFunction((void*)getdirentries64, (void*)hooked_getdirentries64, (void**)&orig_getdirentries64);
 }
 
 %hook NSFileManager
