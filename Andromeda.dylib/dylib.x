@@ -157,6 +157,21 @@
 
         @try { andromeda_hook_DetectionBypass(); } @catch(NSException *e) { NSLog(@"[Andromeda] DetectionBypass err: %@", e); }
 
+        val = [_andromeda preferences][@"Hook_ProcessHiding"];
+        if(!val || [val boolValue]) {
+            @try { andromeda_hook_ProcessHiding(); } @catch(NSException *e) { NSLog(@"[Andromeda] ProcessHiding err: %@", e); }
+        }
+
+        val = [_andromeda preferences][@"Hook_FridaBypass"];
+        if(!val || [val boolValue]) {
+            @try { andromeda_hook_FridaBypass(); } @catch(NSException *e) { NSLog(@"[Andromeda] FridaBypass err: %@", e); }
+        }
+
+        val = [_andromeda preferences][@"Hook_DynamicHooker"];
+        if(!val || [val boolValue]) {
+            @try { andromeda_hook_DynamicHooker(); } @catch(NSException *e) { NSLog(@"[Andromeda] DynamicHooker err: %@", e); }
+        }
+
         val = [_andromeda preferences][@"Adaptive_Mode"];
         if(val && [val boolValue]) {
             @try { andromeda_hook_Adaptive(); } @catch(NSException *e) { NSLog(@"[Andromeda] Adaptive err: %@", e); }

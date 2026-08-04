@@ -273,7 +273,61 @@
         @"Sift",
         @"Riskified",
         @"Forter",
-        @"Signifyd"
+        @"Signifyd",
+        @"FBDeviceInformation",
+        @"FBAppIntegrity",
+        @"FBDeviceIntegrity",
+        @"FBBuildEnvironment",
+        @"FBAnalytics",
+        @"IGSecurityManager",
+        @"IGIntegrityCheck",
+        @"IGDeviceChecker",
+        @"IGRuntimeSecurity",
+        @"IGDeviceFingerprint",
+        @"IGSecurityController",
+        @"THAppSecurityManager",
+        @"THDeviceIntegrity",
+        @"THSecurityCheck",
+        @"THRuntimeSecurity",
+        @"THDeviceFingerprint",
+        @"THIntegrityValidator",
+        @"SCSecurityManager",
+        @"SCDeviceCheck",
+        @"SCIntegrityValidator",
+        @"SCRuntimeSecurity",
+        @"SCDeviceFingerprint",
+        @"TTSecurityManager",
+        @"TTDeviceCheck",
+        @"TTIntegrityValidator",
+        @"TTRuntimeSecurity",
+        @"TTDeviceFingerprint",
+        @"TTSecurityController",
+        @"TNDRSecurityManager",
+        @"TNDRDeviceIntegrity",
+        @"TNDRAppIntegrity",
+        @"BMBLSecurityManager",
+        @"BMBLDeviceChecker",
+        @"BMBLIntegrityCheck",
+        @"HLYSecurityManager",
+        @"HLYDeviceIntegrity",
+        @"HLYAppIntegrityCheck",
+        @"HLYRuntimeSecurity",
+        @"HLYFingerprintManager",
+        @"HLYTrustEvaluator",
+        @"BDODeviceInfo",
+        @"BDOSecurity",
+        @"BDOIntegrityCheck",
+        @"FRZSecurityCheck",
+        @"FRZIntegrityValidator",
+        @"FLSSecurityManager",
+        @"FLSIntegrityCheck",
+        @"FLSDeviceFingerprint",
+        @"HNGDeviceCheck",
+        @"HNGSecurityIntegration",
+        @"GRDRSecurityManager",
+        @"HPNDeviceSecurity",
+        @"OKCDeviceCheck",
+        @"MTCSecurityManager"
     ];
 }
 
@@ -508,30 +562,36 @@
         ],
         @"com.cardify.tinder": @[
             @"TNDRSecurityManager", @"TNDRDeviceIntegrity", @"TNDRAppIntegrity",
-            @"TNDRUser", @"TNDRDeletionDetector", @"TNDRMetaManager"
+            @"TNDRUser", @"TNDRDeletionDetector", @"TNDRMetaManager",
+            @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
         @"com.bumble.app": @[
             @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
-            @"BMBLAccountManager"
+            @"BMBLAccountManager", @"IOSSecuritySuite"
         ],
         @"com.badoo.badoo": @[
-            @"BDODeviceInfo", @"BDOSecurity", @"BDOIntegrityCheck"
+            @"BDODeviceInfo", @"BDOSecurity", @"BDOIntegrityCheck",
+            @"IOSSecuritySuite"
         ],
         @"com.ftw-and-co.fruitz": @[
-            @"FRZSecurityCheck", @"FRZIntegrityValidator"
+            @"FRZSecurityCheck", @"FRZIntegrityValidator",
+            @"IOSSecuritySuite"
         ],
         @"com.feels.Feels": @[
-            @"FLSSecurityManager", @"FLSIntegrityCheck", @"FLSDeviceFingerprint"
+            @"FLSSecurityManager", @"FLSIntegrityCheck", @"FLSDeviceFingerprint",
+            @"IOSSecuritySuite"
         ],
         @"com.burbn.instagram": @[
             @"IGSecurityManager", @"IGIntegrityCheck", @"IGAnalyticsSession",
             @"IGDeviceChecker", @"FBDeviceInformation", @"FBAppIntegrity",
             @"RCTDeviceInfo", @"IGDirectSecurity", @"IGUserSession",
-            @"IGRuntimeSecurity", @"IGDeviceFingerprint"
+            @"IGRuntimeSecurity", @"IGDeviceFingerprint", @"FBDeviceIntegrity",
+            @"FBBuildEnvironment", @"IGSecurityController"
         ],
         @"com.instagram.barcelona": @[
             @"THAppSecurityManager", @"THDeviceIntegrity", @"THSecurityCheck",
-            @"BHInstagramAppIntegrity", @"THRuntimeSecurity"
+            @"BHInstagramAppIntegrity", @"THRuntimeSecurity", @"THDeviceFingerprint",
+            @"THIntegrityValidator"
         ],
         @"com.happn.happn": @[
             @"HPNDeviceSecurity"
@@ -555,7 +615,16 @@
             @"HNGDeviceCheck", @"HNGSecurityIntegration"
         ],
         @"com.zhiliaoapp.musically": @[
-            @"TTSecurityManager", @"TTDeviceCheck"
+            @"TTSecurityManager", @"TTDeviceCheck", @"TTIntegrityValidator",
+            @"TTRuntimeSecurity", @"TTDeviceFingerprint", @"TTSecurityController"
+        ],
+        @"com.snapchat.Snapchat": @[
+            @"SCSecurityManager", @"SCDeviceCheck", @"SCIntegrityValidator",
+            @"SCRuntimeSecurity", @"SCDeviceFingerprint"
+        ],
+        @"com.facebook.Facebook": @[
+            @"FBSecurityManager", @"FBDeviceCheck", @"FBDeviceIntegrity",
+            @"FBBuildEnvironment", @"FBAppIntegrity"
         ]
     };
 }
@@ -582,7 +651,60 @@
         @"JB_ROOT",
         @"__XINA",
         @"CHOICY",
-        @"PALERA1N"
+        @"PALERA1N",
+        @"FRIDA",
+        @"FRIDA_SERVER",
+        @"FRIDA_VERSION",
+        @"_MSSafeMode",
+        @"_SubstrateLoader",
+        @"LIBSubstitute",
+        @"_SubstituteLoader",
+        @"_TweakInject",
+        @"ELLEKIT",
+        @"LIBHOOKER"
+    ];
+}
+
++ (NSArray<NSString*>*)suspiciousDyldSymbols {
+    return @[
+        @"SubstrateLoader",
+        @"SubstrateInserter",
+        @"substitute-loader",
+        @"TweakInject",
+        @"MobileSubstrate",
+        @"CydiaSubstrate",
+        @"libsubstitute",
+        @"libsubstrate",
+        @"libellekit",
+        @"libhooker",
+        @"frida",
+        @"frida-agent",
+        @"gum-js-loop",
+        @"gum-js-tmp",
+        @"gmain",
+        @"gum-js-tmp"
+    ];
+}
+
++ (NSArray<NSString*>*)suspiciousProcessNames {
+    return @[
+        @"frida-server",
+        @"frida-helper",
+        @"frida-agent",
+        @"cycript",
+        @"cycript0",
+        @"ssh",
+        @"sshd",
+        @"dropbear",
+        @"dpkg",
+        @"apt",
+        @"apt-get",
+        @"cydia",
+        @"sileo",
+        @"zebra",
+        @"filza",
+        @"mterminal",
+        @"newterm"
     ];
 }
 
@@ -619,7 +741,8 @@
                 @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
-                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt"
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"co.hinge.app": @{
@@ -629,7 +752,8 @@
                 @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
-                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt"
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"processhiding", @"fridabypass"
             ]
         },
         @"com.bumble.app": @{
@@ -639,7 +763,8 @@
                 @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
-                @"vnodebypass", @"uiimage", @"mobilegestalt"
+                @"vnodebypass", @"uiimage", @"mobilegestalt",
+                @"processhiding", @"fridabypass"
             ]
         },
         @"com.badoo.badoo": @{
@@ -648,7 +773,8 @@
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
                 @"appattest", @"hardwarefprint", @"sandbox",
                 @"urlscheme", @"envvars", @"tweakclasses",
-                @"behavioral", @"vnodebypass", @"uiimage"
+                @"behavioral", @"vnodebypass", @"uiimage",
+                @"processhiding", @"fridabypass"
             ]
         },
         @"com.ftw-and-co.fruitz": @{
@@ -657,7 +783,7 @@
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
                 @"hardwarefprint", @"sandbox", @"urlscheme",
                 @"envvars", @"tweakclasses", @"behavioral",
-                @"vnodebypass"
+                @"vnodebypass", @"processhiding"
             ]
         },
         @"com.feels.Feels": @{
@@ -667,7 +793,8 @@
                 @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
-                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt"
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"processhiding", @"fridabypass"
             ]
         },
         @"com.burbn.instagram": @{
@@ -678,7 +805,8 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"networkinterface", @"procfiles"
+                @"networkinterface", @"procfiles", @"processhiding",
+                @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.instagram.barcelona": @{
@@ -689,7 +817,44 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"networkinterface", @"procfiles"
+                @"networkinterface", @"procfiles", @"processhiding",
+                @"fridabypass"
+            ]
+        },
+        @"com.snapchat.Snapchat": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"processhiding",
+                @"fridabypass", @"dynamichecker"
+            ]
+        },
+        @"com.facebook.Facebook": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"processhiding",
+                @"fridabypass"
+            ]
+        },
+        @"com.zhiliaoapp.musically": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"processhiding",
+                @"fridabypass", @"dynamichecker"
             ]
         }
     };

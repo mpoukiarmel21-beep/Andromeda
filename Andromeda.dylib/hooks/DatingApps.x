@@ -38,6 +38,25 @@
 - (BOOL)checkCodeSignature { return YES; }
 %end
 
+%hook IOSSecuritySuite
++ (BOOL)amIJailbroken { return NO; }
++ (BOOL)amIReverseEngineered { return NO; }
++ (BOOL)amIDebugged { return NO; }
++ (BOOL)amIProxied { return NO; }
++ (BOOL)amIManipulated { return NO; }
++ (BOOL)amIJailbrokenWithFailMessage:(id*)msg {
+    if(msg) *msg = @"";
+    return NO;
+}
++ (NSString*)deviceIdiomString { return @"iPhone"; }
++ (NSArray*)amIAttachedToDebugger { return @[]; }
+%end
+
+%hook flutter_jailbreak_detection
++ (BOOL)isJailBroken { return NO; }
++ (BOOL)isDebugged { return NO; }
+%end
+
 %end
 
 %group andromeda_bumble
@@ -65,6 +84,20 @@
 - (BOOL)checkIntegrity { return YES; }
 - (BOOL)isTampered { return NO; }
 - (BOOL)isDebuggerPresent { return NO; }
+%end
+
+%hook IOSSecuritySuite
++ (BOOL)amIJailbroken { return NO; }
++ (BOOL)amIReverseEngineered { return NO; }
++ (BOOL)amIDebugged { return NO; }
++ (BOOL)amIProxied { return NO; }
++ (BOOL)amIManipulated { return NO; }
++ (BOOL)amIJailbrokenWithFailMessage:(id*)msg {
+    if(msg) *msg = @"";
+    return NO;
+}
++ (NSString*)deviceIdiomString { return @"iPhone"; }
++ (NSArray*)amIAttachedToDebugger { return @[]; }
 %end
 
 %end
@@ -123,6 +156,20 @@
 - (BOOL)isDeviceTrusted { return YES; }
 %end
 
+%hook IOSSecuritySuite
++ (BOOL)amIJailbroken { return NO; }
++ (BOOL)amIReverseEngineered { return NO; }
++ (BOOL)amIDebugged { return NO; }
++ (BOOL)amIProxied { return NO; }
++ (BOOL)amIManipulated { return NO; }
++ (BOOL)amIJailbrokenWithFailMessage:(id*)msg {
+    if(msg) *msg = @"";
+    return NO;
+}
++ (NSString*)deviceIdiomString { return @"iPhone"; }
++ (NSArray*)amIAttachedToDebugger { return @[]; }
+%end
+
 %end
 
 %group andromeda_badoo
@@ -145,6 +192,20 @@
 - (BOOL)checkIntegrity { return YES; }
 %end
 
+%hook IOSSecuritySuite
++ (BOOL)amIJailbroken { return NO; }
++ (BOOL)amIReverseEngineered { return NO; }
++ (BOOL)amIDebugged { return NO; }
++ (BOOL)amIProxied { return NO; }
++ (BOOL)amIManipulated { return NO; }
++ (BOOL)amIJailbrokenWithFailMessage:(id*)msg {
+    if(msg) *msg = @"";
+    return NO;
+}
++ (NSString*)deviceIdiomString { return @"iPhone"; }
++ (NSArray*)amIAttachedToDebugger { return @[]; }
+%end
+
 %end
 
 %group andromeda_fruitz
@@ -158,6 +219,20 @@
 %hook FRZIntegrityValidator
 - (BOOL)validate { return YES; }
 - (BOOL)checkIntegrity { return YES; }
+%end
+
+%hook IOSSecuritySuite
++ (BOOL)amIJailbroken { return NO; }
++ (BOOL)amIReverseEngineered { return NO; }
++ (BOOL)amIDebugged { return NO; }
++ (BOOL)amIProxied { return NO; }
++ (BOOL)amIManipulated { return NO; }
++ (BOOL)amIJailbrokenWithFailMessage:(id*)msg {
+    if(msg) *msg = @"";
+    return NO;
+}
++ (NSString*)deviceIdiomString { return @"iPhone"; }
++ (NSArray*)amIAttachedToDebugger { return @[]; }
 %end
 
 %end
@@ -187,6 +262,20 @@
         @"is_jailbroken": @NO
     };
 }
+%end
+
+%hook IOSSecuritySuite
++ (BOOL)amIJailbroken { return NO; }
++ (BOOL)amIReverseEngineered { return NO; }
++ (BOOL)amIDebugged { return NO; }
++ (BOOL)amIProxied { return NO; }
++ (BOOL)amIManipulated { return NO; }
++ (BOOL)amIJailbrokenWithFailMessage:(id*)msg {
+    if(msg) *msg = @"";
+    return NO;
+}
++ (NSString*)deviceIdiomString { return @"iPhone"; }
++ (NSArray*)amIAttachedToDebugger { return @[]; }
 %end
 
 %end
