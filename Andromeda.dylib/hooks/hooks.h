@@ -87,15 +87,59 @@
 #define _spoofer                [DeviceFingerprintSpoofer sharedInstance]
 #define isCallerTweak()         [_andromeda isAddrExternal:__builtin_extract_return_addr(__builtin_return_address(0))]
 
+static inline NSDictionary* andromeda_prefs(void) {
+    return [[AndromedaCore sharedInstance] preferences];
+}
+
 static inline BOOL andromeda_prefEnabled(NSString* key) {
     @try {
-        NSNumber* val = [[AndromedaCore sharedInstance] preferences][key];
+        NSNumber* val = andromeda_prefs()[key];
         if(!val) return YES;
         return [val boolValue];
     } @catch(NSException *e) {
         return YES;
     }
 }
+
+static inline NSArray* andromeda_extraList(NSString* key) {
+    @try {
+        NSString* raw = andromeda_prefs()[key];
+        if(!raw || ![raw isKindOfClass:[NSString class]] || raw.length == 0) return @[];
+        NSArray* parts = [raw componentsSeparatedByString:@","];
+        NSMutableArray* cleaned = [NSMutableArray array];
+        for(NSString* p in parts) {
+            NSString* t = [p stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            if(t.length > 0) [cleaned addObject:t];
+        }
+        return cleaned;
+    } @catch(NSException *e) {
+        return @[];
+    }
+}
+
+static inline NSString* andromeda_detectionMode(void) {
+    @try {
+        NSString* mode = andromeda_prefs()[@"Detection_Mode"];
+        if(mode && [mode isKindOfClass:[NSString class]] && mode.length > 0) return mode;
+    } @catch(NSException *e) {}
+    return @"spoof";
+}
+
+static inline int andromeda_logLevel(void) {
+    @try {
+        NSString* level = andromeda_prefs()[@"Log_Level"];
+        if(!level || ![level isKindOfClass:[NSString class]]) return 2;
+        if([level isEqualToString:@"none"]) return 0;
+        if([level isEqualToString:@"errors"]) return 1;
+        if([level isEqualToString:@"verbose"]) return 3;
+        return 2;
+    } @catch(NSException *e) {
+        return 2;
+    }
+}
+
+#define ALog(level, fmt, ...) \
+    do { if(andromeda_logLevel() >= (level)) NSLog(@"[Andromeda] " fmt, ##__VA_ARGS__); } while(0)
 
 static inline BOOL andromeda_isProtectedProcess(void) {
     @try {
@@ -115,10 +159,21 @@ static inline BOOL andromeda_isProtectedProcess(void) {
             return NO;
         }
 
-        NSNumber* debugMode = [[AndromedaCore sharedInstance] preferences][@"Debug_Mode"];
+        NSNumber* debugMode = andromeda_prefs()[@"Debug_Mode"];
         if(debugMode && [debugMode isKindOfClass:[NSNumber class]] && [debugMode boolValue]) {
             return YES;
         }
+
+        if([andromeda_prefs()[@"Global_ApplyToAll"] boolValue]) {
+            return YES;
+        }
+
+        NSString* appKey = [@"App_" stringByAppendingString:bundleIdentifier];
+        NSNumber* appOverride = andromeda_prefs()[appKey];
+        if(appOverride && [appOverride isKindOfClass:[NSNumber class]]) {
+            return [appOverride boolValue];
+        }
+
         return [[AndromedaCore sharedInstance] isProtectedApp];
     } @catch(NSException *e) {
         return NO;

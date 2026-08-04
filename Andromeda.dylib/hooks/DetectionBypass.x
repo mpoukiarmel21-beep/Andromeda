@@ -135,6 +135,15 @@ static BOOL isJBPath(NSString* path) {
     || [lower containsString:@"absubloader"])
 
         return YES;
+
+    NSArray* extraPaths = andromeda_extraList(@"FS_ExtraPaths");
+    for(NSString* p in extraPaths) {
+        NSString* lp = [p lowercaseString];
+        if([lower isEqualToString:lp] || [lower hasPrefix:lp] || [lower containsString:lp]) {
+            return YES;
+        }
+    }
+
     return NO;
 }
 

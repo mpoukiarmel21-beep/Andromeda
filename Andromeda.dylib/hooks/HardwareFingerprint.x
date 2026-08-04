@@ -66,7 +66,7 @@ static int hooked_uname(struct utsname* name) {
 }
 
 - (NSString*)name {
-    return @"iPhone";
+    return [_spoofer spoofedDeviceName];
 }
 
 - (float)batteryLevel {

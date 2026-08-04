@@ -18,6 +18,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString*)spoofedBuildVersion;
 - (NSDictionary*)spoofedDeviceInfo;
 - (NSUUID*)spoofedAdvertisingUUID;
+- (NSString*)spoofedECID;
+- (NSString*)spoofedMLBSerial;
+- (NSString*)spoofedDeviceName;
+- (NSString*)spoofedProductType;
+- (NSString*)spoofedMachineName;
+- (void)reloadFromPreferences:(NSDictionary*)prefs;
 
 @property (nonatomic, readonly) NSDictionary* currentSpoofProfile;
 @property (nonatomic, readonly) BOOL isSpoofingEnabled;

@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSDictionary<NSString*, NSArray<NSString*>*>*)appSpecificDetectionClasses;
 + (NSArray<NSString*>*)suspiciousEnvVars;
 + (NSArray<NSString*>*)suspiciousProcFiles;
++ (NSArray<NSString*>*)suspiciousProcessNames;
++ (NSArray<NSString*>*)suspiciousDyldSymbols;
 + (NSDictionary<NSString*, NSArray<NSString*>*>*)datingAppBundleIds;
 + (NSDictionary<NSString*, NSArray<NSString*>*>*)socialAppBundleIds;
 + (NSDictionary<NSString*, NSDictionary*>*)appSpecificConfigurations;

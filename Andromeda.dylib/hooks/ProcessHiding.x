@@ -13,7 +13,7 @@ static int (*orig_sysctl)(int*, u_int, void*, size_t*, void*, size_t) = NULL;
 
 static BOOL isJBProcess(const char* name) {
     if(!name) return NO;
-    return strstr(name, "frida")
+    if(strstr(name, "frida")
         || strstr(name, "Frida")
         || strstr(name, "substrate")
         || strstr(name, "Substrate")
@@ -38,7 +38,24 @@ static BOOL isJBProcess(const char* name) {
         || strstr(name, "mterminal")
         || strstr(name, "androguard")
         || strstr(name, "SSLKillSwitch")
-        || strstr(name, "sslkillswitch");
+        || strstr(name, "sslkillswitch")) {
+        return YES;
+    }
+
+    NSArray* extraProcs = andromeda_extraList(@"Proc_ExtraProcesses");
+    for(NSString* proc in extraProcs) {
+        if(strcasestr(name, [proc UTF8String])) {
+            return YES;
+        }
+    }
+
+    NSArray* dbProcs = [DetectionSignatures suspiciousProcessNames];
+    for(NSString* proc in dbProcs) {
+        if(strcasestr(name, [proc UTF8String])) {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 // struct kinfo_proc layout for filtering

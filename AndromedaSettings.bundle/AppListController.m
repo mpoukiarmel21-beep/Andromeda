@@ -10,7 +10,7 @@
     if(!_specifiers) {
         _specifiers = [NSMutableArray array];
         
-        [_specifiers addObject:[self createGroupSpecifier:@"DATING_APPS" label:@"Dating Apps"]];
+        [_specifiers addObject:[self createGroupSpecifier:@"DATING_APPS" label:@"Dating Apps - Per-App Toggle"]];
         
         NSArray* datingApps = @[
             @[@"Tinder", @"com.cardify.tinder"],
@@ -25,20 +25,29 @@
             @[@"OkCupid", @"com.okcupid.okcupid"],
             @[@"POF", @"com.pof.pof"],
             @[@"Grindr", @"com.grindrapp.ios"],
-            @[@"Meetic", @"com.meetic.meetic"]
+            @[@"Meetic", @"com.meetic.meetic"],
+            @[@"AdopteUnMec", @"com.adopteunmec.ios"],
+            @[@"Jaumo", @"com.jaumo.ios"],
+            @[@"Tantan", @"com.tantan.ios"],
+            @[@"Lovoo", @"com.lovoo.ios"],
+            @[@"Boo", @"com.boo.app"],
+            @[@"The League", @"com.theleague.ios"],
+            @[@"Inner Circle", @"com.innercircle.ios"],
+            @[@"Once", @"com.once.once"],
+            @[@"Clover", @"com.clover.ios"]
         ];
         
         for(NSArray* app in datingApps) {
-            PSSpecifier* specifier = [self createButtonSpecifier:app[0] action:@selector(patchApp:) associatedObject:app[1]];
-            [_specifiers addObject:specifier];
+            [_specifiers addObject:[self createToggleSpecifier:app[0] bundleId:app[1]]];
         }
         
-        [_specifiers addObject:[self createGroupSpecifier:@"SOCIAL_APPS" label:@"Social Apps"]];
+        [_specifiers addObject:[self createGroupSpecifier:@"SOCIAL_APPS" label:@"Social Apps - Per-App Toggle"]];
         
         NSArray* socialApps = @[
             @[@"Instagram", @"com.burbn.instagram"],
             @[@"Threads", @"com.instagram.barcelona"],
             @[@"Facebook", @"com.facebook.Facebook"],
+            @[@"Messenger", @"com.facebook.Messenger"],
             @[@"Snapchat", @"com.snapchat.Snapchat"],
             @[@"TikTok", @"com.zhiliaoapp.musically"],
             @[@"Twitter/X", @"com.atebits.Tweetie2"],
@@ -46,8 +55,20 @@
             @[@"Reddit", @"com.reddit.Reddit"],
             @[@"WhatsApp", @"net.whatsapp.WhatsApp"],
             @[@"Telegram", @"ph.telegra.Telegraph"],
-            @[@"Signal", @"org.whispersystems.signal"]
+            @[@"BeReal", @"com.bereal.ios"],
+            @[@"LinkedIn", @"com.linkedin.LinkedIn"]
         ];
+        
+        for(NSArray* app in socialApps) {
+            [_specifiers addObject:[self createToggleSpecifier:app[0] bundleId:app[1]]];
+        }
+        
+        [_specifiers addObject:[self createGroupSpecifier:@"LAUNCH" label:@"Patch & Launch Apps"]];
+        
+        for(NSArray* app in datingApps) {
+            PSSpecifier* specifier = [self createButtonSpecifier:app[0] action:@selector(patchApp:) associatedObject:app[1]];
+            [_specifiers addObject:specifier];
+        }
         
         for(NSArray* app in socialApps) {
             PSSpecifier* specifier = [self createButtonSpecifier:app[0] action:@selector(patchApp:) associatedObject:app[1]];
@@ -55,6 +76,15 @@
         }
     }
     return _specifiers;
+}
+
+- (PSSpecifier*)createToggleSpecifier:(NSString*)title bundleId:(NSString*)bundleId {
+    PSSpecifier* specifier = [PSSpecifier preferenceSpecifierNamed:title target:self set:nil get:nil detail:nil cell:PSSwitchCell edit:nil];
+    [specifier setProperty:@"com.andromeda.bypass" forKey:@"defaults"];
+    [specifier setProperty:[@"App_" stringByAppendingString:bundleId] forKey:@"key"];
+    [specifier setProperty:@YES forKey:@"default"];
+    [specifier setProperty:@"com.andromeda.bypass/settingsChanged" forKey:@"PostNotification"];
+    return specifier;
 }
 
 - (PSSpecifier*)createGroupSpecifier:(NSString*)key label:(NSString*)label {

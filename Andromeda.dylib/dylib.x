@@ -6,6 +6,23 @@
 #import "hooks/hooks.h"
 #import <Andromeda.h>
 
+static NSDictionary* andromeda_prefs(void) {
+    return [[AndromedaCore sharedInstance] preferences];
+}
+
+static BOOL andromeda_hookEnabled(NSString* key) {
+    NSNumber* val = andromeda_prefs()[key];
+    if(!val) return YES;
+    return [val boolValue];
+}
+
+static void andromeda_runHook(NSString* prefKey, void (^block)(void), NSString* name) {
+    if(andromeda_hookEnabled(prefKey)) {
+        @try { block(); }
+        @catch(NSException *e) { NSLog(@"[Andromeda] %@ err: %@", name, e); }
+    }
+}
+
 %ctor {
     @try {
         [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge NSNotificationName)CFSTR("com.andromeda.bypass/settingsChanged") object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification* note) {
@@ -19,16 +36,25 @@
             return;
         }
 
-        NSNumber* globalEnabled = [_andromeda preferences][@"Global_Enabled"];
+        NSNumber* globalEnabled = andromeda_prefs()[@"Global_Enabled"];
         if(globalEnabled && ![globalEnabled boolValue]) {
             return;
         }
 
-        BOOL applyToAll = [[_andromeda preferences][@"Global_ApplyToAll"] boolValue];
+        BOOL applyToAll = [andromeda_prefs()[@"Global_ApplyToAll"] boolValue];
+        BOOL debugMode = [andromeda_prefs()[@"Debug_Mode"] boolValue];
+
         BOOL isDating = [[AndromedaCore sharedInstance] isDatingApp];
         BOOL isSocial = [[AndromedaCore sharedInstance] isSocialApp];
         BOOL isProtected = isDating || isSocial;
-        BOOL debugMode = [[_andromeda preferences][@"Debug_Mode"] boolValue];
+
+        NSString* appKey = [@"App_" stringByAppendingString:bundleIdentifier];
+        NSNumber* appOverride = andromeda_prefs()[appKey];
+        if(appOverride && [appOverride isKindOfClass:[NSNumber class]]) {
+            isProtected = [appOverride boolValue];
+        }
+
+        if(!isProtected && !debugMode && !applyToAll) return;
 
         NSString* executablePath = [[NSBundle mainBundle] executablePath];
         BOOL isSystemProcess = NO;
@@ -51,135 +77,53 @@
             return;
         }
 
-        if(!isProtected && !debugMode && !applyToAll) return;
-        if(isProtected == NO && debugMode) {
+        if(debugMode) {
             NSLog(@"[Andromeda DEBUG] Applying bypass to app: %@", bundleIdentifier);
         }
 
-        NSNumber* val;
+        @try {
+            [[DeviceFingerprintSpoofer sharedInstance] reloadFromPreferences:andromeda_prefs()];
+        } @catch(NSException *e) {}
 
-        val = [_andromeda preferences][@"Hook_Filesystem"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_Filesystem(); } @catch(NSException *e) { NSLog(@"[Andromeda] Filesystem err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_Dyld"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_Dyld(); } @catch(NSException *e) { NSLog(@"[Andromeda] Dyld err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_AntiDebug"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_AntiDebug(); } @catch(NSException *e) { NSLog(@"[Andromeda] AntiDebug err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_DeviceCheck"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_DeviceCheck(); } @catch(NSException *e) { NSLog(@"[Andromeda] DeviceCheck err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_Sandbox"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_Sandbox(); } @catch(NSException *e) { NSLog(@"[Andromeda] Sandbox err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_SymLookup"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_SymLookup(); } @catch(NSException *e) { NSLog(@"[Andromeda] SymLookup err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_EnvVars"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_EnvVars(); } @catch(NSException *e) { NSLog(@"[Andromeda] EnvVars err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_MachBootstrap"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_MachBootstrap(); } @catch(NSException *e) { NSLog(@"[Andromeda] MachBootstrap err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_ObjCRuntime"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_ObjCRuntime(); } @catch(NSException *e) { NSLog(@"[Andromeda] ObjCRuntime err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_Syscall"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_Syscall(); } @catch(NSException *e) { NSLog(@"[Andromeda] Syscall err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_TweakClasses"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_TweakClasses(); } @catch(NSException *e) { NSLog(@"[Andromeda] TweakClasses err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_UIImage"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_UIImage(); } @catch(NSException *e) { NSLog(@"[Andromeda] UIImage err: %@", e); }
-        }
+        andromeda_runHook(@"Hook_DetectionBypass", ^{ andromeda_hook_DetectionBypass(); }, @"DetectionBypass");
+        andromeda_runHook(@"Hook_Filesystem", ^{ andromeda_hook_Filesystem(); }, @"Filesystem");
+        andromeda_runHook(@"Hook_Dyld", ^{ andromeda_hook_Dyld(); }, @"Dyld");
+        andromeda_runHook(@"Hook_AntiDebug", ^{ andromeda_hook_AntiDebug(); }, @"AntiDebug");
+        andromeda_runHook(@"Hook_DeviceCheck", ^{ andromeda_hook_DeviceCheck(); }, @"DeviceCheck");
+        andromeda_runHook(@"Hook_Sandbox", ^{ andromeda_hook_Sandbox(); }, @"Sandbox");
+        andromeda_runHook(@"Hook_SymLookup", ^{ andromeda_hook_SymLookup(); }, @"SymLookup");
+        andromeda_runHook(@"Hook_EnvVars", ^{ andromeda_hook_EnvVars(); }, @"EnvVars");
+        andromeda_runHook(@"Hook_MachBootstrap", ^{ andromeda_hook_MachBootstrap(); }, @"MachBootstrap");
+        andromeda_runHook(@"Hook_ObjCRuntime", ^{ andromeda_hook_ObjCRuntime(); }, @"ObjCRuntime");
+        andromeda_runHook(@"Hook_Syscall", ^{ andromeda_hook_Syscall(); }, @"Syscall");
+        andromeda_runHook(@"Hook_Behavioral", ^{ andromeda_hook_Behavioral(); }, @"Behavioral");
+        andromeda_runHook(@"Hook_UIImage", ^{ andromeda_hook_UIImage(); }, @"UIImage");
+        andromeda_runHook(@"Hook_HardwareFingerprint", ^{ andromeda_hook_HardwareFingerprint(); }, @"HardwareFingerprint");
+        andromeda_runHook(@"Hook_IOKit", ^{ andromeda_hook_IOKit(); }, @"IOKit");
+        andromeda_runHook(@"Hook_MobileGestalt", ^{ andromeda_hook_MobileGestalt(); }, @"MobileGestalt");
+        andromeda_runHook(@"Hook_NetworkInterface", ^{ andromeda_hook_NetworkInterface(); }, @"NetworkInterface");
+        andromeda_runHook(@"Hook_Sensors", ^{ andromeda_hook_Sensors(); }, @"Sensors");
+        andromeda_runHook(@"Hook_ProcFiles", ^{ andromeda_hook_ProcFiles(); }, @"ProcFiles");
+        andromeda_runHook(@"Hook_IOHID", ^{ andromeda_hook_IOHID(); }, @"IOHID");
 
-        val = [_andromeda preferences][@"Hook_HardwareFingerprint"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_HardwareFingerprint(); } @catch(NSException *e) { NSLog(@"[Andromeda] HardwareFingerprint err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_IOKit"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_IOKit(); } @catch(NSException *e) { NSLog(@"[Andromeda] IOKit err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_Behavioral"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_Behavioral(); } @catch(NSException *e) { NSLog(@"[Andromeda] Behavioral err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_Sensors"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_Sensors(); } @catch(NSException *e) { NSLog(@"[Andromeda] Sensors err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_MobileGestalt"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_MobileGestalt(); } @catch(NSException *e) { NSLog(@"[Andromeda] MobileGestalt err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_NetworkInterface"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_NetworkInterface(); } @catch(NSException *e) { NSLog(@"[Andromeda] NetworkInterface err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_ProcFiles"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_ProcFiles(); } @catch(NSException *e) { NSLog(@"[Andromeda] ProcFiles err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_IOHID"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_IOHID(); } @catch(NSException *e) { NSLog(@"[Andromeda] IOHID err: %@", e); }
-        }
+        andromeda_runHook(@"Hook_ProcessHiding", ^{ andromeda_hook_ProcessHiding(); }, @"ProcessHiding");
+        andromeda_runHook(@"Hook_FridaBypass", ^{ andromeda_hook_FridaBypass(); }, @"FridaBypass");
+        andromeda_runHook(@"Hook_DynamicHooker", ^{ andromeda_hook_DynamicHooker(); }, @"DynamicHooker");
+        andromeda_runHook(@"Hook_AppAttest", ^{ andromeda_hook_AppAttestBypass_install(); }, @"AppAttestBypass");
+        andromeda_runHook(@"Hook_URLScheme", ^{ andromeda_hook_URLSchemeBypass_install(); }, @"URLSchemeBypass");
 
-        if(isDating) {
+        if(isDating && andromeda_hookEnabled(@"Hook_DatingApps")) {
             @try { andromeda_hook_DatingApps(); } @catch(NSException *e) { NSLog(@"[Andromeda] DatingApps err: %@", e); }
         }
-        if(isSocial) {
+        if(isSocial && andromeda_hookEnabled(@"Hook_SocialApps")) {
             @try { andromeda_hook_SocialApps(); } @catch(NSException *e) { NSLog(@"[Andromeda] SocialApps err: %@", e); }
         }
 
-        @try { andromeda_hook_DetectionBypass(); } @catch(NSException *e) { NSLog(@"[Andromeda] DetectionBypass err: %@", e); }
-
-        val = [_andromeda preferences][@"Hook_ProcessHiding"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_ProcessHiding(); } @catch(NSException *e) { NSLog(@"[Andromeda] ProcessHiding err: %@", e); }
+        if([andromeda_prefs()[@"Adaptive_Mode"] boolValue]) {
+            andromeda_runHook(@"Adaptive_Mode", ^{ andromeda_hook_Adaptive(); }, @"Adaptive");
         }
 
-        val = [_andromeda preferences][@"Hook_FridaBypass"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_FridaBypass(); } @catch(NSException *e) { NSLog(@"[Andromeda] FridaBypass err: %@", e); }
-        }
-
-        val = [_andromeda preferences][@"Hook_DynamicHooker"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_DynamicHooker(); } @catch(NSException *e) { NSLog(@"[Andromeda] DynamicHooker err: %@", e); }
-        }
-
-        val = [_andromeda preferences][@"Hook_AppAttest"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_AppAttestBypass_install(); } @catch(NSException *e) { NSLog(@"[Andromeda] AppAttestBypass err: %@", e); }
-        }
-
-        val = [_andromeda preferences][@"Hook_URLScheme"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_URLSchemeBypass_install(); } @catch(NSException *e) { NSLog(@"[Andromeda] URLSchemeBypass err: %@", e); }
-        }
-
-        val = [_andromeda preferences][@"Adaptive_Mode"];
-        if(val && [val boolValue]) {
-            @try { andromeda_hook_Adaptive(); } @catch(NSException *e) { NSLog(@"[Andromeda] Adaptive err: %@", e); }
-        }
-
-        NSLog(@"[Andromeda] Hooks initialized for %@ (debug=%d)", bundleIdentifier, debugMode);
+        NSLog(@"[Andromeda] Hooks initialized for %@ (protected=%d debug=%d)", bundleIdentifier, isProtected, debugMode);
     } @catch(NSException *e) {
         NSLog(@"[Andromeda] ctor error: %@", e);
     }

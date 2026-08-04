@@ -33,8 +33,7 @@ jobs:
       - name: Setup layout
         run: |
           mkdir -p layout/DEBIAN
-          mkdir -p layout/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle
-          mkdir -p layout/var/jb/Library/PreferenceLoader/Preferences
+          mkdir -p layout/Library/PreferenceLoader/Preferences
           mkdir -p layout/Library/Andromeda
           
           cat > layout/DEBIAN/control << 'EOF'
@@ -44,7 +43,7 @@ jobs:
           Depends: firmware (>= 15.0), preferenceloader
           Recommends: mobilesubstrate
           Suggests: com.opa334.choicy
-          Version: 4.0.0
+          Version: 4.1.0
           Architecture: iphoneos-arm64
           Description: Ultimate rootless jailbreak detection bypass for dating apps and social media. Neutralizes hardware fingerprinting, App Attest, DeviceCheck, anti-debugging, sandbox checks, filesystem detection, dylib enumeration, behavioral biometrics, and adaptive auto-scanning.
           Maintainer: AndromedaTeam
@@ -89,7 +88,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v4.0.0
+          tag_name: v4.1.0
           files: packages/com.andromeda.bypass_*.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -2,7 +2,75 @@
 
 @implementation DetectionSignatures
 
++ (NSDictionary*)_externalDB {
+    static NSDictionary* db = nil;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        NSArray* paths = @[
+            @"/var/jb/Library/Andromeda/signatures.json",
+            @"/Library/Andromeda/signatures.json"
+        ];
+        for(NSString* path in paths) {
+            NSData* data = [NSData dataWithContentsOfFile:path];
+            if(data) {
+                id obj = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                if([obj isKindOfClass:[NSDictionary class]]) {
+                    db = obj;
+                    break;
+                }
+            }
+        }
+    });
+    return db;
+}
+
++ (NSArray*)_mergedArray:(NSArray*)compiled forKey:(NSString*)key {
+    if(!compiled || compiled.count == 0) return compiled ?: @[];
+    NSDictionary* external = [self _externalDB];
+    NSArray* extra = external ? external[key] : nil;
+    if(!extra || ![extra isKindOfClass:[NSArray class]] || extra.count == 0) return compiled;
+    NSMutableArray* merged = [NSMutableArray arrayWithArray:compiled];
+    NSMutableSet* seen = [NSMutableSet setWithArray:compiled];
+    for(id item in extra) {
+        if(![seen containsObject:item]) {
+            [seen addObject:item];
+            [merged addObject:item];
+        }
+    }
+    return merged;
+}
+
++ (NSDictionary*)_mergedDict:(NSDictionary*)compiled forKey:(NSString*)key {
+    if(!compiled || compiled.count == 0) return compiled ?: @{};
+    NSDictionary* external = [self _externalDB];
+    NSDictionary* extra = external ? external[key] : nil;
+    if(!extra || ![extra isKindOfClass:[NSDictionary class]] || extra.count == 0) return compiled;
+    NSMutableDictionary* merged = [NSMutableDictionary dictionaryWithDictionary:compiled];
+    for(NSString* k in extra) {
+        id existing = merged[k];
+        id incoming = extra[k];
+        if([existing isKindOfClass:[NSArray class]] && [incoming isKindOfClass:[NSArray class]]) {
+            NSMutableArray* list = [NSMutableArray arrayWithArray:existing];
+            NSMutableSet* seen = [NSMutableSet setWithArray:existing];
+            for(id item in incoming) {
+                if(![seen containsObject:item]) {
+                    [seen addObject:item];
+                    [list addObject:item];
+                }
+            }
+            merged[k] = list;
+        } else {
+            merged[k] = incoming;
+        }
+    }
+    return merged;
+}
+
 + (NSArray<NSString*>*)jailbreakPaths_fs {
+    return [self _mergedArray:[self _compiledJailbreakPathsFS] forKey:@"jailbreakPaths_fs"];
+}
+
++ (NSArray<NSString*>*)_compiledJailbreakPathsFS {
     return @[
         @"/Applications/Cydia.app",
         @"/Applications/Sileo.app",
@@ -44,19 +112,20 @@
         @"/private/var/mobile/Library/Zebra",
         @"/private/var/containers/Bundle/Application",
         @"/private/var/containers/Bundle/tweaksupport",
-        @"/.bootstrapped",
-        @"/.installed_unc0ver",
-        @"/.installed_taurine",
-        @"/.installed_xina",
-        @"/.installed_palera1n",
-        @"/.procursus_strapped",
-        @"/.jbroot",
+        @"/var/jb/.bootstrapped", @"/var/jb/.installed_palera1n", @"/var/jb/.installed_dopamine",
+        @"/var/jb/.procursus_strapped", @"/var/jb/.bootstrap", @"/var/jb/.jailbreak",
+        @"/.bootstrapped", @"/.installed_unc0ver", @"/.installed_taurine", @"/.installed_xina",
+        @"/.installed_palera1n", @"/.procursus_strapped", @"/.jbroot",
         @"/cores/binpack"
     ];
 }
 
++ (NSArray<NSString*>*)jailbreakPaths_fs_extra {
+    return [self _mergedArray:@[] forKey:@"jailbreakPaths_fs"];
+}
+
 + (NSArray<NSString*>*)jailbreakPaths_containing {
-    return @[
+    return [self _mergedArray:@[
         @"cydia",
         @"sileo",
         @"zebra",
@@ -96,7 +165,7 @@
         @"applist",
         @"flipswitch",
         @"activator"
-    ];
+    ] forKey:@"jailbreakPaths_containing"];
 }
 
 + (NSArray<NSString*>*)jailbreakPaths_prefix {
@@ -178,7 +247,7 @@
 }
 
 + (NSArray<NSString*>*)suspiciousDylibNames {
-    return @[
+    return [self _mergedArray:@[
         @"SubstrateLoader",
         @"SubstrateInserter",
         @"substitute-loader",
@@ -212,11 +281,11 @@
         @"Cydia",
         @"Filza",
         @"iCleaner"
-    ];
+    ] forKey:@"suspiciousDylibNames"];
 }
 
 + (NSArray<NSString*>*)bannedURLSchemes {
-    return @[
+    return [self _mergedArray:@[
         @"cydia://",
         @"sileo://",
         @"zbra://",
@@ -228,7 +297,7 @@
         @"mterminal://",
         @"activator://",
         @"ssh://"
-    ];
+    ] forKey:@"bannedURLSchemes"];
 }
 
 + (NSArray<NSString*>*)knownDetectionClasses {
@@ -328,11 +397,11 @@
         @"HPNDeviceSecurity",
         @"OKCDeviceCheck",
         @"MTCSecurityManager"
-    ];
+    ] forKey:@"knownDetectionClasses"];
 }
 
 + (NSArray<NSString*>*)knownDetectionSelectors {
-    return @[
+    return [self _mergedArray:@[
         @"isJailbroken",
         @"isJailBreak",
         @"isJailBroken",
@@ -385,7 +454,7 @@
         @"integrityCheck",
         @"securityCheck",
         @"safetyCheck"
-    ];
+    ] forKey:@"knownDetectionSelectors"];
 }
 
 + (NSDictionary<NSString*,NSArray<NSString*>*>*)datingAppBundleIds {
@@ -555,7 +624,7 @@
 }
 
 + (NSDictionary<NSString*,NSArray<NSString*>*>*)appSpecificDetectionClasses {
-    return @{
+    return [self _mergedDict:@{
         @"co.hily.app": @[
             @"HLYSecurityManager", @"HLYDeviceIntegrity", @"HLYAppIntegrityCheck",
             @"HLYRuntimeSecurity", @"HLYFingerprintManager", @"HLYTrustEvaluator"
@@ -626,11 +695,11 @@
             @"FBSecurityManager", @"FBDeviceCheck", @"FBDeviceIntegrity",
             @"FBBuildEnvironment", @"FBAppIntegrity"
         ]
-    };
+    } forKey:@"appSpecificDetectionClasses"];
 }
 
 + (NSArray<NSString*>*)suspiciousEnvVars {
-    return @[
+    return [self _mergedArray:@[
         @"DYLD_INSERT_LIBRARIES",
         @"DYLD_FORCE_FLAT_NAMESPACE",
         @"DYLD_SHARED_REGION",
@@ -662,7 +731,7 @@
         @"_TweakInject",
         @"ELLEKIT",
         @"LIBHOOKER"
-    ];
+    ] forKey:@"suspiciousEnvVars"];
 }
 
 + (NSArray<NSString*>*)suspiciousDyldSymbols {
@@ -709,7 +778,7 @@
 }
 
 + (NSArray<NSString*>*)suspiciousProcFiles {
-    return @[
+    return [self _mergedArray:@[
         @"/proc/cpuinfo",
         @"/proc/meminfo",
         @"/proc/stat",
@@ -718,7 +787,7 @@
         @"/proc/self/exe",
         @"/proc/self/cmdline",
         @"/proc/self/environ"
-    ];
+    ] forKey:@"suspiciousProcFiles"];
 }
 
 + (NSDictionary<NSString*,NSDictionary*>*)appSpecificConfigurations {

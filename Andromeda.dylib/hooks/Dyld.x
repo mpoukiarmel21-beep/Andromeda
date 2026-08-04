@@ -37,6 +37,13 @@ static BOOL is_suspicious_dylib(const char* name) {
             return YES;
         }
     }
+
+    NSArray* extraLibs = andromeda_extraList(@"Dyld_ExtraLibs");
+    for(NSString* lib in extraLibs) {
+        if([nsName rangeOfString:lib options:NSCaseInsensitiveSearch].location != NSNotFound) {
+            return YES;
+        }
+    }
     return NO;
 }
 

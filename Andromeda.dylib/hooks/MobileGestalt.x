@@ -8,23 +8,41 @@ static CFTypeRef hooked_MGCopyAnswer(CFStringRef question) {
     if(!isCallerTweak() && question) {
         NSString* q = (__bridge NSString*)question;
 
-        if([q isEqualToString:@"ProductType"]
-        || [q isEqualToString:@"hw.model"]
+        if([q isEqualToString:@"ProductType"]) {
+            if(result) CFRelease(result);
+            return (__bridge_retained CFTypeRef)[_spoofer spoofedProductType];
+        }
+
+        if([q isEqualToString:@"hw.model"]
         || [q isEqualToString:@"HWModelStr"]
         || [q isEqualToString:@"hw.machine"]) {
             if(result) CFRelease(result);
             return (__bridge_retained CFTypeRef)[_spoofer spoofedDeviceModel];
         }
 
-        if([q isEqualToString:@"UniqueDeviceID"]
-        || [q isEqualToString:@"UniqueChipID"]) {
+        if([q isEqualToString:@"UniqueDeviceID"]) {
             if(result) CFRelease(result);
             return (__bridge_retained CFTypeRef)[_spoofer spoofedUDID];
+        }
+
+        if([q isEqualToString:@"UniqueChipID"]) {
+            if(result) CFRelease(result);
+            return (__bridge_retained CFTypeRef)[_spoofer spoofedECID];
         }
 
         if([q isEqualToString:@"SerialNumber"]) {
             if(result) CFRelease(result);
             return (__bridge_retained CFTypeRef)[_spoofer spoofedSerialNumber];
+        }
+
+        if([q isEqualToString:@"MLBSerialNumber"]) {
+            if(result) CFRelease(result);
+            return (__bridge_retained CFTypeRef)[_spoofer spoofedMLBSerial];
+        }
+
+        if([q isEqualToString:@"DeviceName"]) {
+            if(result) CFRelease(result);
+            return (__bridge_retained CFTypeRef)[_spoofer spoofedDeviceName];
         }
 
         if([q isEqualToString:@"ProductVersion"]) {

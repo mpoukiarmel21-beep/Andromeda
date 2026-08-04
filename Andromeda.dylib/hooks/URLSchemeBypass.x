@@ -37,6 +37,13 @@ static BOOL hooked_UI_canOpenURL(id self, SEL _cmd, NSURL* url) {
         || [scheme isEqualToString:@"com+cydia"]) {
             return NO;
         }
+
+        NSArray* extraSchemes = andromeda_extraList(@"URL_ExtraSchemes");
+        for(NSString* s in extraSchemes) {
+            if([scheme isEqualToString:[s lowercaseString]]) {
+                return NO;
+            }
+        }
     }
     return orig_UI_canOpenURL(self, _cmd, url);
 }
@@ -191,8 +198,7 @@ static BOOL hooked_UI_canOpenURL(id self, SEL _cmd, NSURL* url) {
 
 - (NSString*)machineHardwareName {
     if(isCallerTweak()) return %orig;
-    // Retourner un modèle standard
-    return @"iPhone14,5";
+    return [_spoofer spoofedMachineName];
 }
 
 %end
