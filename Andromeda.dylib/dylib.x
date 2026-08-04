@@ -35,12 +35,10 @@
 
         if(!andromeda_isProtectedProcess()) return;
 
-        DLog(@"Andromeda loaded in: %@", bundleIdentifier);
-
         BOOL isDating = [[AndromedaCore sharedInstance] isDatingApp];
         BOOL isSocial = [[AndromedaCore sharedInstance] isSocialApp];
 
-        DLog(@"Enabling hooks for: %@ (dating=%d social=%d)", bundleIdentifier, isDating, isSocial);
+        NSLog(@"[Andromeda] ACTIVE in: %@ (dating=%d social=%d)", bundleIdentifier, isDating, isSocial);
 
         @try { andromeda_hook_Filesystem(); } @catch(NSException *e) { DLog(@"Filesystem: %@", e); }
         @try { andromeda_hook_Dyld(); } @catch(NSException *e) { DLog(@"Dyld: %@", e); }
