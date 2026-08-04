@@ -379,18 +379,10 @@ static pid_t (*orig_fork)(void) = NULL;
 static pid_t (*orig_vfork)(void) = NULL;
 
 static pid_t hooked_fork(void) {
-    if(!isCallerTweak()) {
-        NSLog(@"[Andromeda] Blocked fork() call");
-        return -1;
-    }
     return orig_fork();
 }
 
 static pid_t hooked_vfork(void) {
-    if(!isCallerTweak()) {
-        NSLog(@"[Andromeda] Blocked vfork() call");
-        return -1;
-    }
     return orig_vfork();
 }
 

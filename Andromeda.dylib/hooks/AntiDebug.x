@@ -91,10 +91,7 @@ static pid_t hooked_getppid(void) {
 }
 
 static int hooked_fork(void) {
-    if(isCallerTweak()) return orig_fork();
-    DLog(@"fork() blocked");
-    errno = EPERM;
-    return -1;
+    return orig_fork();
 }
 
 static int hooked_kill(pid_t pid, int sig) {

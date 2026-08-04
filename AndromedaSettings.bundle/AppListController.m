@@ -2,6 +2,8 @@
 #import <UIKit/UIKit.h>
 #import <dlfcn.h>
 
+#import "../common.h"
+
 @interface AndromedaAppListController : PSListController
 @end
 
@@ -33,9 +35,40 @@ static NSSet* InstalledBundleIds(void) {
 }
 
 static void LaunchApp(NSString* bundleId) {
-    id ws = LSWorkspace();
-    if (!ws) return;
-    [ws performSelector:@selector(openApplicationWithBundleID:) withObject:bundleId];
+    void* handle = dlopen("/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices", RTLD_LAZY);
+    if (handle) {
+        int (*SBSLaunchApplicationWithIdentifier)(NSString*, BOOL) =
+            (int(*)(NSString*, BOOL))dlsym(handle, "SBSLaunchApplicationWithIdentifier");
+        if (SBSLaunchApplicationWithIdentifier) {
+            SBSLaunchApplicationWithIdentifier(bundleId, NO);
+        }
+    }
+}
+
+static NSMutableDictionary* LoadPrefs(void) {
+    NSMutableDictionary* prefs = [NSMutableDictionary dictionaryWithContentsOfFile:@ANDROMEDA_PREFS];
+    if (!prefs) prefs = [NSMutableDictionary dictionary];
+    return prefs;
+}
+
+static void SavePrefs(NSMutableDictionary* prefs) {
+    [prefs writeToFile:@ANDROMEDA_PREFS atomically:YES];
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.andromeda.bypass/settingsChanged"), NULL, NULL, YES);
+}
+
+- (id)readPreferenceValue:(PSSpecifier*)specifier {
+    NSString* key = [specifier propertyForKey:@"key"];
+    id value = LoadPrefs()[key];
+    if (!value) return @YES;
+    return value;
+}
+
+- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
+    NSString* key = [specifier propertyForKey:@"key"];
+    if (!key) return;
+    NSMutableDictionary* prefs = LoadPrefs();
+    prefs[key] = value;
+    SavePrefs(prefs);
 }
 
 - (NSArray*)specifiers {
@@ -131,11 +164,10 @@ static void LaunchApp(NSString* bundleId) {
 }
 
 - (PSSpecifier*)createToggleSpecifier:(NSString*)title bundleId:(NSString*)bundleId installed:(BOOL)installed {
-    PSSpecifier* specifier = [PSSpecifier preferenceSpecifierNamed:title target:self set:nil get:nil detail:nil cell:PSSwitchCell edit:nil];
-    [specifier setProperty:@"com.andromeda.bypass" forKey:@"defaults"];
+    PSSpecifier* specifier = [PSSpecifier preferenceSpecifierNamed:title target:self
+        set:@selector(setPreferenceValue:specifier:) get:@selector(readPreferenceValue:)
+        detail:nil cell:PSSwitchCell edit:nil];
     [specifier setProperty:[@"App_" stringByAppendingString:bundleId] forKey:@"key"];
-    [specifier setProperty:@YES forKey:@"default"];
-    [specifier setProperty:@"com.andromeda.bypass/settingsChanged" forKey:@"PostNotification"];
     if(!installed) {
         [specifier setProperty:@"Not installed" forKey:@"footerText"];
     }
