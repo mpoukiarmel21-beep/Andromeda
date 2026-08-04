@@ -67,8 +67,6 @@
 
         if(!isProtected) return;
 
-        %init;
-
         DLog(@"Enabling hooks for: %@ (dating=%d social=%d)", bundleIdentifier, isDating, isSocial);
 
         andromeda_hook_Filesystem();
