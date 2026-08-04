@@ -54,7 +54,7 @@ static void AndromedaSavePrefs(NSMutableDictionary* prefs);
 - (PSSpecifier*)textFieldForKey:(NSString*)key title:(NSString*)title placeholder:(NSString*)placeholder {
     PSSpecifier* spec = [PSSpecifier preferenceSpecifierNamed:title target:self
         set:@selector(setPreferenceValue:specifier:) get:@selector(readPreferenceValue:)
-        detail:nil cell:PSTextFieldCell edit:nil];
+        detail:nil cell:@"PSTextFieldCell" edit:nil];
     [spec setProperty:key forKey:@"key"];
     if(placeholder) [spec setProperty:placeholder forKey:@"placeholder"];
     return spec;
@@ -131,7 +131,7 @@ static void AndromedaSavePrefs(NSMutableDictionary* prefs);
 
     [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
 
-    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+    if([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         alert.popoverPresentationController.sourceView = self.view;
         alert.popoverPresentationController.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
         alert.popoverPresentationController.permittedArrowDirections = 0;
