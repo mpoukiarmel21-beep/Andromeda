@@ -15,6 +15,14 @@
     },
     {
       cell = PSSwitchCell;
+      default = 1;
+      defaults = "com.andromeda.bypass";
+      key = "AutoPatch_Enabled";
+      label = "Auto-Patch Detected Apps";
+      PostNotification = "com.andromeda.bypass/settingsChanged";
+    },
+    {
+      cell = PSSwitchCell;
       default = 0;
       defaults = "com.andromeda.bypass";
       key = "Global_ApplyToAll";
@@ -52,8 +60,7 @@
     {
       cell = PSLinkCell;
       detail = "AndromedaAppListController";
-      label = "Per-App Toggles & Launch";
-    },
+      label = "Per-App Toggles & Launch";    },
     {
       cell = PSGroupCell;
       label = "Core Bypass Modules";
@@ -527,7 +534,7 @@
     },
     {
       cell = PSSegmentCell;
-      label = "Version 4.1.3";
+      label = "Version 4.1.4";
     },
     {
       cell = PSStaticTextCell;

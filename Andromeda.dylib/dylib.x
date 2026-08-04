@@ -37,6 +37,11 @@ static void andromeda_runHook(NSString* prefKey, void (^block)(void), NSString* 
             return;
         }
 
+        NSNumber* autoPatch = andromeda_prefs()[@"AutoPatch_Enabled"];
+        if(autoPatch && ![autoPatch boolValue]) {
+            return;
+        }
+
         BOOL applyToAll = [andromeda_prefs()[@"Global_ApplyToAll"] boolValue];
         BOOL debugMode = [andromeda_prefs()[@"Debug_Mode"] boolValue];
 

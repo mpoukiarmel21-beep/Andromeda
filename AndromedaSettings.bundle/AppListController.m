@@ -34,17 +34,6 @@ static NSSet* InstalledBundleIds(void) {
     return set;
 }
 
-static void LaunchApp(NSString* bundleId) {
-    void* handle = dlopen("/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices", RTLD_LAZY);
-    if (handle) {
-        int (*SBSLaunchApplicationWithIdentifier)(NSString*, BOOL) =
-            (int(*)(NSString*, BOOL))dlsym(handle, "SBSLaunchApplicationWithIdentifier");
-        if (SBSLaunchApplicationWithIdentifier) {
-            SBSLaunchApplicationWithIdentifier(bundleId, NO);
-        }
-    }
-}
-
 static NSMutableDictionary* LoadPrefs(void) {
     NSMutableDictionary* prefs = [NSMutableDictionary dictionaryWithContentsOfFile:@ANDROMEDA_PREFS];
     if (!prefs) prefs = [NSMutableDictionary dictionary];
@@ -131,6 +120,14 @@ static void SavePrefs(NSMutableDictionary* prefs) {
             }
         }
 
+        [_specifiers addObject:[self createGroupSpecifier:@"AUTOPATCH" label:@"Auto-Patch"]];
+        PSSpecifier* autoPatch = [PSSpecifier preferenceSpecifierNamed:@"Patch Detected Apps" target:self
+            set:@selector(setPreferenceValue:specifier:) get:@selector(readPreferenceValue:)
+            detail:nil cell:PSSwitchCell edit:nil];
+        [autoPatch setProperty:@"AutoPatch_Enabled" forKey:@"key"];
+        [autoPatch setProperty:@"Every detected app is patched automatically. Disable to stop patching, or turn off individual apps below." forKey:@"footerText"];
+        [_specifiers addObject:autoPatch];
+
         [_specifiers addObject:[self createGroupSpecifier:@"DETECTED" label:@"Detected Apps"]];
         if(detected.count == 0) {
             [_specifiers addObject:[self createNoteSpecifier:@"No supported apps detected on this device."]];
@@ -148,16 +145,6 @@ static void SavePrefs(NSMutableDictionary* prefs) {
         [_specifiers addObject:[self createGroupSpecifier:@"SOCIAL_APPS" label:@"Social Apps - All"]];
         for(NSArray* app in socialApps) {
             [_specifiers addObject:[self createToggleSpecifier:app[0] bundleId:app[1] installed:[installed containsObject:app[1]]]];
-        }
-
-        [_specifiers addObject:[self createGroupSpecifier:@"LAUNCH" label:@"Patch & Launch Detected Apps"]];
-        if(detected.count == 0) {
-            [_specifiers addObject:[self createNoteSpecifier:@"No installed apps to launch."]];
-        } else {
-            for(NSDictionary* app in detected) {
-                PSSpecifier* specifier = [self createButtonSpecifier:app[@"name"] action:@selector(patchApp:) associatedObject:app[@"bundleId"]];
-                [_specifiers addObject:specifier];
-            }
         }
     }
     return _specifiers;
@@ -183,31 +170,6 @@ static void SavePrefs(NSMutableDictionary* prefs) {
 - (PSSpecifier*)createNoteSpecifier:(NSString*)text {
     PSSpecifier* specifier = [PSSpecifier preferenceSpecifierNamed:text target:self set:nil get:nil detail:nil cell:PSStaticTextCell edit:nil];
     return specifier;
-}
-
-- (PSSpecifier*)createButtonSpecifier:(NSString*)title action:(SEL)action associatedObject:(NSString*)bundleId {
-    PSSpecifier* specifier = [PSSpecifier preferenceSpecifierNamed:title target:self set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
-    [specifier setProperty:bundleId forKey:@"bundleId"];
-    [specifier setButtonAction:action];
-    return specifier;
-}
-
-- (void)patchApp:(PSSpecifier*)specifier {
-    NSString* bundleId = [specifier propertyForKey:@"bundleId"];
-    if(!bundleId) return;
-
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Patch & Launch"
-        message:[NSString stringWithFormat:@"Launch %@ with Andromeda bypass patches active?", [specifier name]]
-        preferredStyle:UIAlertControllerStyleAlert];
-
-    [alert addAction:[UIAlertAction actionWithTitle:@"Patch & Launch" style:UIAlertActionStyleDefault handler:^(UIAlertAction* action) {
-        LaunchApp(bundleId);
-        NSLog(@"[Andromeda] Patched launch for %@", bundleId);
-    }]];
-
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-
-    [self presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)viewDidLoad {
