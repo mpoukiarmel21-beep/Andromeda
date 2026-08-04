@@ -54,7 +54,7 @@ static void AndromedaSavePrefs(NSMutableDictionary* prefs);
 - (PSSpecifier*)textFieldForKey:(NSString*)key title:(NSString*)title placeholder:(NSString*)placeholder {
     PSSpecifier* spec = [PSSpecifier preferenceSpecifierNamed:title target:self
         set:@selector(setPreferenceValue:specifier:) get:@selector(readPreferenceValue:)
-        detail:nil cell:@"PSTextFieldCell" edit:nil];
+        detail:nil cell:PSEditTextCell edit:nil];
     [spec setProperty:key forKey:@"key"];
     if(placeholder) [spec setProperty:placeholder forKey:@"placeholder"];
     return spec;
