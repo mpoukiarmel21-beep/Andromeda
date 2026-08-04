@@ -301,7 +301,7 @@
 }
 
 + (NSArray<NSString*>*)knownDetectionClasses {
-    return @[
+    return [self _mergedArray:@[
         @"IOSSecuritySuite",
         @"JailbreakDetection",
         @"DTTJailbreakDetection",
