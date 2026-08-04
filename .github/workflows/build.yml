@@ -37,19 +37,18 @@ jobs:
 
       - name: Build All
         run: |
-          make package messages=yes SDKVERSION=$SDKVERSION
+          make messages=yes SDKVERSION=$SDKVERSION
 
       - name: Create .deb package
         run: |
           mkdir -p build/deb/DEBIAN
-          mkdir -p build/deb/Library/Frameworks
           mkdir -p build/deb/Library/MobileSubstrate/DynamicLibraries
           mkdir -p build/deb/Library/PreferenceBundles
           mkdir -p build/deb/Library/PreferenceLoader/Preferences
 
-          cp Andromeda.dylib/obj/Andromeda.dylib build/deb/Library/MobileSubstrate/DynamicLibraries/
+          cp .theos/obj/debug/arm64/Andromeda.dylib build/deb/Library/MobileSubstrate/DynamicLibraries/
           cp Andromeda.dylib/Andromeda.plist build/deb/Library/MobileSubstrate/DynamicLibraries/
-          cp -r AndromedaSettings.bundle/obj/AndromedaSettings.bundle build/deb/Library/PreferenceBundles/
+          cp -r .theos/obj/debug/arm64/AndromedaSettings.bundle build/deb/Library/PreferenceBundles/
 
           cat > build/deb/Library/PreferenceLoader/Preferences/Andromeda.plist << 'EOF'
           {
