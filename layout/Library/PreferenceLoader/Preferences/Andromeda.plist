@@ -1,11 +1,10 @@
 {
   entry = {
     bundle = "AndromedaSettings";
-    name = "Andromeda";
-    defaults = "com.andromeda.bypass";
-    isRequired = FALSE;
     cell = PSLinkCell;
-    detail = PSListItemsController;
+    detail = "AndromedaRootListController";
+    icon = "/Library/PreferenceBundles/AndromedaSettings.bundle/icon.png";
+    isController = true;
     label = "Andromeda";
   };
 }

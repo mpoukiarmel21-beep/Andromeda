@@ -5,6 +5,7 @@
   CFBundleIdentifier = "com.andromeda.bypass.settings";
   CFBundleInfoDictionaryVersion = "6.0";
   CFBundlePackageType = BNDL;
-  CFBundleShortVersionString = "4.1.0";
-  CFBundleVersion = "4.1.0";
+  CFBundleShortVersionString = "4.1.1";
+  CFBundleVersion = "4.1.1";
+  NSPrincipalClass = AndromedaRootListController;
 }

@@ -527,7 +527,7 @@
     },
     {
       cell = PSSegmentCell;
-      label = "Version 4.1.0";
+      label = "Version 4.1.1";
     },
     {
       cell = PSStaticTextCell;
