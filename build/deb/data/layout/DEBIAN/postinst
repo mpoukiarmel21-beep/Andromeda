@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+echo "[Andromeda] Post-installation setup..."
+
+mkdir -p /var/mobile/Library/Caches/com.andromeda.bypass
+mkdir -p /Library/Andromeda
+
+if [ -f /usr/bin/sbreload ]; then
+    echo "[Andromeda] Refreshing SpringBoard..."
+    /usr/bin/sbreload
+fi
+
+exit 0

@@ -1,0 +1,133 @@
+name: Build Andromeda .deb
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Theos
+        run: |
+          git clone --recursive https://github.com/theos/theos.git /tmp/theos
+          echo "THEOS=/tmp/theos" >> $GITHUB_ENV
+
+      - name: Setup SDK
+        run: |
+          curl -LO https://github.com/theos/sdks/raw/master/iPhoneOS16.5.sdk.tar.xz
+          mkdir -p /tmp/theos/sdks
+          mv iPhoneOS16.5.sdk.tar.xz /tmp/theos/sdks/
+          cd /tmp/theos/sdks && tar -xf iPhoneOS16.5.sdk.tar.xz
+
+      - name: Build Andromeda Framework
+        run: |
+          cd Andromeda.framework
+          make clean 2>/dev/null || true
+          make package messages=yes
+
+      - name: Build Andromeda Dylib
+        run: |
+          cd Andromeda.dylib
+          make clean 2>/dev/null || true
+          make package messages=yes
+
+      - name: Build Settings Bundle
+        run: |
+          cd AndromedaSettings.bundle
+          make clean 2>/dev/null || true
+          make package messages=yes
+
+      - name: Create .deb package
+        run: |
+          mkdir -p build/deb/control build/deb/data
+          
+          cp -r Andromeda.framework/obj/Andromeda.framework build/deb/data/Library/Frameworks/
+          cp Andromeda.dylib/obj/Andromeda.dylib build/deb/data/Library/MobileSubstrate/DynamicLibraries/
+          cp Andromeda.dylib/Andromeda.plist build/deb/data/Library/MobileSubstrate/DynamicLibraries/
+          cp -r AndromedaSettings.bundle/obj/AndromedaSettings.bundle build/deb/data/Library/PreferenceBundles/
+          
+          mkdir -p "build/deb/data/Library/PreferenceLoader/Preferences"
+          
+          cat > "build/deb/data/Library/PreferenceLoader/Preferences/Andromeda.plist" << 'EOF'
+          {
+              entry = {
+                  bundle = AndromedaSettings;
+                  cell = PSLinkCell;
+                  detail = AndromedaRootListController;
+                  icon = "/Library/PreferenceBundles/AndromedaSettings.bundle/Icons/icon.svg";
+                  isController = 1;
+                  label = Andromeda;
+              };
+          }
+          EOF
+          
+          mkdir -p build/deb/data/DEBIAN
+          
+          cat > build/deb/data/DEBIAN/control << 'CTRL'
+          Package: com.andromeda.bypass
+          Name: Andromeda
+          Pre-Depends: dpkg
+          Depends: firmware (>= 12.0), preferenceloader
+          Recommends: mobilesubstrate
+          Suggests: com.opa334.choicy
+          Version: 4.0.0
+          Architecture: iphoneos-arm
+          Description: Ultimate jailbreak detection bypass for dating apps & social media. Neutralizes hardware fingerprinting, App Attest, DeviceCheck, anti-debugging, sandbox checks, filesystem detection, dylib enumeration, and behavioral biometrics.
+          Maintainer: AndromedaTeam
+          Author: AndromedaTeam
+          Section: System
+          CTRL
+          
+          cat > build/deb/data/DEBIAN/postinst << 'POST'
+          #!/bin/sh
+          set -e
+          echo "[Andromeda] Post-installation setup..."
+          mkdir -p /var/mobile/Library/Caches/com.andromeda.bypass
+          mkdir -p /Library/Andromeda
+          if [ -f /usr/bin/sbreload ]; then
+              echo "[Andromeda] Refreshing SpringBoard..."
+              /usr/bin/sbreload
+          fi
+          exit 0
+          POST
+          
+          cat > build/deb/data/DEBIAN/postrm << 'POSTRM'
+          #!/bin/sh
+          set -e
+          echo "[Andromeda] Cleaning up..."
+          rm -rf /var/mobile/Library/Caches/com.andromeda.bypass
+          rm -rf /Library/Andromeda
+          exit 0
+          POSTRM
+          
+          chmod 755 build/deb/data/DEBIAN/postinst
+          chmod 755 build/deb/data/DEBIAN/postrm
+          
+          cd build/deb
+          dpkg-deb -b data com.andromeda.bypass_4.0.0_iphoneos-arm.deb
+          cp com.andromeda.bypass_4.0.0_iphoneos-arm.deb ../../
+
+      - name: Upload .deb Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Andromeda-deb
+          path: com.andromeda.bypass_4.0.0_iphoneos-arm.deb
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v4.0.0
+          name: "Andromeda v4.0.0"
+          body: "Ultimate jailbreak detection bypass for dating apps & social media.\n\nSupported apps: Tinder, Bumble, Hily, Badoo, Fruitz, Feels, Hinge, Grindr, Happn, OKCupid, Meetic, Instagram, Threads, Facebook, Snapchat, TikTok."
+          files: com.andromeda.bypass_4.0.0_iphoneos-arm.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

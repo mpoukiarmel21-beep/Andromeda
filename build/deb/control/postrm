@@ -1,0 +1,6 @@
+﻿#!/bin/sh
+set -e
+echo "[Andromeda] Cleaning up..."
+rm -rf /var/mobile/Library/Caches/com.andromeda.bypass
+rm -rf /Library/Andromeda
+exit 0
