@@ -5,6 +5,9 @@ static int (*orig_lstat)(const char *, struct stat *) = NULL;
 static int (*orig_statfs)(const char *, struct statfs *) = NULL;
 static int (*orig_access)(const char *, int) = NULL;
 static int (*orig_open)(const char *, int, ...) = NULL;
+static int (*orig_openat)(int, const char *, int, ...) = NULL;
+static int (*orig_faccessat)(int, const char *, int, int) = NULL;
+static int (*orig_fstatat)(int, const char *, struct stat *, int) = NULL;
 static FILE* (*orig_fopen)(const char *, const char *) = NULL;
 static struct dirent* (*orig_readdir)(DIR*) = NULL;
 static int (*orig_fcntl)(int, int, ...) = NULL;
@@ -218,6 +221,45 @@ static int hooked_rmdir(const char* path) {
     return orig_rmdir(path);
 }
 
+static int hooked_openat(int dirfd, const char* path, int flags, ...) {
+    if(path && should_block(path)) {
+        errno = ENOENT;
+        return -1;
+    }
+    mode_t mode = 0;
+    if(flags & O_CREAT) {
+        va_list args;
+        va_start(args, flags);
+        mode = (mode_t)va_arg(args, int);
+        va_end(args);
+    }
+    return orig_openat(dirfd, path, flags, mode);
+}
+
+static int hooked_faccessat(int dirfd, const char* path, int mode, int flags) {
+    if(path && should_block(path)) {
+        errno = ENOENT;
+        return -1;
+    }
+    return orig_faccessat(dirfd, path, mode, flags);
+}
+
+static int hooked_fstatat(int dirfd, const char* path, struct stat* buf, int flags) {
+    if(path && should_block(path)) {
+        errno = ENOENT;
+        return -1;
+    }
+    return orig_fstatat(dirfd, path, buf, flags);
+}
+
+static FILE* hooked_fopen_path(const char* path, const char* mode) {
+    if(path && should_block(path)) {
+        errno = ENOENT;
+        return NULL;
+    }
+    return orig_fopen(path, mode);
+}
+
 void andromeda_hook_Filesystem(void) {
     @try {
     MSHookFunction((void*)stat, (void*)hooked_stat, (void**)&orig_stat);
@@ -239,6 +281,19 @@ void andromeda_hook_Filesystem(void) {
     MSHookFunction((void*)readlink, (void*)hooked_readlink, (void**)&orig_readlink);
     MSHookFunction((void*)mkdir, (void*)hooked_mkdir, (void**)&orig_mkdir);
     MSHookFunction((void*)rmdir, (void*)hooked_rmdir, (void**)&orig_rmdir);
+
+    void* sym_openat = dlsym(RTLD_DEFAULT, "openat");
+    if(sym_openat && !orig_openat) {
+        MSHookFunction(sym_openat, (void*)hooked_openat, (void**)&orig_openat);
+    }
+    void* sym_faccessat = dlsym(RTLD_DEFAULT, "faccessat");
+    if(sym_faccessat && !orig_faccessat) {
+        MSHookFunction(sym_faccessat, (void*)hooked_faccessat, (void**)&orig_faccessat);
+    }
+    void* sym_fstatat = dlsym(RTLD_DEFAULT, "fstatat");
+    if(sym_fstatat && !orig_fstatat) {
+        MSHookFunction(sym_fstatat, (void*)hooked_fstatat, (void**)&orig_fstatat);
+    }
     } @catch(NSException *e) { DLog(@"Filesystem hooks failed: %@", e); }
 }
 

@@ -87,11 +87,37 @@
 #define _spoofer                [DeviceFingerprintSpoofer sharedInstance]
 #define isCallerTweak()         [_andromeda isAddrExternal:__builtin_extract_return_addr(__builtin_return_address(0))]
 
+static inline BOOL andromeda_prefEnabled(NSString* key) {
+    @try {
+        NSNumber* val = [[AndromedaCore sharedInstance] preferences][key];
+        if(!val) return YES;
+        return [val boolValue];
+    } @catch(NSException *e) {
+        return YES;
+    }
+}
+
 static inline BOOL andromeda_isProtectedProcess(void) {
     @try {
         NSString* bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         if(!bundleIdentifier) return NO;
         if([bundleIdentifier hasPrefix:@"com.apple"]) return NO;
+
+        NSString* executablePath = [[NSBundle mainBundle] executablePath];
+        if(!executablePath) return NO;
+        if([executablePath hasPrefix:@"/Applications"]
+        || [executablePath hasPrefix:@"/System"]
+        || [executablePath hasPrefix:@"/private/preboot"]
+        || [executablePath hasPrefix:@"/usr/libexec"]
+        || [executablePath hasPrefix:@"/usr/bin"]
+        || [executablePath hasPrefix:@"/usr/sbin"]
+        || [executablePath hasPrefix:@"/var/jb"]) {
+            return NO;
+        }
+
+        if([[AndromedaCore sharedInstance] preferences][@"Debug_Mode"] && [[[[AndromedaCore sharedInstance] preferences][@"Debug_Mode"] isKindOfClass:[NSNumber class]]]) {
+            return YES;
+        }
         return [[AndromedaCore sharedInstance] isProtectedApp];
     } @catch(NSException *e) {
         return NO;

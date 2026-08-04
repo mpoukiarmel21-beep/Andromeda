@@ -175,7 +175,23 @@
     },
     {
       cell = PSGroupCell;
-      label = "Actions";
+      label = "Testing";
+    },
+    {
+      cell = PSSwitchCell;
+      default = 0;
+      defaults = "com.andromeda.bypass";
+      key = "Debug_Mode";
+      label = "Debug Mode (all apps)";
+      PostNotification = "com.andromeda.bypass/settingsChanged";
+    },
+    {
+      cell = PSSwitchCell;
+      default = 0;
+      defaults = "com.andromeda.bypass";
+      key = "Log_Hide";
+      label = "Log Hidden Access";
+      PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSButtonCell;
