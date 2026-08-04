@@ -252,14 +252,6 @@ static int hooked_fstatat(int dirfd, const char* path, struct stat* buf, int fla
     return orig_fstatat(dirfd, path, buf, flags);
 }
 
-static FILE* hooked_fopen_path(const char* path, const char* mode) {
-    if(path && should_block(path)) {
-        errno = ENOENT;
-        return NULL;
-    }
-    return orig_fopen(path, mode);
-}
-
 void andromeda_hook_Filesystem(void) {
     @try {
     MSHookFunction((void*)stat, (void*)hooked_stat, (void**)&orig_stat);
