@@ -1,27 +1,16 @@
 #import "hooks.h"
 
-// ============================================================================
-// ANDROMEDA APP ATTEST BYPASS — Hook DCAppAttestService
-// Apple App Attest est utilisé par Meta (Instagram/Threads) et d'autres apps
-// pour la vérification d'intégrité côté serveur
-// ============================================================================
-
-// ============================================================================
-// DCAppAttestService — Forcer isSupported = NO
-// ============================================================================
+%group andromeda_appattest
 
 %hook DCAppAttestService
 
 + (BOOL)isSupported {
     if(isCallerTweak()) return %orig;
-    // Forcer isSupported = NO pour forcer le fallback vers
-    // les vérifications logicielles (que nos hooks couvrent)
     return NO;
 }
 
 - (void)generateKeyWithCompletionHandler:(void(^)(id, NSError*))handler {
     if(isCallerTweak()) { %orig; return; }
-    // Retourner une erreur pour éviter la génération de clé d'attestation
     if(handler) {
         NSError* error = [NSError errorWithDomain:@"com.andromeda"
                                              code:-1
@@ -42,10 +31,6 @@
 
 %end
 
-// ============================================================================
-// DCDevice — Masquer device attestation
-// ============================================================================
-
 %hook DCDevice
 
 + (BOOL)currentDeviceSupportsDeviceCheck {
@@ -65,10 +50,6 @@
 
 %end
 
-// ============================================================================
-// ASDeviceIdentity — Masquer device identity
-// ============================================================================
-
 %hook ASDeviceIdentity
 
 + (void)deviceIdentityWithCompletion:(void(^)(id, NSError*))completion {
@@ -83,28 +64,12 @@
 
 %end
 
-// ============================================================================
-// Installation
-// ============================================================================
+%end
 
 void andromeda_hook_AppAttest(void) {
-    NSLog(@"[Andromeda] AppAttestBypass: Installing App Attest bypass...");
+    NSLog(@"[Andromeda] AppAttestBypass: Installing...");
 
-    if(NSClassFromString(@"DCAppAttestService")) {
+    if(NSClassFromString(@"DCAppAttestService") || NSClassFromString(@"DCDevice") || NSClassFromString(@"ASDeviceIdentity")) {
         %init(andromeda_appattest);
-        NSLog(@"[Andromeda] AppAttestBypass: DCAppAttestService hooked");
     }
-
-    if(NSClassFromString(@"DCDevice")) {
-        NSLog(@"[Andromeda] AppAttestBypass: DCDevice hooked");
-    }
-
-    if(NSClassFromString(@"ASDeviceIdentity")) {
-        NSLog(@"[Andromeda] AppAttestBypass: ASDeviceIdentity hooked");
-    }
-
-    NSLog(@"[Andromeda] AppAttestBypass: Installation complete");
 }
-
-%group andromeda_appattest
-%end
