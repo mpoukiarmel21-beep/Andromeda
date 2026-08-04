@@ -9,23 +9,19 @@
 // Mots-clés à rechercher dans les noms de classes
 static NSArray* detectionKeywords = nil;
 
-// Hook dynamique pour les méthodes BOOL retournant YES
-static BOOL dynamicHook_returnYES(id self, SEL _cmd) {
+__attribute__((unused)) static BOOL dynamicHook_returnYES(id self, SEL _cmd) {
     return YES;
 }
 
-// Hook dynamique pour les méthodes BOOL retournant NO
-static BOOL dynamicHook_returnNO(id self, SEL _cmd) {
+__attribute__((unused)) static BOOL dynamicHook_returnNO(id self, SEL _cmd) {
     return NO;
 }
 
-// Hook dynamique pour les méthodes returning nil
-static id dynamicHook_returnNil(id self, SEL _cmd) {
+__attribute__((unused)) static id dynamicHook_returnNil(id self, SEL _cmd) {
     return nil;
 }
 
-// Hook dynamique pour les méthodes returning @YES
-static id dynamicHook_returnYES_dict(id self, SEL _cmd) {
+__attribute__((unused)) static id dynamicHook_returnYES_dict(id self, SEL _cmd) {
     return @YES;
 }
 
