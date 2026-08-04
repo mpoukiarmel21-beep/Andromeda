@@ -219,7 +219,7 @@ static BOOL hooked_UI_canOpenURL(id self, SEL _cmd, NSURL* url) {
 // Installation
 // ============================================================================
 
-void andromeda_hook_URLScheme(void) {
+void andromeda_hook_URLSchemeBypass_install(void) {
     NSLog(@"[Andromeda] URLSchemeBypass: Installing URL scheme + workspace bypass...");
 
     // canOpenURL hook (ObjC runtime)

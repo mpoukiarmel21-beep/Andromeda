@@ -18,7 +18,7 @@ static BOOL hooked_supportsDeviceCheck(id self, SEL _cmd) {
     return NO;
 }
 
-void andromeda_hook_AppAttest(void) {
+void andromeda_hook_AppAttestBypass_install(void) {
     NSLog(@"[Andromeda] AppAttestBypass: Installing...");
 
     Class cls;

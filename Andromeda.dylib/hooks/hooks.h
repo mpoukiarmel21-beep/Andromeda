@@ -154,3 +154,5 @@ extern void andromeda_hook_DetectionBypass(void);
 extern void andromeda_hook_ProcessHiding(void);
 extern void andromeda_hook_FridaBypass(void);
 extern void andromeda_hook_DynamicHooker(void);
+extern void andromeda_hook_AppAttestBypass_install(void);
+extern void andromeda_hook_URLSchemeBypass_install(void);

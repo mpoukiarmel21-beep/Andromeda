@@ -74,10 +74,6 @@
         if(!val || [val boolValue]) {
             @try { andromeda_hook_DeviceCheck(); } @catch(NSException *e) { NSLog(@"[Andromeda] DeviceCheck err: %@", e); }
         }
-        val = [_andromeda preferences][@"Hook_AppAttest"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_AppAttest(); } @catch(NSException *e) { NSLog(@"[Andromeda] AppAttest err: %@", e); }
-        }
         val = [_andromeda preferences][@"Hook_Sandbox"];
         if(!val || [val boolValue]) {
             @try { andromeda_hook_Sandbox(); } @catch(NSException *e) { NSLog(@"[Andromeda] Sandbox err: %@", e); }
@@ -85,10 +81,6 @@
         val = [_andromeda preferences][@"Hook_SymLookup"];
         if(!val || [val boolValue]) {
             @try { andromeda_hook_SymLookup(); } @catch(NSException *e) { NSLog(@"[Andromeda] SymLookup err: %@", e); }
-        }
-        val = [_andromeda preferences][@"Hook_URLScheme"];
-        if(!val || [val boolValue]) {
-            @try { andromeda_hook_URLScheme(); } @catch(NSException *e) { NSLog(@"[Andromeda] URLScheme err: %@", e); }
         }
         val = [_andromeda preferences][@"Hook_EnvVars"];
         if(!val || [val boolValue]) {
@@ -170,6 +162,16 @@
         val = [_andromeda preferences][@"Hook_DynamicHooker"];
         if(!val || [val boolValue]) {
             @try { andromeda_hook_DynamicHooker(); } @catch(NSException *e) { NSLog(@"[Andromeda] DynamicHooker err: %@", e); }
+        }
+
+        val = [_andromeda preferences][@"Hook_AppAttest"];
+        if(!val || [val boolValue]) {
+            @try { andromeda_hook_AppAttestBypass_install(); } @catch(NSException *e) { NSLog(@"[Andromeda] AppAttestBypass err: %@", e); }
+        }
+
+        val = [_andromeda preferences][@"Hook_URLScheme"];
+        if(!val || [val boolValue]) {
+            @try { andromeda_hook_URLSchemeBypass_install(); } @catch(NSException *e) { NSLog(@"[Andromeda] URLSchemeBypass err: %@", e); }
         }
 
         val = [_andromeda preferences][@"Adaptive_Mode"];
