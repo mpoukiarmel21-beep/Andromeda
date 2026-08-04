@@ -1,7 +1,6 @@
 #import "hooks.h"
 
 static CFTypeRef (*orig_MGCopyAnswer)(CFStringRef) = NULL;
-static CFTypeRef (*orig_MGCopyMultipleAnswers)(CFArrayRef, CFDictionaryRef*) = NULL;
 
 static CFTypeRef hooked_MGCopyAnswer(CFStringRef question) {
     CFTypeRef result = orig_MGCopyAnswer(question);
@@ -51,10 +50,6 @@ static CFTypeRef hooked_MGCopyAnswer(CFStringRef question) {
     }
 
     return result;
-}
-
-static CFTypeRef hooked_MGCopyMultipleAnswers(CFArrayRef questions, CFDictionaryRef* answers) {
-    return orig_MGCopyMultipleAnswers(questions, answers);
 }
 
 void andromeda_hook_MobileGestalt(void) {
