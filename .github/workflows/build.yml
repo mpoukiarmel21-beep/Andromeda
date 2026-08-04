@@ -72,7 +72,10 @@ jobs:
           chmod 755 build/deb/DEBIAN/postrm
 
           cd build
-          dpkg-deb -b deb com.andromeda.bypass_4.0.0_iphoneos-arm.deb
+          echo "2.0" > debian-binary
+          cd deb && tar -czf ../control.tar.gz -C DEBIAN .
+          cd .. && tar -czf data.tar.gz -C deb --exclude=DEBIAN .
+          ar rcs com.andromeda.bypass_4.0.0_iphoneos-arm.deb debian-binary control.tar.gz data.tar.gz
           cp com.andromeda.bypass_4.0.0_iphoneos-arm.deb ..//
 
       - name: Upload .deb Artifact
