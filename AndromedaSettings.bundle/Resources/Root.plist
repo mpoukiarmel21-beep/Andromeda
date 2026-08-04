@@ -585,18 +585,16 @@
       label = "About";
     },
     {
-      cell = PSImageCell;
-      image = "logo.png";
-      height = 64;
-      width = 64;
-    },
-    {
       cell = PSStaticTextCell;
-      label = "Version 4.1.7";
+      label = "Andromeda v4.1.8";
     },
     {
       cell = PSStaticTextCell;
       label = "Developed by Mpouki Armel Wham Andromeda";
+    },
+    {
+      cell = PSStaticTextCell;
+      label = "Contact: mpoukiarmel21@gmail.com";
     },
     {
       cell = PSButtonCell;
