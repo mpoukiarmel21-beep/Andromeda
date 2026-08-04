@@ -51,7 +51,7 @@
             return;
         }
 
-        if(!isProtected && !debugMode) return;
+        if(!isProtected && !debugMode && !applyToAll) return;
         if(isProtected == NO && debugMode) {
             NSLog(@"[Andromeda DEBUG] Applying bypass to app: %@", bundleIdentifier);
         }
