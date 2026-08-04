@@ -1,5 +1,9 @@
 #import "hooks.h"
 
+#ifndef IFT_ETHER_VLAN
+#define IFT_ETHER_VLAN 0xec
+#endif
+
 static int (*orig_getifaddrs)(struct ifaddrs**) = NULL;
 
 static int hooked_getifaddrs(struct ifaddrs** ifap) {
