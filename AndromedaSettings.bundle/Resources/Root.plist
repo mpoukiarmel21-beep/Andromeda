@@ -8,32 +8,36 @@
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Global_Enabled";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Enable Andromeda";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "AutoPatch_Enabled";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Auto-Patch Detected Apps";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 0;
-      defaults = "com.andromeda.bypass";
       key = "Global_ApplyToAll";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Apply to All Apps";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 0;
-      defaults = "com.andromeda.bypass";
       key = "Global_AutoRespring";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Auto-Respring on Change";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
@@ -44,23 +48,26 @@
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_DatingApps";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Dating Apps";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_SocialApps";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Social Media Apps";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSLinkCell;
       detail = "AndromedaAppListController";
-      label = "Per-App Toggles & Launch";    },
+      label = "Per-App Toggles & Launch";
+    },
     {
       cell = PSGroupCell;
       label = "Core Bypass Modules";
@@ -68,120 +75,135 @@
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_DetectionBypass";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Multi-Vector Detection Bypass";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_Filesystem";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Filesystem Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_Dyld";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Dyld/Runtime Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_AntiDebug";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Anti-Debug Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_DeviceCheck";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "DeviceCheck Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_AppAttest";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "App Attest Bypass";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_Sandbox";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Sandbox Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_SymLookup";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Symbol Lookup Filtering";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_URLScheme";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "URL Scheme Filtering";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_EnvVars";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Environment Variable Cleaning";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_MachBootstrap";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Mach Bootstrap Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_ObjCRuntime";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "ObjC Runtime Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_Syscall";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Syscall Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_Behavioral";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Behavioral Biometrics Bypass";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_UIImage";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "UIImage Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
@@ -192,80 +214,90 @@
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_ProcessHiding";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Process Hiding (sysctl)";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_FridaBypass";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Frida / Runtime Bypass";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_DynamicHooker";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Dynamic Class Scanner";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_HardwareFingerprint";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Hardware Fingerprint Spoofing";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_IOKit";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "IOKit Spoofing";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_MobileGestalt";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "MobileGestalt Spoofing";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_NetworkInterface";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Network Interface Spoofing";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_Sensors";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Sensor Spoofing";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_ProcFiles";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Proc Files Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Hook_IOHID";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "HID Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
@@ -276,8 +308,9 @@
     {
       cell = PSMultiValueCell;
       default = "spoof";
-      defaults = "com.andromeda.bypass";
       key = "Detection_Mode";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Detection Response Mode";
       titles = ("Hide", "Spoof", "Block");
       values = ("hide", "spoof", "block");
@@ -286,8 +319,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "FS_ExtraPaths";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Extra Paths to Hide";
       placeholder = "e.g. /var/jb/Applications/X.app,/private/var/mobile/xx";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -295,8 +329,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "URL_ExtraSchemes";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Extra URL Schemes";
       placeholder = "e.g. cydia,sileo,zbra,filza,ssh";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -304,8 +339,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Dyld_ExtraLibs";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Extra Libraries to Block";
       placeholder = "e.g. libfrida,libsubstrate,dylib.dll";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -313,8 +349,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Proc_ExtraProcesses";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Extra Processes to Hide";
       placeholder = "e.g. frida-server,sshd,cycript";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -322,8 +359,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Class_ExtraPatterns";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Extra Class Patterns";
       placeholder = "e.g. MyDetector,JailbreakCheck";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -335,8 +373,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_Model";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Device Model";
       placeholder = "e.g. iPhone15,2 (leave empty to randomize)";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -344,8 +383,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_ProductType";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Product Type";
       placeholder = "e.g. iPhone15,2";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -353,8 +393,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_MachineName";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Machine Name";
       placeholder = "e.g. iPhone16,1";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -362,8 +403,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_SerialNumber";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Serial Number";
       placeholder = "12 alphanumeric chars";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -371,8 +413,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_UDID";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "UDID (40 hex)";
       placeholder = "40 hex characters";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -380,8 +423,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_ECID";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "ECID (hex)";
       placeholder = "e.g. 1234ABCDEF";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -389,8 +433,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_MLBSerial";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "MLB Serial Number";
       placeholder = "e.g. F2LQ1234ABCD";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -398,8 +443,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_OSVersion";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "iOS Version";
       placeholder = "e.g. 18.4.1";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -407,8 +453,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_BuildVersion";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Build Version";
       placeholder = "e.g. 22E240";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -416,8 +463,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_DeviceName";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Device Name";
       placeholder = "e.g. iPhone de Andromeda";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -425,8 +473,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_WiFiMAC";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Wi-Fi MAC Address";
       placeholder = "e.g. AA:BB:CC:DD:EE:FF";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -434,8 +483,9 @@
     {
       cell = PSTextFieldCell;
       default = "";
-      defaults = "com.andromeda.bypass";
       key = "Spoof_BluetoothMAC";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Bluetooth MAC Address";
       placeholder = "e.g. AA:BB:CC:DD:EE:FF";
       PostNotification = "com.andromeda.bypass/settingsChanged";
@@ -457,8 +507,9 @@
     {
       cell = PSMultiValueCell;
       default = "info";
-      defaults = "com.andromeda.bypass";
       key = "Log_Level";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Log Level";
       titles = ("None", "Errors", "Info", "Verbose");
       values = ("none", "errors", "info", "verbose");
@@ -467,24 +518,27 @@
     {
       cell = PSSwitchCell;
       default = 0;
-      defaults = "com.andromeda.bypass";
       key = "Debug_Mode";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Debug Mode (all apps)";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 0;
-      defaults = "com.andromeda.bypass";
       key = "Log_Hide";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Log Hidden Access";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 0;
-      defaults = "com.andromeda.bypass";
       key = "Global_NotifyOnChange";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Notify on Settings Change";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
@@ -495,16 +549,18 @@
     {
       cell = PSSwitchCell;
       default = 0;
-      defaults = "com.andromeda.bypass";
       key = "Adaptive_Mode";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Adaptive Mode (Auto-Scan)";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
     {
       cell = PSSwitchCell;
       default = 1;
-      defaults = "com.andromeda.bypass";
       key = "Adaptive_Log";
+      get = "readPreferenceValue:";
+      set = "setPreferenceValue:specifier:";
       label = "Log Adaptive Hooks";
       PostNotification = "com.andromeda.bypass/settingsChanged";
     },
@@ -534,11 +590,15 @@
     },
     {
       cell = PSSegmentCell;
-      label = "Version 4.1.4";
+      label = "Version 4.1.5";
     },
     {
       cell = PSStaticTextCell;
       label = "Ultimate jailbreak detection bypass for dating apps and social media.";
+    },
+    {
+      cell = PSStaticTextCell;
+      label = "Developed by Mpouki Armel Wham Andromeda";
     },
     {
       cell = PSButtonCell;

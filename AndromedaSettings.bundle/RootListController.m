@@ -1,5 +1,8 @@
 #import <Preferences/Preferences.h>
 #import <spawn.h>
+#import <CoreFoundation/CoreFoundation.h>
+
+#import "../common.h"
 
 @interface AndromedaRootListController : PSListController
 @end
@@ -11,6 +14,25 @@
         _specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
     }
     return _specifiers;
+}
+
+static NSMutableDictionary* AndromedaLoadPrefs(void) {
+    NSMutableDictionary* prefs = [NSMutableDictionary dictionaryWithContentsOfFile:@ANDROMEDA_PREFS];
+    if (!prefs) prefs = [NSMutableDictionary dictionary];
+    return prefs;
+}
+
+static void AndromedaSavePrefs(NSMutableDictionary* prefs) {
+    [prefs writeToFile:@ANDROMEDA_PREFS atomically:YES];
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.andromeda.bypass/settingsChanged"), NULL, NULL, YES);
+}
+
+- (id)readPreferenceValue:(PSSpecifier*)specifier {
+    NSString* key = [specifier propertyForKey:@"key"];
+    if (!key) return nil;
+    id value = AndromedaLoadPrefs()[key];
+    if (!value) value = [specifier propertyForKey:@"default"];
+    return value;
 }
 
 - (void)respring {
@@ -35,14 +57,18 @@
 }
 
 - (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
-    [super setPreferenceValue:value specifier:specifier];
-
     NSString* key = [specifier propertyForKey:@"key"];
+    if (key) {
+        NSMutableDictionary* prefs = AndromedaLoadPrefs();
+        prefs[key] = value;
+        AndromedaSavePrefs(prefs);
+    }
+
     if(!key || [key isEqualToString:@"Global_AutoRespring"]) return;
 
-    NSUserDefaults* defaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.andromeda.bypass"];
+    BOOL autoRespring = [[AndromedaLoadPrefs() objectForKey:@"Global_AutoRespring"] boolValue];
 
-    if([[defaults objectForKey:@"Global_AutoRespring"] boolValue]) {
+    if(autoRespring) {
         static BOOL s_respringScheduled = NO;
         if(!s_respringScheduled) {
             s_respringScheduled = YES;
@@ -60,7 +86,7 @@
         }
     }
 
-    if([[defaults objectForKey:@"Global_NotifyOnChange"] boolValue]) {
+    if([[AndromedaLoadPrefs() objectForKey:@"Global_NotifyOnChange"] boolValue]) {
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Andromeda"
             message:@"Settings applied. Change will take effect after respring."
             preferredStyle:UIAlertControllerStyleAlert];
