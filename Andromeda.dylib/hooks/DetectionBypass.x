@@ -32,7 +32,6 @@ static BOOL isJBPath(NSString* path) {
     if(!path) return NO;
     NSString* lower = [path lowercaseString];
 
-    // Jailbreak tools & package managers
     if([lower containsString:@"cydia"]
     || [lower containsString:@"sileo"]
     || [lower containsString:@"zebra"]
@@ -46,9 +45,7 @@ static BOOL isJBPath(NSString* path) {
     || [lower containsString:@"flipswitch"]
     || [lower containsString:@"winterboard"]
     || [lower containsString:@"themesboard"]
-    || [lower containsString:@"sbsettings"])
-
-    // Substrate/Substitute/ElleKit
+    || [lower containsString:@"sbsettings"]
     || [lower containsString:@"substrate"]
     || [lower containsString:@"substitute"]
     || [lower containsString:@"ellekit"]
@@ -63,18 +60,12 @@ static BOOL isJBPath(NSString* path) {
     || [lower containsString:@"applist"]
     || [lower containsString:@"cephei"]
     || [lower containsString:@"libcolorpicker"]
-
-    // Package management
     || [lower containsString:@"apt"]
     || [lower containsString:@"dpkg"]
     || [lower containsString:@"dpkginfo"]
-
-    // SSH
     || [lower containsString:@"ssh"]
     || [lower containsString:@"dropbear"]
     || [lower containsString:@"sftp"]
-
-    // Jailbreak paths
     || [lower containsString:@"/var/jb"]
     || [lower containsString:@"/bin/bash"]
     || [lower containsString:@"/bin/sh"]
@@ -94,8 +85,6 @@ static BOOL isJBPath(NSString* path) {
     || [lower containsString:@"/library/preferencebundles"]
     || [lower containsString:@"/library/preferenceloader"]
     || [lower containsString:@"/library/frameworks/cydiasubstrate.framework"]
-
-    // Frida/Reverse engineering
     || [lower containsString:@"frida"]
     || [lower containsString:@"fridagadget"]
     || [lower containsString:@"frida-server"]
@@ -104,8 +93,6 @@ static BOOL isJBPath(NSString* path) {
     || [lower containsString:@"cycript"]
     || [lower containsString:@"ssl kill switch"]
     || [lower containsString:@"sslkillswitch"]
-
-    // Shadow/anti-bypass detection
     || [lower containsString:@"shadow"]
     || [lower containsString:@"shadowruleset"]
     || [lower containsString:@"abypass"]
@@ -120,8 +107,6 @@ static BOOL isJBPath(NSString* path) {
     || [lower containsString:@"not a bypass"]
     || [lower containsString:@"hestia"]
     || [lower containsString:@"rootlesshide"]
-
-    // Dopamine/palera1n rootless
     || [lower containsString:@"/var/jb/basebin"]
     || [lower containsString:@"/var/jb/usr"]
     || [lower containsString:@"/var/jb/etc"]
@@ -137,12 +122,8 @@ static BOOL isJBPath(NSString* path) {
     || [lower containsString:@"checkra1n"]
     || [lower containsString:@"electra"]
     || [lower containsString:@"liber iOS"]
-
-    // TrollStore
     || [lower containsString:@"trollstore"]
     || [lower containsString:@"trollstorehelper"]
-
-    // Jailbreak markers
     || [lower containsString:@"jailbreak"]
     || [lower containsString:@"jailbroken"]
     || [lower containsString:@".cydia_no_stash"]
