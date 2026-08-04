@@ -1,0 +1,80 @@
+/* Spanish Localizations for Andromeda Settings */
+
+/* General */
+"ENABLE_ANDROMEDA" = "Activar Andromeda";
+"GLOBAL_ENABLED_DESC" = "Activar o desactivar todas las protecciones";
+
+/* Dating Apps */
+"DATING_APPS_PROTECTION" = "Protección de Apps de Citas";
+"HOOK_DATING_APPS" = "Activar Bypass para Apps de Citas";
+"HOOK_DATING_APPS_DESC" = "Neutralizar detección de jailbreak en apps de citas";
+"HOOK_APP_ATTEST" = "Saltar App Attest";
+"HOOK_APP_ATTEST_DESC" = "Saltar verificaciones de integridad de Apple";
+"HOOK_BEHAVIORAL" = "Saltar Biometrics Comportamentales";
+"HOOK_BEHAVIORAL_DESC" = "Protección contra análisis comportamental";
+
+/* Core Modules */
+"CORE_BYPASS_MODULES" = "Módulos Principales de Bypass";
+"HOOK_FILESYSTEM" = "Hooks de Sistema de Archivos";
+"HOOK_FILESYSTEM_DESC" = "Ocultar archivos relacionados con jailbreak";
+"HOOK_DYLD" = "Hooks Dyld/Runtime";
+"HOOK_DYLD_DESC" = "Ocultar dylibs inyectadas";
+"HOOK_ANTIDEBUG" = "Hooks Anti-Depuración";
+"HOOK_ANTIDEBUG_DESC" = "Prevenir detección de depurador";
+"HOOK_DEVICECHECK" = "Hooks DeviceCheck";
+"HOOK_DEVICECHECK_DESC" = "Saltar verificaciones de dispositivo";
+"HOOK_SANDBOX" = "Hooks Sandbox";
+"HOOK_SANDBOX_DESC" = "Protección contra verificaciones sandbox";
+"HOOK_URLSCHEME" = "Filtrado de URL Schemes";
+"HOOK_URLSCHEME_DESC" = "Bloquear esquemas de URL sospechosos";
+"HOOK_ENVVARS" = "Limpieza de Variables de Entorno";
+"HOOK_ENVVARS_DESC" = "Eliminar variables de entorno relacionadas con jailbreak";
+"HOOK_SYSCALL" = "Hooks Syscall";
+"HOOK_SYSCALL_DESC" = "Interceptar llamadas del sistema sospechosas";
+"HOOK_MACHBOOTSTRAP" = "Hooks Mach Bootstrap";
+"HOOK_MACHBOOTSTRAP_DESC" = "Proteger contra detección Mach";
+
+/* Advanced */
+"ADVANCED_PROTECTION" = "Protección Avanzada";
+"HOOK_HARDWAREFP" = "Suplantación de Huella de Hardware";
+"HOOK_HARDWAREFP_DESC" = "Modificar identificadores de hardware";
+"HOOK_IOKIT" = "Suplantación IOKit";
+"HOOK_IOKIT_DESC" = "Interceptar solicitudes IOKit";
+"HOOK_TWEAKCLASSES" = "Ocultar Clases de Tweak";
+"HOOK_TWEAKCLASSES_DESC" = "Ocultar clases de tweaks instalados";
+"HOOK_SYMLOOKUP" = "Filtrado de Búsqueda de Símbolos";
+"HOOK_SYMLOOKUP_DESC" = "Proteger contra búsqueda de símbolos";
+"HOOK_OBJCRUNTIME" = "Hooks ObjC Runtime";
+"HOOK_OBJCRUNTIME_DESC" = "Interceptar llamadas de runtime Objective-C";
+"HOOK_VNODEBYPASS" = "Bypass Vnode";
+"HOOK_VNODEBYPASS_DESC" = "Protección a nivel de kernel";
+
+/* Adaptive */
+"ADAPTIVE_PROTECTION" = "Protección Adaptativa";
+"ADAPTIVE_MODE" = "Modo Adaptativo (Auto-Scan)";
+"ADAPTIVE_MODE_DESC" = "Análisis automático y bypass";
+"ADAPTIVE_LOG" = "Registro de Hooks Adaptativos";
+"ADAPTIVE_LOG_DESC" = "Registrar hooks realizados";
+"VIEW_SCAN_RESULTS" = "Ver Resultados del Último Escaneo";
+
+/* Testing */
+"TESTING" = "Pruebas";
+"DEBUG_MODE" = "Modo Depuración (todas las apps)";
+"DEBUG_MODE_DESC" = "Aplicar hooks a todas las aplicaciones";
+"LOG_HIDE" = "Registro de Accesos Ocultos";
+"LOG_HIDE_DESC" = "Registrar accesos filtrados";
+
+/* Actions */
+"RESPRING" = "Reiniciar SpringBoard";
+"RESPRING_DESC" = "Aplicar cambios";
+"ABOUT" = "Acerca de";
+"VERSION" = "Versión";
+"CREDITS" = "Créditos";
+"ANDROMEDA_DESC" = "Bypass definitivo de detección de jailbreak para apps de citas y redes sociales.";
+
+/* Scan Results */
+"SCAN_COMPLETE" = "Escaneo Completo";
+"SCAN_NONE" = "Aún no se encontraron detecciones.\n\nActive el Modo Adaptativo, luego lance una app protegida.";
+"SELECTORS_HOOKED" = "selectores enganchados";
+"CLASSES_FOUND" = "clases sospechosas encontradas";
+"HOOKED_SELECTORS" = "Selectores enganchados :";

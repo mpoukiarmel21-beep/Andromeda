@@ -1,0 +1,80 @@
+/* English Localizations for Andromeda Settings */
+
+/* General */
+"ENABLE_ANDROMEDA" = "Enable Andromeda";
+"GLOBAL_ENABLED_DESC" = "Enable or disable all protections";
+
+/* Dating Apps */
+"DATING_APPS_PROTECTION" = "Dating Apps Protection";
+"HOOK_DATING_APPS" = "Enable Dating App Bypasses";
+"HOOK_DATING_APPS_DESC" = "Neutralize jailbreak detection in dating apps";
+"HOOK_APP_ATTEST" = "Bypass App Attest";
+"HOOK_APP_ATTEST_DESC" = "Bypass Apple integrity checks";
+"HOOK_BEHAVIORAL" = "Bypass Behavioral Biometrics";
+"HOOK_BEHAVIORAL_DESC" = "Protection against behavioral analysis";
+
+/* Core Modules */
+"CORE_BYPASS_MODULES" = "Core Bypass Modules";
+"HOOK_FILESYSTEM" = "Filesystem Hooks";
+"HOOK_FILESYSTEM_DESC" = "Hide jailbreak-related files";
+"HOOK_DYLD" = "Dyld/Runtime Hooks";
+"HOOK_DYLD_DESC" = "Hide injected dylibs";
+"HOOK_ANTIDEBUG" = "Anti-Debug Hooks";
+"HOOK_ANTIDEBUG_DESC" = "Prevent debugger detection";
+"HOOK_DEVICECHECK" = "DeviceCheck Hooks";
+"HOOK_DEVICECHECK_DESC" = "Bypass device verification checks";
+"HOOK_SANDBOX" = "Sandbox Hooks";
+"HOOK_SANDBOX_DESC" = "Protection against sandbox checks";
+"HOOK_URLSCHEME" = "URL Scheme Filtering";
+"HOOK_URLSCHEME_DESC" = "Block suspicious URL schemes";
+"HOOK_ENVVARS" = "Environment Variable Cleaning";
+"HOOK_ENVVARS_DESC" = "Remove jailbreak-related environment variables";
+"HOOK_SYSCALL" = "Syscall Hooks";
+"HOOK_SYSCALL_DESC" = "Intercept suspicious system calls";
+"HOOK_MACHBOOTSTRAP" = "Mach Bootstrap Hooks";
+"HOOK_MACHBOOTSTRAP_DESC" = "Protect against Mach detection";
+
+/* Advanced */
+"ADVANCED_PROTECTION" = "Advanced Protection";
+"HOOK_HARDWAREFP" = "Hardware Fingerprint Spoofing";
+"HOOK_HARDWAREFP_DESC" = "Modify hardware identifiers";
+"HOOK_IOKIT" = "IOKit Spoofing";
+"HOOK_IOKIT_DESC" = "Intercept IOKit requests";
+"HOOK_TWEAKCLASSES" = "Hide Tweak Classes";
+"HOOK_TWEAKCLASSES_DESC" = "Hide installed tweak classes";
+"HOOK_SYMLOOKUP" = "Symbol Lookup Filtering";
+"HOOK_SYMLOOKUP_DESC" = "Protect against symbol lookup";
+"HOOK_OBJCRUNTIME" = "ObjC Runtime Hooks";
+"HOOK_OBJCRUNTIME_DESC" = "Intercept Objective-C runtime calls";
+"HOOK_VNODEBYPASS" = "Vnode Bypass";
+"HOOK_VNODEBYPASS_DESC" = "Kernel-level protection";
+
+/* Adaptive */
+"ADAPTIVE_PROTECTION" = "Adaptive Protection";
+"ADAPTIVE_MODE" = "Adaptive Mode (Auto-Scan)";
+"ADAPTIVE_MODE_DESC" = "Automatic analysis and bypass";
+"ADAPTIVE_LOG" = "Log Adaptive Hooks";
+"ADAPTIVE_LOG_DESC" = "Record performed hooks";
+"VIEW_SCAN_RESULTS" = "View Last Scan Results";
+
+/* Testing */
+"TESTING" = "Testing";
+"DEBUG_MODE" = "Debug Mode (all apps)";
+"DEBUG_MODE_DESC" = "Apply hooks to all applications";
+"LOG_HIDE" = "Log Hidden Access";
+"LOG_HIDE_DESC" = "Record filtered access";
+
+/* Actions */
+"RESPRING" = "Respring";
+"RESPRING_DESC" = "Apply changes";
+"ABOUT" = "About";
+"VERSION" = "Version";
+"CREDITS" = "Credits";
+"ANDROMEDA_DESC" = "Ultimate jailbreak detection bypass for dating apps and social media.";
+
+/* Scan Results */
+"SCAN_COMPLETE" = "Scan Complete";
+"SCAN_NONE" = "No detections found yet.\n\nEnable Adaptive Mode, then launch a protected app to trigger a scan.";
+"SELECTORS_HOOKED" = "selectors hooked";
+"CLASSES_FOUND" = "suspicious classes found";
+"HOOKED_SELECTORS" = "Hooked selectors :";

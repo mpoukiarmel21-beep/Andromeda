@@ -72,4 +72,11 @@
     [super viewDidLoad];
 }
 
+- (void)openGitHub {
+    NSURL *url = [NSURL URLWithString:@"https://github.com/mpoukiarmel21-beep/Andromeda"];
+    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+    }
+}
+
 @end

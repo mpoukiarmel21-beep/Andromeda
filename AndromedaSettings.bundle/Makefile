@@ -19,4 +19,17 @@ after-bundle-stage::
 	      $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle/icon.png 2>/dev/null || true
 	@cp -f $(THEOS_PROJECT_DIR)/Resources/icon@2x.png \
 	      $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle/icon@2x.png 2>/dev/null || true
+	@cp -f $(THEOS_PROJECT_DIR)/Resources/logo.png \
+	      $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle/logo.png 2>/dev/null || true
+	@cp -rf $(THEOS_PROJECT_DIR)/Resources/Icons \
+	      $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle/ 2>/dev/null || true
+	@mkdir -p $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle/fr.lproj
+	@cp -f $(THEOS_PROJECT_DIR)/fr.lproj/Localizable.strings \
+	      $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle/fr.lproj/ 2>/dev/null || true
+	@mkdir -p $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle/en.lproj
+	@cp -f $(THEOS_PROJECT_DIR)/en.lproj/Localizable.strings \
+	      $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle/en.lproj/ 2>/dev/null || true
+	@mkdir -p $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle/es.lproj
+	@cp -f $(THEOS_PROJECT_DIR)/es.lproj/Localizable.strings \
+	      $(THEOS_STAGING_DIR)/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle/es.lproj/ 2>/dev/null || true
 

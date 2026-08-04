@@ -222,6 +222,29 @@
       cell = PSButtonCell;
       action = respring;
       label = "Respring";
+    },
+    {
+      cell = PSGroupCell;
+      label = "About";
+    },
+    {
+      cell = PSImageCell;
+      image = "logo.png";
+      height = 120;
+      width = 120;
+    },
+    {
+      cell = PSSegmentCell;
+      label = "Version 4.0.0";
+    },
+    {
+      cell = PSStaticTextCell;
+      label = "Ultimate jailbreak detection bypass for dating apps and social media.";
+    },
+    {
+      cell = PSButtonCell;
+      action = openGitHub;
+      label = "GitHub Repository";
     }
   );
 }
