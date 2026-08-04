@@ -1,7 +1,13 @@
 #import "hooks.h"
 
+@class CTCellularData;
+typedef NS_ENUM(NSUInteger, CTCellularDataRestrictedState) {
+    kCTCellularDataRestrictedStateUnknown = 0,
+    kCTCellularDataRestricted = 1,
+    kCTCellularDataNotRestricted = 2
+};
+
 static int (*orig_uname)(struct utsname*) = NULL;
-static int (*orig_gethostuuid)(uuid_t, const struct timespec*) = NULL;
 
 static int hooked_uname(struct utsname* name) {
     int result = orig_uname(name);
@@ -15,32 +21,12 @@ static int hooked_uname(struct utsname* name) {
     return result;
 }
 
-static int hooked_gethostuuid(uuid_t uuid, const struct timespec* timeout) {
-    int result = orig_gethostuuid(uuid, timeout);
-    if(result == 0) {
-        NSUUID* spoofed = [_spoofer spoofedAdvertisingUUID];
-        [spoofed getUUIDBytes:uuid];
-    }
-    return result;
-}
-
 %hook UIScreen
 
-- (CGRect)bounds {
-    return %orig;
-}
-
-- (CGRect)nativeBounds {
-    return %orig;
-}
-
-- (CGFloat)nativeScale {
-    return %orig;
-}
-
-- (CGFloat)scale {
-    return %orig;
-}
+- (CGRect)bounds { return %orig; }
+- (CGRect)nativeBounds { return %orig; }
+- (CGFloat)nativeScale { return %orig; }
+- (CGFloat)scale { return %orig; }
 
 %end
 
@@ -98,5 +84,4 @@ static int hooked_gethostuuid(uuid_t uuid, const struct timespec* timeout) {
 
 void andromeda_hook_HardwareFingerprint(void) {
     MSHookFunction((void*)uname, (void*)hooked_uname, (void**)&orig_uname);
-    MSHookFunction((void*)gethostuuid, (void*)hooked_gethostuuid, (void**)&orig_gethostuuid);
 }
