@@ -165,20 +165,20 @@ static void AndromedaSavePrefs(NSMutableDictionary* prefs) {
     NSString* version = versions[arc4random_uniform((uint32_t)versions.count)];
     NSString* build = builds[arc4random_uniform((uint32_t)builds.count)];
 
-    NSUserDefaults* defaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.andromeda.bypass"];
-    [defaults setObject:model forKey:@"Spoof_Model"];
-    [defaults setObject:model forKey:@"Spoof_ProductType"];
-    [defaults setObject:model forKey:@"Spoof_MachineName"];
-    [defaults setObject:serial forKey:@"Spoof_SerialNumber"];
-    [defaults setObject:udid forKey:@"Spoof_UDID"];
-    [defaults setObject:ecid forKey:@"Spoof_ECID"];
-    [defaults setObject:mlb forKey:@"Spoof_MLBSerial"];
-    [defaults setObject:version forKey:@"Spoof_OSVersion"];
-    [defaults setObject:build forKey:@"Spoof_BuildVersion"];
-    [defaults setObject:@"iPhone de Andromeda" forKey:@"Spoof_DeviceName"];
-    [defaults setObject:mac1 forKey:@"Spoof_WiFiMAC"];
-    [defaults setObject:mac2 forKey:@"Spoof_BluetoothMAC"];
-    [defaults synchronize];
+    NSMutableDictionary* prefs = AndromedaLoadPrefs();
+    prefs[@"Spoof_Model"] = model;
+    prefs[@"Spoof_ProductType"] = model;
+    prefs[@"Spoof_MachineName"] = model;
+    prefs[@"Spoof_SerialNumber"] = serial;
+    prefs[@"Spoof_UDID"] = udid;
+    prefs[@"Spoof_ECID"] = ecid;
+    prefs[@"Spoof_MLBSerial"] = mlb;
+    prefs[@"Spoof_OSVersion"] = version;
+    prefs[@"Spoof_BuildVersion"] = build;
+    prefs[@"Spoof_DeviceName"] = @"iPhone de Andromeda";
+    prefs[@"Spoof_WiFiMAC"] = mac1;
+    prefs[@"Spoof_BluetoothMAC"] = mac2;
+    AndromedaSavePrefs(prefs);
 
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Profile Generated"
         message:[NSString stringWithFormat:@"Model: %@\niOS: %@ (%@)\nSerial: %@\nUDID: %@\n\nRespring to apply.", model, version, build, serial, udid]
@@ -190,11 +190,11 @@ static void AndromedaSavePrefs(NSMutableDictionary* prefs) {
 - (void)resetSpoof {
     NSArray* keys = @[@"Spoof_Model", @"Spoof_ProductType", @"Spoof_MachineName", @"Spoof_SerialNumber", @"Spoof_UDID", @"Spoof_ECID", @"Spoof_MLBSerial", @"Spoof_OSVersion", @"Spoof_BuildVersion", @"Spoof_DeviceName", @"Spoof_WiFiMAC", @"Spoof_BluetoothMAC"];
 
-    NSUserDefaults* defaults = [[NSUserDefaults alloc] initWithSuiteName:@"com.andromeda.bypass"];
+    NSMutableDictionary* prefs = AndromedaLoadPrefs();
     for(NSString* key in keys) {
-        [defaults removeObjectForKey:key];
+        [prefs removeObjectForKey:key];
     }
-    [defaults synchronize];
+    AndromedaSavePrefs(prefs);
 
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Spoof Fields Reset"
         message:@"All custom spoof values cleared. Random profile will be used."
