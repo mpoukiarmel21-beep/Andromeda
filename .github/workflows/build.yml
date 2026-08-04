@@ -43,7 +43,7 @@ jobs:
           Depends: firmware (>= 15.0), preferenceloader
           Recommends: mobilesubstrate
           Suggests: com.opa334.choicy
-          Version: 4.1.6
+          Version: 4.1.7
           Architecture: iphoneos-arm64
           Description: Ultimate rootless jailbreak detection bypass for dating apps and social media. Neutralizes hardware fingerprinting, App Attest, DeviceCheck, anti-debugging, sandbox checks, filesystem detection, dylib enumeration, behavioral biometrics, and adaptive auto-scanning.
           Maintainer: AndromedaTeam
@@ -88,7 +88,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v4.1.6
+          tag_name: v4.1.7
           files: packages/com.andromeda.bypass_*.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

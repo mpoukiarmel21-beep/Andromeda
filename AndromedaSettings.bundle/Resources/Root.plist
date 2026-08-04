@@ -306,7 +306,8 @@
       label = "Per-Vector Options";
     },
     {
-      cell = PSMultiValueCell;
+      cell = PSLinkListCell;
+      detail = "PSListItemsController";
       default = "spoof";
       key = "Detection_Mode";
       get = "readPreferenceValue:";
@@ -505,7 +506,8 @@
       label = "Logs & Debug";
     },
     {
-      cell = PSMultiValueCell;
+      cell = PSLinkListCell;
+      detail = "PSListItemsController";
       default = "info";
       key = "Log_Level";
       get = "readPreferenceValue:";
@@ -585,16 +587,12 @@
     {
       cell = PSImageCell;
       image = "logo.png";
-      height = 120;
-      width = 120;
-    },
-    {
-      cell = PSSegmentCell;
-      label = "Version 4.1.6";
+      height = 64;
+      width = 64;
     },
     {
       cell = PSStaticTextCell;
-      label = "Ultimate jailbreak detection bypass for dating apps and social media.";
+      label = "Version 4.1.7";
     },
     {
       cell = PSStaticTextCell;
@@ -604,6 +602,10 @@
       cell = PSButtonCell;
       action = openGitHub;
       label = "GitHub Repository";
+    },
+    {
+      cell = PSGroupCell;
+      footerText = "Ultimate jailbreak detection bypass for dating apps and social media.";
     }
   );
 }
