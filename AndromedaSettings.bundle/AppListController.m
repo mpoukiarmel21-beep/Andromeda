@@ -1,17 +1,47 @@
 #import <Preferences/Preferences.h>
 #import <UIKit/UIKit.h>
+#import <dlfcn.h>
 
 @interface AndromedaAppListController : PSListController
 @end
 
 @implementation AndromedaAppListController
 
+static id LSWorkspace(void) {
+    static id ws = nil;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        dlopen("/System/Library/Frameworks/MobileCoreServices.framework/MobileCoreServices", RTLD_LAZY);
+        Class cls = NSClassFromString(@"LSApplicationWorkspace");
+        if (cls) ws = [cls valueForKey:@"defaultWorkspace"];
+    });
+    return ws;
+}
+
+static NSSet* InstalledBundleIds(void) {
+    id ws = LSWorkspace();
+    if (!ws) return [NSSet set];
+    NSMutableSet* set = [NSMutableSet set];
+    NSArray* apps = [ws performSelector:@selector(allInstalledApplications)];
+    for (id proxy in apps) {
+        if ([proxy respondsToSelector:@selector(bundleIdentifier)]) {
+            NSString* bid = [proxy performSelector:@selector(bundleIdentifier)];
+            if (bid.length) [set addObject:bid];
+        }
+    }
+    return set;
+}
+
+static void LaunchApp(NSString* bundleId) {
+    id ws = LSWorkspace();
+    if (!ws) return;
+    [ws performSelector:@selector(openApplicationWithBundleID:) withObject:bundleId];
+}
+
 - (NSArray*)specifiers {
     if(!_specifiers) {
         _specifiers = [NSMutableArray array];
-        
-        [_specifiers addObject:[self createGroupSpecifier:@"DATING_APPS" label:@"Dating Apps - Per-App Toggle"]];
-        
+
         NSArray* datingApps = @[
             @[@"Tinder", @"com.cardify.tinder"],
             @[@"Bumble", @"com.bumble.app"],
@@ -25,6 +55,7 @@
             @[@"OkCupid", @"com.okcupid.okcupid"],
             @[@"POF", @"com.pof.pof"],
             @[@"Grindr", @"com.grindrapp.ios"],
+            @[@"HER", @"com.weareher.HER"],
             @[@"Meetic", @"com.meetic.meetic"],
             @[@"AdopteUnMec", @"com.adopteunmec.ios"],
             @[@"Jaumo", @"com.jaumo.ios"],
@@ -36,13 +67,7 @@
             @[@"Once", @"com.once.once"],
             @[@"Clover", @"com.clover.ios"]
         ];
-        
-        for(NSArray* app in datingApps) {
-            [_specifiers addObject:[self createToggleSpecifier:app[0] bundleId:app[1]]];
-        }
-        
-        [_specifiers addObject:[self createGroupSpecifier:@"SOCIAL_APPS" label:@"Social Apps - Per-App Toggle"]];
-        
+
         NSArray* socialApps = @[
             @[@"Instagram", @"com.burbn.instagram"],
             @[@"Threads", @"com.instagram.barcelona"],
@@ -58,38 +83,73 @@
             @[@"BeReal", @"com.bereal.ios"],
             @[@"LinkedIn", @"com.linkedin.LinkedIn"]
         ];
-        
-        for(NSArray* app in socialApps) {
-            [_specifiers addObject:[self createToggleSpecifier:app[0] bundleId:app[1]]];
-        }
-        
-        [_specifiers addObject:[self createGroupSpecifier:@"LAUNCH" label:@"Patch & Launch Apps"]];
-        
+
+        NSSet* installed = InstalledBundleIds();
+
+        NSMutableArray* detected = [NSMutableArray array];
         for(NSArray* app in datingApps) {
-            PSSpecifier* specifier = [self createButtonSpecifier:app[0] action:@selector(patchApp:) associatedObject:app[1]];
-            [_specifiers addObject:specifier];
+            if([installed containsObject:app[1]]) {
+                [detected addObject:@{ @"name": app[0], @"bundleId": app[1] }];
+            }
         }
-        
         for(NSArray* app in socialApps) {
-            PSSpecifier* specifier = [self createButtonSpecifier:app[0] action:@selector(patchApp:) associatedObject:app[1]];
-            [_specifiers addObject:specifier];
+            if([installed containsObject:app[1]]) {
+                [detected addObject:@{ @"name": app[0], @"bundleId": app[1] }];
+            }
+        }
+
+        [_specifiers addObject:[self createGroupSpecifier:@"DETECTED" label:@"Detected Apps"]];
+        if(detected.count == 0) {
+            [_specifiers addObject:[self createNoteSpecifier:@"No supported apps detected on this device."]];
+        } else {
+            for(NSDictionary* app in detected) {
+                [_specifiers addObject:[self createToggleSpecifier:app[@"name"] bundleId:app[@"bundleId"] installed:YES]];
+            }
+        }
+
+        [_specifiers addObject:[self createGroupSpecifier:@"DATING_APPS" label:@"Dating Apps - All"]];
+        for(NSArray* app in datingApps) {
+            [_specifiers addObject:[self createToggleSpecifier:app[0] bundleId:app[1] installed:[installed containsObject:app[1]]]];
+        }
+
+        [_specifiers addObject:[self createGroupSpecifier:@"SOCIAL_APPS" label:@"Social Apps - All"]];
+        for(NSArray* app in socialApps) {
+            [_specifiers addObject:[self createToggleSpecifier:app[0] bundleId:app[1] installed:[installed containsObject:app[1]]]];
+        }
+
+        [_specifiers addObject:[self createGroupSpecifier:@"LAUNCH" label:@"Patch & Launch Detected Apps"]];
+        if(detected.count == 0) {
+            [_specifiers addObject:[self createNoteSpecifier:@"No installed apps to launch."]];
+        } else {
+            for(NSDictionary* app in detected) {
+                PSSpecifier* specifier = [self createButtonSpecifier:app[@"name"] action:@selector(patchApp:) associatedObject:app[@"bundleId"]];
+                [_specifiers addObject:specifier];
+            }
         }
     }
     return _specifiers;
 }
 
-- (PSSpecifier*)createToggleSpecifier:(NSString*)title bundleId:(NSString*)bundleId {
+- (PSSpecifier*)createToggleSpecifier:(NSString*)title bundleId:(NSString*)bundleId installed:(BOOL)installed {
     PSSpecifier* specifier = [PSSpecifier preferenceSpecifierNamed:title target:self set:nil get:nil detail:nil cell:PSSwitchCell edit:nil];
     [specifier setProperty:@"com.andromeda.bypass" forKey:@"defaults"];
     [specifier setProperty:[@"App_" stringByAppendingString:bundleId] forKey:@"key"];
     [specifier setProperty:@YES forKey:@"default"];
     [specifier setProperty:@"com.andromeda.bypass/settingsChanged" forKey:@"PostNotification"];
+    if(!installed) {
+        [specifier setProperty:@"Not installed" forKey:@"footerText"];
+    }
     return specifier;
 }
 
 - (PSSpecifier*)createGroupSpecifier:(NSString*)key label:(NSString*)label {
     PSSpecifier* specifier = [PSSpecifier preferenceSpecifierNamed:label target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
     [specifier setProperty:key forKey:@"id"];
+    return specifier;
+}
+
+- (PSSpecifier*)createNoteSpecifier:(NSString*)text {
+    PSSpecifier* specifier = [PSSpecifier preferenceSpecifierNamed:text target:self set:nil get:nil detail:nil cell:PSStaticTextCell edit:nil];
     return specifier;
 }
 
@@ -103,31 +163,18 @@
 - (void)patchApp:(PSSpecifier*)specifier {
     NSString* bundleId = [specifier propertyForKey:@"bundleId"];
     if(!bundleId) return;
-    
-    BOOL installed = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@://", bundleId]]];
-    
-    if(!installed) {
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"App Not Found"
-            message:[NSString stringWithFormat:@"%@ is not installed on this device.", [specifier name]]
-            preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-        [self presentViewController:alert animated:YES completion:nil];
-        return;
-    }
-    
+
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Patch & Launch"
         message:[NSString stringWithFormat:@"Launch %@ with Andromeda bypass patches active?", [specifier name]]
         preferredStyle:UIAlertControllerStyleAlert];
-    
-    [alert addAction:[UIAlertAction actionWithTitle:@"Patch & Launch" style:UIAlertActionStyleDestructive handler:^(UIAlertAction* action) {
-        NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://", bundleId]];
-        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-        
+
+    [alert addAction:[UIAlertAction actionWithTitle:@"Patch & Launch" style:UIAlertActionStyleDefault handler:^(UIAlertAction* action) {
+        LaunchApp(bundleId);
         NSLog(@"[Andromeda] Patched launch for %@", bundleId);
     }]];
-    
+
     [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    
+
     [self presentViewController:alert animated:YES completion:nil];
 }
 
