@@ -30,36 +30,47 @@ jobs:
           mkdir -p /tmp/theos/sdks
           ln -sf "$SDK_PATH" "/tmp/theos/sdks/iPhoneOS${SDK_VERSION}.sdk"
 
+      - name: Setup layout
+        run: |
+          mkdir -p layout/DEBIAN
+          printf 'Package: com.andromeda.bypass\nName: Andromeda\nVersion: 4.0.0\nArchitecture: iphoneos-arm\nDepends: firmware (>= 12.0), preferenceloader\nRecommends: mobilesubstrate\nSuggests: com.opa334.choicy\nDescription: Ultimate jailbreak detection bypass for dating apps and social media.\nMaintainer: AndromedaTeam\nAuthor: AndromedaTeam\nSection: System\n' > layout/DEBIAN/control
+          printf '#!/bin/sh\nset -e\nexit 0\n' > layout/DEBIAN/postinst
+          printf '#!/bin/sh\nset -e\nexit 0\n' > layout/DEBIAN/postrm
+          chmod 755 layout/DEBIAN/postinst layout/DEBIAN/postrm
+          mkdir -p layout/Library/MobileSubstrate/DynamicLibraries
+          mkdir -p layout/Library/PreferenceBundles
+          mkdir -p layout/Library/PreferenceLoader/Preferences
+          printf '{"entry":{"bundle":"AndromedaSettings","cell":"PSLinkCell","detail":"AndromedaRootListController","isController":1,"label":"Andromeda"}}\n' > layout/Library/PreferenceLoader/Preferences/Andromeda.plist
+
       - name: Build
         run: make messages=yes
 
+      - name: Install to layout
+        run: |
+          DYLIB=$(find .theos -name "Andromeda.dylib" -type f ! -path "*.dSYM*" | head -1)
+          BUNDLE=$(find .theos -name "AndromedaSettings.bundle" -type d ! -path "*.dSYM*" | head -1)
+          echo "DYLIB: $DYLIB"
+          echo "BUNDLE: $BUNDLE"
+          if [ -n "$DYLIB" ] && [ -n "$BUNDLE" ]; then
+            cp "$DYLIB" layout/Library/MobileSubstrate/DynamicLibraries/Andromeda.dylib
+            cp Andromeda.dylib/Andromeda.plist layout/Library/MobileSubstrate/DynamicLibraries/
+            cp -r "$BUNDLE" layout/Library/PreferenceBundles/
+            echo "Files copied to layout"
+            find layout -type f | head -20
+          else
+            echo "ERROR: Build files not found!"
+            find .theos -type f | head -20
+            exit 1
+          fi
+
       - name: Package .deb
         run: |
-          PKG="pack"
-          mkdir -p "$PKG/DEBIAN" "$PKG/Library/MobileSubstrate/DynamicLibraries" "$PKG/Library/PreferenceBundles" "$PKG/Library/PreferenceLoader/Preferences"
-
-          DYLIB=$(find .theos/obj/debug -name "Andromeda.dylib" -type f | head -1)
-          BUNDLE=$(find .theos/obj/debug -name "AndromedaSettings.bundle" -type d | head -1)
-          cp "$DYLIB" "$PKG/Library/MobileSubstrate/DynamicLibraries/"
-          cp Andromeda.dylib/Andromeda.plist "$PKG/Library/MobileSubstrate/DynamicLibraries/"
-          cp -r "$BUNDLE" "$PKG/Library/PreferenceBundles/"
-
-          printf '{"entry":{"bundle":"AndromedaSettings","cell":"PSLinkCell","detail":"AndromedaRootListController","isController":1,"label":"Andromeda"}}\n' > "$PKG/Library/PreferenceLoader/Preferences/Andromeda.plist"
-
-          printf 'Package: com.andromeda.bypass\nName: Andromeda\nVersion: 4.0.0\nArchitecture: iphoneos-arm\nDepends: firmware (>= 12.0), preferenceloader\nRecommends: mobilesubstrate\nSuggests: com.opa334.choicy\nDescription: Ultimate jailbreak detection bypass for dating apps and social media.\nMaintainer: AndromedaTeam\nAuthor: AndromedaTeam\nSection: System\n' > "$PKG/DEBIAN/control"
-
-          printf '#!/bin/sh\nset -e\nexit 0\n' > "$PKG/DEBIAN/postinst"
-          printf '#!/bin/sh\nset -e\nexit 0\n' > "$PKG/DEBIAN/postrm"
-          chmod 755 "$PKG/DEBIAN/postinst" "$PKG/DEBIAN/postrm"
-
-          echo "=== Package ===" && find "$PKG" -type f | head -20
-
-          cd "$PKG"
+          cd layout
           tar -czf ../data.tar.gz --owner=0 --group=0 Library
           cd DEBIAN && tar -czf ../../control.tar.gz * && cd ../..
           echo "2.0" > debian-binary
           ar rc "com.andromeda.bypass_4.0.0_iphoneos-arm.deb" debian-binary control.tar.gz data.tar.gz
-          ls -la *.deb
+          ls -la *.deb *.tar.gz
 
       - name: Upload
         uses: actions/upload-artifact@v4
