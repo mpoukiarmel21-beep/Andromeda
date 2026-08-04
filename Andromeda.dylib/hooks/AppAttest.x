@@ -1,4 +1,8 @@
 #import "hooks.h"
+#import <LocalAuthentication/LocalAuthentication.h>
+#import <DeviceCheck/DeviceCheck.h>
+
+@class DCAppAttestService;
 
 %hook DCAppAttestService
 
