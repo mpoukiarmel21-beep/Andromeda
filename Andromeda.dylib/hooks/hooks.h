@@ -115,7 +115,8 @@ static inline BOOL andromeda_isProtectedProcess(void) {
             return NO;
         }
 
-        if([[AndromedaCore sharedInstance] preferences][@"Debug_Mode"] && [[[[AndromedaCore sharedInstance] preferences][@"Debug_Mode"] isKindOfClass:[NSNumber class]]]) {
+        NSNumber* debugMode = [[AndromedaCore sharedInstance] preferences][@"Debug_Mode"];
+        if(debugMode && [debugMode isKindOfClass:[NSNumber class]] && [debugMode boolValue]) {
             return YES;
         }
         return [[AndromedaCore sharedInstance] isProtectedApp];
