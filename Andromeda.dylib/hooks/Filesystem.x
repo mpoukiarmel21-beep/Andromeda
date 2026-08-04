@@ -457,5 +457,9 @@ void andromeda_hook_Filesystem(void) {
 %end
 
 %ctor {
-    @try { %init; } @catch(NSException *e) {}
+    @try {
+        if(andromeda_isProtectedProcess()) {
+            %init;
+        }
+    } @catch(NSException *e) {}
 }

@@ -160,7 +160,11 @@ static intptr_t hooked__dyld_get_image_vmaddr_slide(uint32_t index) {
 %end
 
 %ctor {
-    @try { %init; } @catch(NSException *e) {}
+    @try {
+        if(andromeda_isProtectedProcess()) {
+            %init;
+        }
+    } @catch(NSException *e) {}
 }
 
 void andromeda_hook_Dyld(void) {

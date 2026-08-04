@@ -195,7 +195,11 @@
 %end
 
 %ctor {
-    @try { %init; } @catch(NSException *e) {}
+    @try {
+        if(andromeda_isProtectedProcess()) {
+            %init;
+        }
+    } @catch(NSException *e) {}
 }
 
 void andromeda_hook_DeviceCheck(void) {}

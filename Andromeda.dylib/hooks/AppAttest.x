@@ -50,7 +50,11 @@
 %end
 
 %ctor {
-    @try { %init; } @catch(NSException *e) {}
+    @try {
+        if(andromeda_isProtectedProcess()) {
+            %init;
+        }
+    } @catch(NSException *e) {}
 }
 
 static void* (*orig_SecTaskCopyValueForEntitlement)(void*, void*, void*, void*) = NULL;

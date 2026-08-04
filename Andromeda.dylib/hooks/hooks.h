@@ -87,6 +87,17 @@
 #define _spoofer                [DeviceFingerprintSpoofer sharedInstance]
 #define isCallerTweak()         [_andromeda isAddrExternal:__builtin_extract_return_addr(__builtin_return_address(0))]
 
+static inline BOOL andromeda_isProtectedProcess(void) {
+    @try {
+        NSString* bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+        if(!bundleIdentifier) return NO;
+        if([bundleIdentifier hasPrefix:@"com.apple"]) return NO;
+        return [[AndromedaCore sharedInstance] isProtectedApp];
+    } @catch(NSException *e) {
+        return NO;
+    }
+}
+
 extern void andromeda_hook_Filesystem(void);
 extern void andromeda_hook_Dyld(void);
 extern void andromeda_hook_AntiDebug(void);
