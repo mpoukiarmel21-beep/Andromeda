@@ -1,7 +1,8 @@
 include $(THEOS)/makefiles/common.mk
 
-ARCHS = arm64 arm64e
-TARGET = iphone:clang:latest:12.0
+THEOS_PACKAGE_SCHEME = rootless
+ARCHS = arm64
+TARGET = iphone:clang:latest:15.0
 
 BUNDLE_NAME = AndromedaSettings
 AndromedaSettings_FILES = RootListController.m

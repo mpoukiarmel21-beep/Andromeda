@@ -2,8 +2,9 @@ INSTALL_TARGET_PROCESSES = SpringBoard
 
 include $(THEOS)/makefiles/common.mk
 
-ARCHS = arm64 arm64e
-TARGET = iphone:clang:latest:12.0
+THEOS_PACKAGE_SCHEME = rootless
+ARCHS = arm64
+TARGET = iphone:clang:latest:15.0
 
 TWEAK_NAME = Andromeda
 
