@@ -516,6 +516,42 @@
     };
 }
 
++ (NSDictionary<NSString*,NSArray<NSString*>*>*)appSpecificDetectionClasses {
+    return @{
+        @"com.hily.app": @[
+            @"HLYSecurityManager", @"HLYDeviceIntegrity", @"HLYAppIntegrityCheck",
+            @"HLYRuntimeSecurity", @"HLYFingerprintManager", @"HLYTrustEvaluator"
+        ],
+        @"com.cardify.tinder": @[
+            @"TNDRSecurityManager", @"TNDRDeviceIntegrity", @"TNDRAppIntegrity",
+            @"TNDRUser", @"TNDRDeletionDetector", @"TNDRMetaManager"
+        ],
+        @"com.bumble.bumble": @[
+            @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
+            @"BMBLAccountManager"
+        ],
+        @"com.badoo.iphone": @[
+            @"BDODeviceInfo", @"BDOSecurity", @"BDOIntegrityCheck"
+        ],
+        @"com.fruitz.app": @[
+            @"FRZSecurityCheck", @"FRZIntegrityValidator"
+        ],
+        @"com.feels.frn": @[
+            @"FLSSecurityManager", @"FLSIntegrityCheck", @"FLSDeviceFingerprint"
+        ],
+        @"com.burbn.instagram": @[
+            @"IGSecurityManager", @"IGIntegrityCheck", @"IGAnalyticsSession",
+            @"IGDeviceChecker", @"FBDeviceInformation", @"FBAppIntegrity",
+            @"RCTDeviceInfo", @"IGDirectSecurity", @"IGUserSession",
+            @"IGRuntimeSecurity", @"IGDeviceFingerprint"
+        ],
+        @"com.instagram.barcelona": @[
+            @"THAppSecurityManager", @"THDeviceIntegrity", @"THSecurityCheck",
+            @"BHInstagramAppIntegrity", @"THRuntimeSecurity"
+        ]
+    };
+}
+
 + (NSArray<NSString*>*)suspiciousEnvVars {
     return @[
         @"DYLD_INSERT_LIBRARIES",
