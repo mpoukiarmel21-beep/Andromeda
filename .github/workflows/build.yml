@@ -27,7 +27,8 @@ jobs:
           SDK_VERSION=$(xcrun --sdk iphoneos --show-sdk-version)
           echo "Xcode SDK: $SDK_PATH (iOS $SDK_VERSION)"
           mkdir -p /tmp/theos/sdks
-          cp -a "$SDK_PATH" "/tmp/theos/sdks/iPhoneOS${SDK_VERSION}.sdk"
+          ln -sf "$SDK_PATH" "/tmp/theos/sdks/iPhoneOS${SDK_VERSION}.sdk"
+          ls -la /tmp/theos/sdks/
           echo "SDKVERSION=$SDK_VERSION" >> $GITHUB_ENV
 
       - name: Build All
