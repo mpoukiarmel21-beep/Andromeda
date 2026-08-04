@@ -1,5 +1,8 @@
 include $(THEOS)/makefiles/common.mk
 
+ARCHS = arm64 arm64e
+TARGET = iphone:clang:latest:12.0
+
 FRAMEWORK_NAME = Andromeda
 Andromeda_INSTALL_PATH = /Library/Frameworks
 

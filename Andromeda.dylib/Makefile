@@ -2,6 +2,9 @@ INSTALL_TARGET_PROCESSES = SpringBoard
 
 include $(THEOS)/makefiles/common.mk
 
+ARCHS = arm64 arm64e
+TARGET = iphone:clang:latest:12.0
+
 TWEAK_NAME = Andromeda
 
 Andromeda_FILES = $(wildcard hooks/*.x) dylib.x
