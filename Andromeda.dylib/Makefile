@@ -12,6 +12,7 @@ Andromeda_FRAMEWORKS = Foundation UIKit Security IOKit CoreTelephony SystemConfi
 Andromeda_EXTRA_FRAMEWORKS = Andromeda
 Andromeda_PRIVATE_FRAMEWORKS = MobileCoreServices MobileGestalt
 Andromeda_CFLAGS = -fobjc-arc -I.. -I../Andromeda.framework/Headers -Wno-unguarded-availability -Wno-deprecated-declarations
+Andromeda_GO_EASY_ON_ME = 1
 Andromeda_LDFLAGS = -rpath /Library/Frameworks -rpath /var/jb/Library/Frameworks -rpath /usr/lib -rpath /var/jb/usr/lib
 Andromeda_LDFLAGS += -F../
 
