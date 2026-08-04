@@ -21,6 +21,10 @@ jobs:
           git clone --recursive https://github.com/theos/theos.git /tmp/theos
           echo "THEOS=/tmp/theos" >> $GITHUB_ENV
 
+      - name: Install ldid
+        run: |
+          brew install ldid
+
       - name: Setup SDK
         run: |
           SDK_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
