@@ -36,7 +36,7 @@
     {
       cell = PSGroupCell;
       label = "Global Defaults";
-      footerText = "Each app is configured individually from the Andromeda home screen. Nothing is applied to an app until you pick a Protection Level for it.";
+      footerText = "Each app is configured individually from the Andromeda home screen. Nothing is applied to an app until you enable Protection for it.";
     },
     {
       cell = PSGroupCell;
@@ -107,7 +107,7 @@
     },
     {
       cell = PSStaticTextCell;
-      label = "Andromeda v4.2.1";
+      label = "Andromeda v4.2.2";
     },
     {
       cell = PSStaticTextCell;

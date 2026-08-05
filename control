@@ -4,9 +4,9 @@ Pre-Depends: dpkg
 Depends: firmware (>= 15.0), preferenceloader
 Recommends: mobilesubstrate, com.opa334.altlist
 Suggests: com.opa334.choicy
-Version: 4.2.1
+Version: 4.2.2
 Architecture: iphoneos-arm64
-Description: Rootless jailbreak detection bypass for dating apps and social media (Tinder, Bumble, Hinge, Instagram, WhatsApp and more). Pick a per-app Protection Level (Off/Simple/Standard/Maximum/Custom) from Settings. Targeted injection means only supported apps are affected.
+Description: Rootless jailbreak detection bypass for dating apps and social media (Tinder, Bumble, Hinge, Instagram, WhatsApp and more). List every app on your device, enable protection per app and pick the bypass tools you want for each one. Targeted dynamic injection means only the apps you enable are affected.
 Maintainer: AndromedaTeam
 Author: AndromedaTeam
 Section: System

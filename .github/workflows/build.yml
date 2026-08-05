@@ -43,9 +43,9 @@ jobs:
           Depends: firmware (>= 15.0), preferenceloader
           Recommends: mobilesubstrate
           Suggests: com.opa334.choicy
-          Version: 4.2.1
+          Version: 4.2.2
           Architecture: iphoneos-arm64
-          Description: Rootless jailbreak detection bypass for dating apps and social media (Tinder, Bumble, Hinge, Instagram, WhatsApp and more). Pick a per-app Protection Level (Off/Simple/Standard/Maximum/Custom) from Settings. Targeted injection means only supported apps are affected.
+          Description: Rootless jailbreak detection bypass for dating apps and social media (Tinder, Bumble, Hinge, Instagram, WhatsApp and more). List every app on your device, enable protection per app and pick the bypass tools you want for each one. Targeted dynamic injection means only the apps you enable are affected.
           Maintainer: AndromedaTeam
           Author: AndromedaTeam
           Section: Tweaks
@@ -58,6 +58,15 @@ jobs:
           echo "[Andromeda] Post-installation setup..."
           mkdir -p /var/mobile/Library/Caches/com.andromeda.bypass
           mkdir -p /var/mobile/Library/Preferences
+          FILTER_SRC=/var/jb/Library/MobileSubstrate/DynamicLibraries/Andromeda.plist
+          FILTER_DST=/var/mobile/Library/Preferences/com.andromeda.bypass.Filter.plist
+          if [ -f "$FILTER_SRC" ]; then
+              if [ ! -f "$FILTER_DST" ]; then
+                  cp "$FILTER_SRC" "$FILTER_DST"
+              fi
+              rm -f "$FILTER_SRC"
+              ln -s "$FILTER_DST" "$FILTER_SRC"
+          fi
           if [ -f /usr/bin/sbreload ]; then
               echo "[Andromeda] Refreshing SpringBoard..."
               /usr/bin/sbreload
@@ -70,6 +79,8 @@ jobs:
           set -e
           echo "[Andromeda] Cleaning up..."
           rm -rf /var/mobile/Library/Caches/com.andromeda.bypass
+          rm -f /var/mobile/Library/Preferences/com.andromeda.bypass.Filter.plist
+          rm -f /var/jb/Library/MobileSubstrate/DynamicLibraries/Andromeda.plist
           exit 0
           EOF
           
@@ -88,7 +99,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v4.2.1
+          tag_name: v4.2.2
           files: packages/com.andromeda.bypass_*.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
