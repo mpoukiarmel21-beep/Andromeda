@@ -582,7 +582,8 @@
             @"com.burbn.instagram"
         ],
         @"threads": @[
-            @"com.instagram.barcelona"
+            @"com.instagram.barcelona",
+            @"com.burbn.barcelona"
         ],
         @"facebook": @[
             @"com.facebook.Facebook"
@@ -658,6 +659,11 @@
             @"FBBuildEnvironment", @"IGSecurityController"
         ],
         @"com.instagram.barcelona": @[
+            @"THAppSecurityManager", @"THDeviceIntegrity", @"THSecurityCheck",
+            @"BHInstagramAppIntegrity", @"THRuntimeSecurity", @"THDeviceFingerprint",
+            @"THIntegrityValidator"
+        ],
+        @"com.burbn.barcelona": @[
             @"THAppSecurityManager", @"THDeviceIntegrity", @"THSecurityCheck",
             @"BHInstagramAppIntegrity", @"THRuntimeSecurity", @"THDeviceFingerprint",
             @"THIntegrityValidator"
@@ -888,6 +894,18 @@
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
                 @"networkinterface", @"procfiles", @"processhiding",
                 @"fridabypass"
+            ]
+        },
+        @"com.burbn.barcelona": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"processhiding",
+                @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.snapchat.Snapchat": @{

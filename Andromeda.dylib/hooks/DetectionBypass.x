@@ -242,6 +242,75 @@ static BOOL hooked_UI_canOpenURL(id self, SEL _cmd, NSURL* url) {
     return orig_UI_canOpenURL(self, _cmd, url);
 }
 
+// VECTOR 3b: LSApplicationWorkspace. Meta apps (Instagram, Threads, Facebook...)
+// enumerate installed apps and flag devices that have Cydia/Sileo/Zebra/Filza/etc.
+// installed. Hide those proxies from the enumeration.
+static NSArray* andromeda_jailbreakAppBundleIds(void) {
+    return @[
+        @"com.saurik.Cydia", @"org.coolstar.sileo", @"xyz.willy.zebra", @"com.tigisoftware.Filza",
+        @"com.opa334.CTNewTerm", @"ws.hbang.Terminal", @"com.innoying.filza", @"com.saurik.MobileCydia",
+        @"com.cydia", @"org.coolstar.cctoggle", @"com.greg0109.ccsupport", @"com.spark.snowboard",
+        @"com.axel.azule", @"org.xdity.terminal", @"com.opa334.sileo", @"com.saurik.ssh",
+        @"com.parrotgeek.ssh", @"com.tigisoftware.FilzaExplorer", @"com.wizages.iPAStripper",
+        @"com.hackyouriphone.iAPCrackerPro", @"com.lauren.aerial", @"com.waylybaye.BetterCycript",
+        @"net.angelxwind.CycPlus", @"com.ps.xenacore", @"com.ichitaso.zebra"
+    ];
+}
+
+static NSArray* (*orig_LSAW_allInstalledApplications)(id, SEL) = NULL;
+static NSArray* hooked_LSAW_allInstalledApplications(id self, SEL _cmd) {
+    NSArray* apps = orig_LSAW_allInstalledApplications(self, _cmd);
+    if(!apps || isCallerTweak()) return apps;
+    NSArray* hidden = andromeda_jailbreakAppBundleIds();
+    NSMutableArray* filtered = [NSMutableArray arrayWithCapacity:apps.count];
+    for(id proxy in apps) {
+        NSString* bid = nil;
+        if(proxy && [proxy respondsToSelector:@selector(bundleIdentifier)]) {
+            bid = [proxy bundleIdentifier];
+        }
+        if(bid && [hidden containsObject:bid]) continue;
+        [filtered addObject:proxy];
+    }
+    return filtered;
+}
+
+static id (*orig_LSAW_applicationProxyForIdentifier)(id, SEL, NSString*) = NULL;
+static id hooked_LSAW_applicationProxyForIdentifier(id self, SEL _cmd, NSString* identifier) {
+    if(!isCallerTweak() && identifier && [andromeda_jailbreakAppBundleIds() containsObject:identifier]) {
+        return nil;
+    }
+    return orig_LSAW_applicationProxyForIdentifier(self, _cmd, identifier);
+}
+
+static void installLSApplicationWorkspaceHooks(void) {
+    Class workspace = objc_getClass("LSApplicationWorkspace");
+    if(workspace) {
+        SEL sel = @selector(allInstalledApplications);
+        Method m = class_getInstanceMethod(workspace, sel);
+        if(m) {
+            orig_LSAW_allInstalledApplications = (NSArray*(*)(id,SEL))method_getImplementation(m);
+            method_setImplementation(m, (IMP)hooked_LSAW_allInstalledApplications);
+            NSLog(@"[Andromeda] LSApplicationWorkspace allInstalledApplications hooked");
+        }
+        sel = @selector(applicationProxyForIdentifier:);
+        m = class_getInstanceMethod(workspace, sel);
+        if(m) {
+            orig_LSAW_applicationProxyForIdentifier = (id(*)(id,SEL,NSString*))method_getImplementation(m);
+            method_setImplementation(m, (IMP)hooked_LSAW_applicationProxyForIdentifier);
+            NSLog(@"[Andromeda] LSApplicationWorkspace applicationProxyForIdentifier hooked");
+        }
+        return;
+    }
+    // LSApplicationWorkspace (MobileCoreServices) may not be loaded yet at ctor time.
+    static int attempts = 0;
+    if(attempts < 5) {
+        attempts++;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            installLSApplicationWorkspaceHooks();
+        });
+    }
+}
+
 // ============================================================================
 // VECTOR 6: dlopen/dlsym hooks
 // ============================================================================
@@ -467,6 +536,9 @@ void andromeda_hook_DetectionBypass(void) {
 
     // Vector 3: canOpenURL (ObjC)
     installUIApplicationHooks();
+
+    // Vector 3b: LSApplicationWorkspace (installed jailbreak apps) (ObjC)
+    installLSApplicationWorkspaceHooks();
 
     // Vector 4: fork/vfork (C)
     MSHookFunction((void*)fork, (void*)hooked_fork, (void**)&orig_fork);

@@ -78,7 +78,7 @@ static NSSet* AndromedaDatingBundleIds(void) {
 
 static NSSet* AndromedaSocialBundleIds(void) {
     return [NSSet setWithObjects:
-        @"com.burbn.instagram", @"com.instagram.barcelona", @"com.facebook.Facebook",
+        @"com.burbn.instagram", @"com.instagram.barcelona", @"com.burbn.barcelona", @"com.facebook.Facebook",
         @"com.facebook.Messenger", @"com.snapchat.Snapchat", @"com.zhiliaoapp.musically",
         @"com.atebits.Tweetie2", @"com.hammerandchisel.discord", @"com.reddit.Reddit",
         @"net.whatsapp.WhatsApp", @"ph.telegra.Telegraph", @"org.whispersystems.signal",

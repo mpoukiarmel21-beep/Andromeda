@@ -257,6 +257,24 @@ static inline BOOL andromeda_isProtectedProcess(void) {
     }
 }
 
+// True when the current app's per-app config turns on any bypass tool
+// (core/advanced tool, app hooks, or LittleMac/CodingJesus).
+static inline BOOL andromeda_anyPerAppBypassEnabled(NSString* bid) {
+    @try {
+        NSDictionary* perApp = andromeda_prefs()[@"PerApp"];
+        if(![perApp isKindOfClass:[NSDictionary class]]) return NO;
+        NSDictionary* cfg = perApp[bid];
+        if(![cfg isKindOfClass:[NSDictionary class]]) return NO;
+        for(NSString* key in cfg) {
+            if(![key isEqualToString:@"enabled"] && ([key hasPrefix:@"Hook_"] || [key hasPrefix:@"Tweak_"])) {
+                id v = cfg[key];
+                if([v isKindOfClass:[NSNumber class]] && [v boolValue]) return YES;
+            }
+        }
+    } @catch(NSException *e) {}
+    return NO;
+}
+
 // Runtime gate for the per-app detection-class hooks (adapted LittleMac).
 // Lets already-installed %hook methods pass through when the app's bypass is
 // toggled off, so disabling takes effect immediately without a respring.
@@ -269,6 +287,7 @@ static inline BOOL andromeda_appBypassActive(void) {
         if(cfg) {
             id enabled = cfg[@"enabled"];
             if(enabled && [enabled isKindOfClass:[NSNumber class]] && ![enabled boolValue]) return NO;
+            if(andromeda_anyPerAppBypassEnabled(bid)) return YES;
         }
 
         return andromeda_hookEnabledForKey(@"Hook_DatingApps")

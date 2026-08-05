@@ -589,15 +589,15 @@ void andromeda_hook_SocialApps(void) {
     if(andromeda_socialInitDone) return;
 
     // Adapted LittleMac for social apps = hooking the app's own detection classes.
-    // Enabled by the built-in Hook_SocialApps switch or the per-app LittleMac switch.
-    // CodingJesus = device fingerprint spoofing (applied by reinjectNow via the spoof hooks).
-    BOOL classHooks = andromeda_hookEnabledForKey(@"Hook_SocialApps") || andromeda_appTweakEnabled(bid, @"Tweak_LittleMac");
+    // Active whenever this app is protected and any bypass tool is on (social
+    // app hooks, core/advanced tools, or LittleMac/CodingJesus).
+    BOOL classHooks = andromeda_appBypassActive();
 
     if(classHooks) {
         if([bid isEqualToString:@"com.burbn.instagram"]) {
             %init(andromeda_instagram);
         }
-        else if([bid isEqualToString:@"com.instagram.barcelona"]) {
+        else if([bid isEqualToString:@"com.burbn.barcelona"] || [bid isEqualToString:@"com.instagram.barcelona"]) {
             %init(andromeda_threads);
         }
         else if([bid isEqualToString:@"com.facebook.Facebook"]) {

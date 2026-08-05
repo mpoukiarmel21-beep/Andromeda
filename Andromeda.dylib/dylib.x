@@ -129,14 +129,15 @@ static void andromeda_applyAppHooks(void) {
     BOOL socialSwitch = andromeda_hookEnabled(@"Hook_SocialApps");
     BOOL littleMac = andromeda_appTweakEnabled(bundleIdentifier, @"Tweak_LittleMac");
     BOOL codingJesus = andromeda_appTweakEnabled(bundleIdentifier, @"Tweak_CodingJesus");
+    BOOL bypassActive = andromeda_appBypassActive();
 
-    NSLog(@"[Andromeda] applyAppHooks bid=%@ isDating=%d isSocial=%d hookDating=%d hookSocial=%d littleMac=%d codingJesus=%d",
-        bundleIdentifier, isDating, isSocial, datingSwitch, socialSwitch, littleMac, codingJesus);
+    NSLog(@"[Andromeda] applyAppHooks bid=%@ isDating=%d isSocial=%d hookDating=%d hookSocial=%d littleMac=%d codingJesus=%d bypassActive=%d",
+        bundleIdentifier, isDating, isSocial, datingSwitch, socialSwitch, littleMac, codingJesus, bypassActive);
 
-    if(isDating && (datingSwitch || littleMac || codingJesus)) {
+    if(isDating && bypassActive) {
         @try { andromeda_hook_DatingApps(); } @catch(NSException *e) { NSLog(@"[Andromeda] DatingApps err: %@", e); }
     }
-    if(isSocial && (socialSwitch || littleMac || codingJesus)) {
+    if(isSocial && bypassActive) {
         @try { andromeda_hook_SocialApps(); } @catch(NSException *e) { NSLog(@"[Andromeda] SocialApps err: %@", e); }
     }
 
