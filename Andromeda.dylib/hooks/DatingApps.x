@@ -243,6 +243,17 @@
 }
 %end
 
+%hook flutter_jailbreak_detection
++ (BOOL)isJailBroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isDebugged {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
 %end
 
 %group andromeda_hily
@@ -976,9 +987,6 @@
 %group andromeda_lex
 %end
 
-%group andromeda_bumble_bff
-%end
-
 %group andromeda_once
 %end
 
@@ -1111,7 +1119,7 @@ void andromeda_hook_DatingApps(void) {
             %init(andromeda_lex);
         }
         else if([bid isEqualToString:@"com.bumble.bff"]) {
-            %init(andromeda_bumble_bff);
+            %init(andromeda_bumble);
         }
         else if([bid isEqualToString:@"com.once.once"]) {
             %init(andromeda_once);

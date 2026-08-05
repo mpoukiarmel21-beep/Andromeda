@@ -640,6 +640,10 @@
             @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
             @"BMBLAccountManager", @"IOSSecuritySuite"
         ],
+        @"com.bumble.bff": @[
+            @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
+            @"BMBLAccountManager", @"IOSSecuritySuite"
+        ],
         @"com.badoo.badoo": @[
             @"BDODeviceInfo", @"BDOSecurity", @"BDOIntegrityCheck",
             @"IOSSecuritySuite"
@@ -834,6 +838,17 @@
             ]
         },
         @"com.bumble.app": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"mobilegestalt",
+                @"processhiding", @"fridabypass"
+            ]
+        },
+        @"com.bumble.bff": @{
             @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
