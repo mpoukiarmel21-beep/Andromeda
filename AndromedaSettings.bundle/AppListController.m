@@ -40,7 +40,7 @@ static NSSet* SupportedBundleIds(void) {
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         NSMutableSet* bids = [NSMutableSet set];
-        NSDictionary* filter = [NSDictionary dictionaryWithContentsOfFile:[SUBSTRATE_PATH stringByAppendingString:@"Andromeda.plist"]];
+        NSDictionary* filter = [NSDictionary dictionaryWithContentsOfFile:[@(SUBSTRATE_PATH) stringByAppendingString:@"Andromeda.plist"]];
         NSDictionary* filt = filter[@"Filter"];
         NSArray* bundles = filt[@"Bundles"];
         if([bundles isKindOfClass:[NSArray class]]) {
