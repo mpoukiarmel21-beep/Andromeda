@@ -12,6 +12,31 @@ static BOOL andromeda_hookEnabled(NSString* key) {
     return [val boolValue];
 }
 
+// Launch diagnostics: the app writes what it saw at load time to a file the
+// Settings bundle can read back, so a non-technical user can verify the tweak
+// loaded and which branch the ctor took, without needing console logs.
+static void andromeda_writeDiagnostics(NSDictionary* info) {
+    @try {
+        NSFileManager* fm = [NSFileManager defaultManager];
+        [fm createDirectoryAtPath:@ANDROMEDA_CACHE withIntermediateDirectories:YES attributes:nil error:nil];
+        NSString* path = [@ANDROMEDA_CACHE stringByAppendingPathComponent:@"launch-diag.plist"];
+        [info writeToFile:path atomically:YES];
+        NSLog(@"[Andromeda] diag: %@", info);
+    } @catch(NSException *e) {
+        NSLog(@"[Andromeda] diag write error: %@", e);
+    }
+}
+
+static void andromeda_updateDiagnostics(void (^update)(NSMutableDictionary* diag)) {
+    @try {
+        NSString* path = [@ANDROMEDA_CACHE stringByAppendingPathComponent:@"launch-diag.plist"];
+        NSMutableDictionary* diag = [NSMutableDictionary dictionaryWithContentsOfFile:path];
+        if(!diag) diag = [NSMutableDictionary dictionary];
+        if(update) update(diag);
+        andromeda_writeDiagnostics(diag);
+    } @catch(NSException *e) {}
+}
+
 static NSMutableSet* g_installedHooks = nil;
 
 static BOOL andromeda_spoofEnabled(void) {
@@ -101,10 +126,18 @@ static void andromeda_applyAppHooks(void) {
     BOOL isSocial = [[AndromedaCore sharedInstance] isSocialApp];
     NSArray* tweakKeys = @[@"Tweak_LittleMac", @"Tweak_CodingJesus"];
 
-    if(isDating && (andromeda_hookEnabled(@"Hook_DatingApps") || andromeda_appTweakEnabledAny(bundleIdentifier, tweakKeys))) {
+    BOOL datingSwitch = andromeda_hookEnabled(@"Hook_DatingApps");
+    BOOL socialSwitch = andromeda_hookEnabled(@"Hook_SocialApps");
+    BOOL littleMac = andromeda_appTweakEnabled(bundleIdentifier, @"Tweak_LittleMac");
+    BOOL codingJesus = andromeda_appTweakEnabled(bundleIdentifier, @"Tweak_CodingJesus");
+
+    NSLog(@"[Andromeda] applyAppHooks bid=%@ isDating=%d isSocial=%d hookDating=%d hookSocial=%d littleMac=%d codingJesus=%d",
+        bundleIdentifier, isDating, isSocial, datingSwitch, socialSwitch, littleMac, codingJesus);
+
+    if(isDating && (datingSwitch || littleMac || codingJesus)) {
         @try { andromeda_hook_DatingApps(); } @catch(NSException *e) { NSLog(@"[Andromeda] DatingApps err: %@", e); }
     }
-    if(isSocial && (andromeda_hookEnabled(@"Hook_SocialApps") || andromeda_appTweakEnabledAny(bundleIdentifier, tweakKeys))) {
+    if(isSocial && (socialSwitch || littleMac || codingJesus)) {
         @try { andromeda_hook_SocialApps(); } @catch(NSException *e) { NSLog(@"[Andromeda] SocialApps err: %@", e); }
     }
 
@@ -129,6 +162,11 @@ static void andromeda_reinjectNow(void) {
 
         NSString* bid = [[NSBundle mainBundle] bundleIdentifier];
         NSLog(@"[Andromeda] Manual re-injection applied for %@", bid ?: @"unknown");
+
+        andromeda_updateDiagnostics(^(NSMutableDictionary* diag) {
+            diag[@"lastReinject"] = [[NSDate date] description];
+            diag[@"installedHooks"] = g_installedHooks ? [g_installedHooks allObjects] : @[];
+        });
     } @catch(NSException *e) {
         NSLog(@"[Andromeda] re-inject error: %@", e);
     }
@@ -148,18 +186,32 @@ static void andromeda_settingsChanged(CFNotificationCenterRef center, void* obse
         CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, &andromeda_settingsChanged, CFSTR("com.andromeda.bypass/settingsChanged"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 
         NSString* bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-        if(!bundleIdentifier) return;
+        NSString* executablePath = [[NSBundle mainBundle] executablePath];
+
+        NSMutableDictionary* diag = [NSMutableDictionary dictionary];
+        diag[@"ctorRan"] = @YES;
+        diag[@"app"] = bundleIdentifier ?: @"(nil)";
+        diag[@"executablePath"] = executablePath ?: @"(nil)";
+        diag[@"timestamp"] = [[NSDate date] description];
+        diag[@"prefsFileExists"] = @([[NSFileManager defaultManager] fileExistsAtPath:@ANDROMEDA_PREFS]);
+        diag[@"prefsRead"] = @([[AndromedaCore sharedInstance] rawPreferences] != nil);
+
+        if(!bundleIdentifier || !executablePath) {
+            diag[@"skip"] = @"bundleIdentifier or executablePath is nil";
+            andromeda_writeDiagnostics(diag);
+            return;
+        }
 
         if([bundleIdentifier hasPrefix:@"com.apple"]
         || [bundleIdentifier hasPrefix:@"com.andromeda"]
         || [bundleIdentifier hasPrefix:@"org.coolstar"]
         || [bundleIdentifier hasPrefix:@"me.jjolano"]
         || [bundleIdentifier hasPrefix:@"com.saurik"]) {
+            diag[@"skip"] = @"system bundle id";
+            andromeda_writeDiagnostics(diag);
             return;
         }
 
-        NSString* executablePath = [[NSBundle mainBundle] executablePath];
-        if(!executablePath) return;
         if([executablePath hasPrefix:@"/Applications"]
         || [executablePath hasPrefix:@"/System"]
         || [executablePath hasPrefix:@"/private/preboot"]
@@ -167,16 +219,28 @@ static void andromeda_settingsChanged(CFNotificationCenterRef center, void* obse
         || [executablePath hasPrefix:@"/usr/bin"]
         || [executablePath hasPrefix:@"/usr/sbin"]
         || [executablePath hasPrefix:@"/var/jb"]) {
+            diag[@"skip"] = @"system executable path";
+            andromeda_writeDiagnostics(diag);
             return;
         }
 
+        NSDictionary* rawPrefs = [[AndromedaCore sharedInstance] rawPreferences];
+        NSDictionary* perApp = rawPrefs[@"PerApp"];
+        diag[@"perAppConfiguredCount"] = @([perApp isKindOfClass:[NSDictionary class]] ? perApp.count : 0);
+        diag[@"perAppConfiguredKeys"] = [perApp isKindOfClass:[NSDictionary class]] ? [perApp allKeys] : @[];
+
         NSNumber* globalEnabled = andromeda_prefs()[@"Global_Enabled"];
         if(globalEnabled && ![globalEnabled boolValue]) {
+            diag[@"skip"] = @"Global_Enabled is NO";
+            andromeda_writeDiagnostics(diag);
             NSLog(@"[Andromeda] Skipping %@: Andromeda disabled in Settings (Global_Enabled=NO).", bundleIdentifier);
             return;
         }
 
         NSDictionary* perAppCfg = [[AndromedaCore sharedInstance] perAppConfigurationForBundleId:bundleIdentifier];
+        diag[@"perAppCfgFound"] = @(perAppCfg != nil);
+        diag[@"perAppEnabled"] = perAppCfg ? (perAppCfg[@"enabled"] ?: @"(missing)") : @"(no config)";
+        diag[@"perAppCfg"] = perAppCfg ?: @{};
 
         BOOL applyToAll = [andromeda_prefs()[@"Global_ApplyToAll"] boolValue];
         BOOL debugMode = [andromeda_prefs()[@"Debug_Mode"] boolValue];
@@ -196,7 +260,13 @@ static void andromeda_settingsChanged(CFNotificationCenterRef center, void* obse
             }
         }
 
+        diag[@"isProtected"] = @(isProtected);
+        diag[@"debugMode"] = @(debugMode);
+        diag[@"applyToAll"] = @(applyToAll);
+
         if(!isProtected && !debugMode && !applyToAll) {
+            diag[@"skip"] = @"no per-app config, debug, or apply-to-all";
+            andromeda_writeDiagnostics(diag);
             NSLog(@"[Andromeda] Skipping %@: no per-app config and not in supported app list. Configure it in Settings, or enable Debug Mode / Apply to All.", bundleIdentifier);
             return;
         }
@@ -206,6 +276,10 @@ static void andromeda_settingsChanged(CFNotificationCenterRef center, void* obse
         }
 
         andromeda_reinjectNow();
+
+        diag[@"installedHooks"] = g_installedHooks ? [g_installedHooks allObjects] : @[];
+        diag[@"skip"] = @"(none)";
+        andromeda_writeDiagnostics(diag);
 
         NSLog(@"[Andromeda] Hooks initialized for %@ (protected=%d debug=%d)", bundleIdentifier, isProtected, debugMode);
     } @catch(NSException *e) {

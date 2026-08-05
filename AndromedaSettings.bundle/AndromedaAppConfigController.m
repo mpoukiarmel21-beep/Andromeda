@@ -205,6 +205,9 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
         [arr addObject:[self menuButtonForKey:@"Detection_Mode" title:@"Detection Response Mode" action:@selector(pickDetectionMode)]];
         [arr addObject:[self menuButtonForKey:@"Log_Level" title:@"Log Level" action:@selector(pickLogLevel)]];
 
+        [arr addObject:[self groupSpecifier:@"DIAGNOSTICS" label:@"Diagnostics" footer:@"Open the target app once, then come back here and tap the button. It shows what Andromeda saw when the app started."]];
+        [arr addObject:[self buttonSpecifier:@"View Launch Diagnostics" action:@selector(showLaunchDiagnostics)]];
+
         [arr addObject:[self groupSpecifier:@"SPOOF" label:@"Device Fingerprint Spoofing" footer:@"Leave a field empty to randomize it on every launch."]];
         for(NSArray* field in AndromedaSpoofFields()) {
             [arr addObject:[self textFieldForKey:field[1] title:field[0] placeholder:field[2]]];
@@ -321,6 +324,42 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
         alert.popoverPresentationController.permittedArrowDirections = 0;
     }
 
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)showLaunchDiagnostics {
+    NSString* path = [@ANDROMEDA_CACHE stringByAppendingPathComponent:@"launch-diag.plist"];
+    NSDictionary* diag = [NSDictionary dictionaryWithContentsOfFile:path];
+    NSMutableString* msg = [NSMutableString string];
+
+    if(!diag) {
+        [msg appendString:@"No diagnostics found.\n\nExpected file:\n"];
+        [msg appendString:path];
+        [msg appendString:@"\n\nIf you just opened the target app and still see this, the Andromeda dylib is NOT being injected into that app."];
+    } else {
+        [msg appendFormat:@"App: %@\n", diag[@"app"] ?: @"?"];
+        [msg appendFormat:@"ctor ran: %@\n", diag[@"ctorRan"]];
+        [msg appendFormat:@"prefs file exists: %@\n", diag[@"prefsFileExists"]];
+        [msg appendFormat:@"prefs read: %@\n", diag[@"prefsRead"]];
+        [msg appendFormat:@"apps configured: %@\n", diag[@"perAppConfiguredCount"]];
+        [msg appendFormat:@"this app has config: %@\n", diag[@"perAppCfgFound"]];
+        [msg appendFormat:@"per-app enabled: %@\n", diag[@"perAppEnabled"]];
+        NSDictionary* cfg = diag[@"perAppCfg"];
+        if([cfg isKindOfClass:[NSDictionary class]] && cfg.count) {
+            [msg appendString:@"per-app config:\n"];
+            for(NSString* k in @[@"enabled", @"Hook_DatingApps", @"Hook_SocialApps", @"Tweak_LittleMac", @"Tweak_CodingJesus", @"Hook_Filesystem", @"Hook_Dyld", @"Hook_AntiDebug", @"Hook_DeviceCheck", @"Hook_HardwareFingerprint", @"Hook_IOKit", @"Hook_MobileGestalt"]) {
+                if(cfg[k]) [msg appendFormat:@"  %@ = %@\n", k, cfg[k]];
+            }
+        }
+        [msg appendFormat:@"protected: %@\n", diag[@"isProtected"]];
+        [msg appendFormat:@"debug mode: %@\n", diag[@"debugMode"]];
+        [msg appendFormat:@"apply to all: %@\n", diag[@"applyToAll"]];
+        [msg appendFormat:@"skip reason: %@\n", diag[@"skip"]];
+        [msg appendFormat:@"installed hooks: %@\n", diag[@"installedHooks"]];
+    }
+
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Launch Diagnostics" message:msg preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
