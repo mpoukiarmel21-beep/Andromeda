@@ -16,3 +16,7 @@ Andromeda_LDFLAGS = -rpath /Library/Frameworks -rpath /var/jb/Library/Frameworks
 Andromeda_FILTER_BUNDLES = com.apple.springboard com.cardify.tinder co.hinge.app com.bumble.app com.bumble.bff co.hily.app com.badoo.badoo com.ftw-and-co.fruitz com.feels.Feels com.happn.happn com.match.Match com.pof.pof com.eharmony.eharmony com.okcupid.okcupid com.zoosk.zoosk com.lex.lex com.grindrapp.ios com.jackd.ios com.scruff.scruff com.weareher.HER com.burbn.instagram com.instagram.barcelona com.facebook.Facebook com.facebook.Messenger net.whatsapp.WhatsApp com.snapchat.Snapchat com.zhiliaoapp.musically com.atebits.Tweetie2 com.bereal.ios ph.telegra.Telegraph org.whispersystems.signal com.hammerandchisel.discord com.reddit.Reddit com.linkedin.LinkedIn com.meetic.meetic com.adopteunmec.ios com.jaumo.ios com.tantan.ios com.lovoo.ios com.hud.ios com.turnup.app com.boo.app com.iris.dating com.once.once com.innercircle.ios com.theleague.ios com.clover.ios
 
 include $(THEOS_MAKE_PATH)/tweak.mk
+
+internal-package::
+	$(ECHO_NOTHING)mkdir -p $(THEOS_STAGING_DIR)/Library/Andromeda/Tweaks$(ECHO_END)
+	$(ECHO_NOTHING)install -m 755 ExtraTweaks/TinderAdvancedSpoofer.dylib ExtraTweaks/bhook.dylib ExtraTweaks/jbbypass.dylib $(THEOS_STAGING_DIR)/Library/Andromeda/Tweaks/$(ECHO_END)

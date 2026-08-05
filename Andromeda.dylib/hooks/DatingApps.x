@@ -472,12 +472,33 @@
 %group andromeda_tantan
 %end
 
+static void andromeda_loadTinderTweak(NSString* name) {
+    if(!name.length) return;
+    NSString* path = [NSString stringWithFormat:@"/var/jb/Library/Andromeda/Tweaks/%@.dylib", name];
+    if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        void* handle = dlopen(path.UTF8String, RTLD_NOW);
+        DLog(@"[Andromeda] External Tinder tweak '%@' %@ (handle=%p)", name, handle ? @"loaded" : @"failed", handle);
+    } else {
+        DLog(@"[Andromeda] External Tinder tweak '%@' not found at %@", name, path);
+    }
+}
+
 void andromeda_hook_DatingApps(void) {
     NSString* bid = [[AndromedaCore sharedInstance] bundleIdentifier];
     DLog(@"Setting up dating app hooks for: %@", bid);
 
     if([bid isEqualToString:@"com.cardify.tinder"]) {
-        %init(andromeda_tinder);
+        NSString* tinderMode = andromeda_prefs()[@"Tinder_Bypass_Mode"];
+        if([tinderMode isEqualToString:@"codingjesus"]) {
+            DLog(@"[Andromeda] Tinder: using Tinder Advanced Spoofer (codingjesus)");
+            andromeda_loadTinderTweak(@"TinderAdvancedSpoofer");
+        } else if([tinderMode isEqualToString:@"littlemac"]) {
+            DLog(@"[Andromeda] Tinder: using LittleMac Tinder Bypass");
+            andromeda_loadTinderTweak(@"bhook");
+            andromeda_loadTinderTweak(@"jbbypass");
+        } else {
+            %init(andromeda_tinder);
+        }
     }
     else if([bid isEqualToString:@"com.bumble.app"]) {
         %init(andromeda_bumble);

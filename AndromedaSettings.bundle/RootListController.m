@@ -26,6 +26,8 @@ static void AndromedaSavePrefs(NSMutableDictionary* prefs);
                 [merged addObjectsFromArray:[self identifierSpoofSpecifiers]];
             } else if([groupName isEqualToString:@"Logs & Debug"]) {
                 [merged addObject:[self logLevelSpecifier]];
+            } else if([groupName isEqualToString:@"Tinder Spoofer"]) {
+                [merged addObjectsFromArray:[self tinderBypassSpecifiers]];
             }
         }
         _specifiers = merged;
@@ -102,6 +104,26 @@ static void AndromedaSavePrefs(NSMutableDictionary* prefs);
     [self showValuePickerForKey:@"Log_Level" title:@"Log Level"
         options:@{ @"None": @"none", @"Errors": @"errors", @"Info": @"info", @"Verbose": @"verbose" }
         defaultValue:@"info"];
+}
+
+- (NSArray*)tinderBypassSpecifiers {
+    NSString* current = AndromedaLoadPrefs()[@"Tinder_Bypass_Mode"];
+    NSString* title = @"Andromeda (default)";
+    if([current isEqualToString:@"codingjesus"]) title = @"Tinder Advanced Spoofer (codingjesus)";
+    else if([current isEqualToString:@"littlemac"]) title = @"LittleMac Tinder Bypass";
+    PSSpecifier* spec = [PSSpecifier preferenceSpecifierNamed:title target:self
+        set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
+    [spec setProperty:@"Tinder_Bypass_Mode" forKey:@"key"];
+    [spec setButtonAction:@selector(pickTinderBypass)];
+    return @[spec];
+}
+
+- (void)pickTinderBypass {
+    [self showValuePickerForKey:@"Tinder_Bypass_Mode" title:@"Tinder Bypass Method"
+        options:@{ @"Andromeda (default)": @"default",
+                   @"Tinder Advanced Spoofer (codingjesus)": @"codingjesus",
+                   @"LittleMac Tinder Bypass": @"littlemac" }
+        defaultValue:@"default"];
 }
 
 - (void)showValuePickerForKey:(NSString*)key title:(NSString*)title

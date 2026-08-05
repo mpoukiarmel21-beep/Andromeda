@@ -70,6 +70,10 @@
     },
     {
       cell = PSGroupCell;
+      label = "Tinder Spoofer";
+    },
+    {
+      cell = PSGroupCell;
       label = "Core Bypass Modules";
     },
     {
