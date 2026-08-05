@@ -483,7 +483,6 @@ static void andromeda_loadTinderTweak(NSString* name) {
         NSLog(@"[Andromeda] External Tinder tweak '%@' NOT FOUND at %@", name, path);
     }
 }
-}
 
 void andromeda_hook_DatingApps(void) {
     NSString* bid = [[AndromedaCore sharedInstance] bundleIdentifier];
