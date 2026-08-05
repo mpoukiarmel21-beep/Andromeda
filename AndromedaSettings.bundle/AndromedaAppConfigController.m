@@ -64,6 +64,30 @@ static NSArray* AndromedaSpoofFields(void) {
     ];
 }
 
+static NSArray* AndromedaAllToolKeys(void) {
+    NSMutableArray* keys = [NSMutableArray array];
+    for(NSArray* pair in [AndromedaCoreTools() arrayByAddingObjectsFromArray:AndromedaAdvancedTools()]) {
+        [keys addObject:pair[1]];
+    }
+    return keys;
+}
+
+static NSSet* AndromedaToolKeysForLevel(NSString* level) {
+    if([level isEqualToString:@"simple"]) {
+        return [NSSet setWithObjects:
+            @"Hook_DetectionBypass", @"Hook_Filesystem", @"Hook_Dyld", @"Hook_AntiDebug",
+            @"Hook_SymLookup", @"Hook_Sandbox", nil];
+    }
+    if([level isEqualToString:@"maximum"]) {
+        return [NSSet setWithArray:AndromedaAllToolKeys()];
+    }
+    return [NSSet setWithObjects:
+        @"Hook_DetectionBypass", @"Hook_Filesystem", @"Hook_Dyld", @"Hook_AntiDebug",
+        @"Hook_DeviceCheck", @"Hook_AppAttest", @"Hook_Sandbox", @"Hook_SymLookup",
+        @"Hook_EnvVars", @"Hook_MachBootstrap", @"Hook_ObjCRuntime", @"Hook_UIImage",
+        @"Hook_HardwareFingerprint", @"Hook_IOKit", @"Hook_MobileGestalt", @"Hook_URLScheme", nil];
+}
+
 static NSSet* AndromedaDatingBundleIds(void) {
     return [NSSet setWithObjects:
         @"com.cardify.tinder", @"com.bumble.app", @"com.bumble.bff", @"co.hinge.app",
@@ -121,18 +145,27 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
     return name.length ? name : (self.bundleId ?: @"App");
 }
 
+- (NSString*)currentProtectionLevel {
+    NSDictionary* cfg = AndromedaAppConfig(self.bundleId);
+    if(!cfg) return @"off";
+    NSString* level = cfg[@"Protection_Level"];
+    if(level && [level isKindOfClass:[NSString class]]) return level;
+    return @"custom";
+}
+
+- (NSString*)displayNameForLevel:(NSString*)level {
+    if([level isEqualToString:@"simple"]) return @"Simple";
+    if([level isEqualToString:@"standard"]) return @"Standard";
+    if([level isEqualToString:@"maximum"]) return @"Maximum";
+    if([level isEqualToString:@"custom"]) return @"Custom";
+    return @"Off";
+}
+
 - (id)readPreferenceValue:(PSSpecifier*)specifier {
     NSString* key = [specifier propertyForKey:@"key"];
     if(!key) return nil;
 
     NSDictionary* cfg = AndromedaAppConfig(self.bundleId);
-
-    if([key isEqualToString:@"enabled"]) {
-        if(!cfg) return @NO;
-        id value = cfg[@"enabled"];
-        return (value && [value isKindOfClass:[NSNumber class]]) ? value : @YES;
-    }
-
     id value = cfg ? cfg[key] : nil;
     if(!value) value = [specifier propertyForKey:@"default"];
     return value;
@@ -141,22 +174,7 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
 - (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
     NSString* key = [specifier propertyForKey:@"key"];
     if(!key) return;
-    if(!value) value = @"";
-
-    NSMutableDictionary* prefs = AndromedaLoadPrefs();
-    NSMutableDictionary* perApp = [prefs[@"PerApp"] mutableCopy];
-    if(!perApp) perApp = [NSMutableDictionary dictionary];
-    NSMutableDictionary* cfg = [perApp[self.bundleId] mutableCopy];
-    if(!cfg) cfg = [NSMutableDictionary dictionary];
-
-    BOOL wasEmpty = (cfg.count == 0);
-    cfg[key] = value;
-    if([key isEqualToString:@"enabled"] && [value boolValue] && wasEmpty) {
-        [self seedDefaultsInto:cfg];
-    }
-    perApp[self.bundleId] = cfg;
-    prefs[@"PerApp"] = perApp;
-    AndromedaSavePrefs(prefs);
+    [self writeValue:(value ?: @"") forKey:key];
 }
 
 - (void)writeValue:(id)value forKey:(NSString*)key {
@@ -172,53 +190,68 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
     AndromedaSavePrefs(prefs);
 }
 
-- (void)seedDefaultsInto:(NSMutableDictionary*)cfg {
-    for(NSArray* pair in [AndromedaCoreTools() arrayByAddingObjectsFromArray:AndromedaAdvancedTools()]) {
-        cfg[pair[1]] = @YES;
+- (void)writeConfig:(NSDictionary*)config {
+    NSMutableDictionary* prefs = AndromedaLoadPrefs();
+    NSMutableDictionary* perApp = [prefs[@"PerApp"] mutableCopy];
+    if(!perApp) perApp = [NSMutableDictionary dictionary];
+    perApp[self.bundleId] = config;
+    prefs[@"PerApp"] = perApp;
+    AndromedaSavePrefs(prefs);
+}
+
+- (void)applyLevel:(NSString*)level {
+    NSMutableDictionary* cfg = [NSMutableDictionary dictionaryWithDictionary:AndromedaAppConfig(self.bundleId)];
+    cfg[@"Protection_Level"] = level;
+    if([level isEqualToString:@"off"]) {
+        cfg[@"enabled"] = @NO;
+    } else {
+        cfg[@"enabled"] = @YES;
+        if(![level isEqualToString:@"custom"]) {
+            NSSet* tools = AndromedaToolKeysForLevel(level);
+            for(NSString* key in AndromedaAllToolKeys()) {
+                cfg[key] = [tools containsObject:key] ? @YES : @NO;
+            }
+            if([AndromedaDatingBundleIds() containsObject:self.bundleId]) cfg[@"Hook_DatingApps"] = @YES;
+            if([AndromedaSocialBundleIds() containsObject:self.bundleId]) cfg[@"Hook_SocialApps"] = @YES;
+        }
     }
-    if([AndromedaDatingBundleIds() containsObject:self.bundleId]) cfg[@"Hook_DatingApps"] = @YES;
-    if([AndromedaSocialBundleIds() containsObject:self.bundleId]) cfg[@"Hook_SocialApps"] = @YES;
-    cfg[@"Detection_Mode"] = @"spoof";
-    cfg[@"Log_Level"] = @"info";
+    [self writeConfig:cfg];
 }
 
 - (NSArray*)specifiers {
     if(!_specifiers) {
         NSString* bid = self.bundleId;
+        BOOL custom = [[self currentProtectionLevel] isEqualToString:@"custom"];
         NSMutableArray* arr = [NSMutableArray array];
 
-        [arr addObject:[self groupSpecifier:@"MASTER" label:self.appName footer:@"App-specific bypass configuration. Only this app is affected; changes save automatically."]];
+        [arr addObject:[self groupSpecifier:@"MASTER" label:self.appName footer:@"Each app has its own protection. Pick a level: Simple, Standard (recommended) or Maximum. Custom lets you enable tools one by one."]];
 
-        PSSpecifier* master = [PSSpecifier preferenceSpecifierNamed:@"Use Andromeda on this app" target:self
-            set:@selector(setPreferenceValue:specifier:) get:@selector(readPreferenceValue:)
-            detail:nil cell:PSSwitchCell edit:nil];
-        [master setProperty:@"enabled" forKey:@"key"];
-        [arr addObject:master];
+        [arr addObject:[self protectionLevelSpecifier]];
+
+        if(custom) {
+            [arr addObject:[self groupSpecifier:@"CORE" label:@"Core Bypasses" footer:nil]];
+            for(NSArray* pair in AndromedaCoreTools()) {
+                [arr addObject:[self switchSpecifier:pair[0] key:pair[1]]];
+            }
+            [arr addObject:[self groupSpecifier:@"ADVANCED" label:@"Advanced Bypasses" footer:@"Advanced tools are aggressive. Only enable what you really need."]];
+            for(NSArray* pair in AndromedaAdvancedTools()) {
+                [arr addObject:[self switchSpecifier:pair[0] key:pair[1]]];
+            }
+            if([AndromedaDatingBundleIds() containsObject:bid]) {
+                [arr addObject:[self groupSpecifier:@"APPHOOK" label:@"App Detection Hooks" footer:nil]];
+                [arr addObject:[self switchSpecifier:@"Dating App Hooks" key:@"Hook_DatingApps"]];
+            }
+            if([AndromedaSocialBundleIds() containsObject:bid]) {
+                if(![AndromedaDatingBundleIds() containsObject:bid]) {
+                    [arr addObject:[self groupSpecifier:@"APPHOOK" label:@"App Detection Hooks" footer:nil]];
+                }
+                [arr addObject:[self switchSpecifier:@"Social Media App Hooks" key:@"Hook_SocialApps"]];
+            }
+        }
 
         if([bid isEqualToString:@"com.cardify.tinder"]) {
             [arr addObject:[self groupSpecifier:@"TINDER" label:@"Tinder Bypass" footer:nil]];
             [arr addObject:[self menuButtonForKey:@"Tinder_Bypass_Mode" title:@"Bypass Method" action:@selector(pickTinderBypass)]];
-        }
-
-        [arr addObject:[self groupSpecifier:@"CORE" label:@"Core Bypasses" footer:nil]];
-        for(NSArray* pair in AndromedaCoreTools()) {
-            [arr addObject:[self switchSpecifier:pair[0] key:pair[1]]];
-        }
-
-        [arr addObject:[self groupSpecifier:@"ADVANCED" label:@"Advanced Bypasses" footer:nil]];
-        for(NSArray* pair in AndromedaAdvancedTools()) {
-            [arr addObject:[self switchSpecifier:pair[0] key:pair[1]]];
-        }
-
-        if([AndromedaDatingBundleIds() containsObject:bid]) {
-            [arr addObject:[self groupSpecifier:@"APPHOOK" label:@"App Detection Hooks" footer:nil]];
-            [arr addObject:[self switchSpecifier:@"Dating App Hooks" key:@"Hook_DatingApps"]];
-        }
-        if([AndromedaSocialBundleIds() containsObject:bid]) {
-            if(![AndromedaDatingBundleIds() containsObject:bid]) {
-                [arr addObject:[self groupSpecifier:@"APPHOOK" label:@"App Detection Hooks" footer:nil]];
-            }
-            [arr addObject:[self switchSpecifier:@"Social Media App Hooks" key:@"Hook_SocialApps"]];
         }
 
         [arr addObject:[self groupSpecifier:@"BEHAVIOR" label:@"Detection Behavior" footer:nil]];
@@ -237,6 +270,52 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
         _specifiers = arr;
     }
     return _specifiers;
+}
+
+- (PSSpecifier*)protectionLevelSpecifier {
+    NSString* level = [self currentProtectionLevel];
+    NSString* label = [NSString stringWithFormat:@"Protection Level (%@)", [self displayNameForLevel:level]];
+    PSSpecifier* spec = [PSSpecifier preferenceSpecifierNamed:label target:self
+        set:nil get:nil detail:nil cell:PSButtonCell edit:nil];
+    [spec setProperty:@"Protection_Level" forKey:@"key"];
+    [spec setButtonAction:@selector(pickProtectionLevel)];
+    return spec;
+}
+
+- (void)pickProtectionLevel {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Protection Level"
+        message:@"Simple: light protection, lowest risk.\nStandard: recommended balance.\nMaximum: every tool on, highest risk.\nCustom: you choose each tool."
+        preferredStyle:UIAlertControllerStyleActionSheet];
+
+    NSDictionary* options = @{
+        @"Off": @"off",
+        @"Simple": @"simple",
+        @"Standard (recommended)": @"standard",
+        @"Maximum": @"maximum",
+        @"Custom": @"custom"
+    };
+
+    NSString* current = [self currentProtectionLevel];
+    for(NSString* display in options) {
+        NSString* value = options[display];
+        NSString* optTitle = [current isEqualToString:value]
+            ? [display stringByAppendingString:@" ✓"] : display;
+        [alert addAction:[UIAlertAction actionWithTitle:optTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction* action) {
+            [self applyLevel:value];
+            _specifiers = nil;
+            [self reloadSpecifiers];
+        }]];
+    }
+
+    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+
+    if([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        alert.popoverPresentationController.sourceView = self.view;
+        alert.popoverPresentationController.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
+        alert.popoverPresentationController.permittedArrowDirections = 0;
+    }
+
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 - (PSSpecifier*)groupSpecifier:(NSString*)identifier label:(NSString*)label footer:(NSString*)footer {
@@ -412,15 +491,6 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
         preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
-}
-
-- (void)writeConfig:(NSDictionary*)config {
-    NSMutableDictionary* prefs = AndromedaLoadPrefs();
-    NSMutableDictionary* perApp = [prefs[@"PerApp"] mutableCopy];
-    if(!perApp) perApp = [NSMutableDictionary dictionary];
-    perApp[self.bundleId] = config;
-    prefs[@"PerApp"] = perApp;
-    AndromedaSavePrefs(prefs);
 }
 
 - (void)respring {
