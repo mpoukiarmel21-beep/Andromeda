@@ -646,61 +646,81 @@
         ],
         @"com.badoo.badoo": @[
             @"BDODeviceInfo", @"BDOSecurity", @"BDOIntegrityCheck",
-            @"IOSSecuritySuite"
+            @"BDORuntimeSecurity", @"BDODeviceFingerprint", @"BDOAccountManager",
+            @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
+            @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
         @"com.ftw-and-co.fruitz": @[
-            @"FRZSecurityCheck", @"FRZIntegrityValidator",
-            @"IOSSecuritySuite"
+            @"FRZSecurityCheck", @"FRZIntegrityValidator", @"FRZRuntimeSecurity",
+            @"FRZDeviceFingerprint", @"FRZAppIntegrity", @"FRZSecurityManager",
+            @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
+            @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
         @"com.feels.Feels": @[
             @"FLSSecurityManager", @"FLSIntegrityCheck", @"FLSDeviceFingerprint",
-            @"IOSSecuritySuite"
+            @"FLSRuntimeSecurity", @"FLSAppIntegrity", @"FLSDeviceSecurity",
+            @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
+            @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
         @"com.burbn.instagram": @[
             @"IGSecurityManager", @"IGIntegrityCheck", @"IGAnalyticsSession",
             @"IGDeviceChecker", @"FBDeviceInformation", @"FBAppIntegrity",
             @"RCTDeviceInfo", @"IGDirectSecurity", @"IGUserSession",
             @"IGRuntimeSecurity", @"IGDeviceFingerprint", @"FBDeviceIntegrity",
-            @"FBBuildEnvironment", @"IGSecurityController"
+            @"FBBuildEnvironment", @"IGSecurityController", @"BMBLSecurityManager",
+            @"BMBLDeviceChecker", @"BMBLIntegrityCheck", @"IOSSecuritySuite",
+            @"flutter_jailbreak_detection"
         ],
         @"com.instagram.barcelona": @[
             @"THAppSecurityManager", @"THDeviceIntegrity", @"THSecurityCheck",
             @"BHInstagramAppIntegrity", @"THRuntimeSecurity", @"THDeviceFingerprint",
-            @"THIntegrityValidator"
+            @"THIntegrityValidator", @"BMBLSecurityManager", @"BMBLDeviceChecker",
+            @"BMBLIntegrityCheck", @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
         @"com.burbn.barcelona": @[
             @"THAppSecurityManager", @"THDeviceIntegrity", @"THSecurityCheck",
             @"BHInstagramAppIntegrity", @"THRuntimeSecurity", @"THDeviceFingerprint",
-            @"THIntegrityValidator"
+            @"THIntegrityValidator", @"BMBLSecurityManager", @"BMBLDeviceChecker",
+            @"BMBLIntegrityCheck", @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
         @"com.happn.happn": @[
-            @"HPNDeviceSecurity"
+            @"HPNDeviceSecurity", @"BMBLSecurityManager", @"BMBLDeviceChecker",
+            @"BMBLIntegrityCheck", @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
         @"com.okcupid.okcupid": @[
-            @"OKCDeviceCheck"
+            @"OKCDeviceCheck", @"BMBLSecurityManager", @"BMBLDeviceChecker",
+            @"BMBLIntegrityCheck", @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
         @"com.match.Match": @[
             @"MatchSecurityManager", @"MatchIntegrityManager", @"MatchDeviceCheck",
             @"MatchJailbreakDetection", @"MatchRuntimeSecurity", @"MatchTrustEvaluator",
-            @"IOSSecuritySuite"
+            @"IOSSecuritySuite", @"BMBLSecurityManager", @"BMBLDeviceChecker",
+            @"BMBLIntegrityCheck", @"flutter_jailbreak_detection"
         ],
         @"com.pof.pof": @[
             @"POFSecurityManager", @"POFIntegrityManager", @"POFDeviceCheck",
             @"POFJailbreakDetection", @"POFRuntimeSecurity", @"POFTrustEvaluator",
-            @"IOSSecuritySuite"
+            @"IOSSecuritySuite", @"BMBLSecurityManager", @"BMBLDeviceChecker",
+            @"BMBLIntegrityCheck", @"flutter_jailbreak_detection"
         ],
         @"com.grindrapp.ios": @[
-            @"GRDRSecurityManager"
+            @"GRDRSecurityManager", @"BMBLSecurityManager", @"BMBLDeviceChecker",
+            @"BMBLIntegrityCheck", @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
         @"com.meetic.meetic": @[
-            @"MTCSecurityManager"
+            @"MTCSecurityManager", @"BMBLSecurityManager", @"BMBLDeviceChecker",
+            @"BMBLIntegrityCheck", @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
         @"co.hinge.app": @[
-            @"HNGDeviceCheck", @"HNGSecurityIntegration"
+            @"HNGDeviceCheck", @"HNGSecurityIntegration", @"BMBLSecurityManager",
+            @"BMBLDeviceChecker", @"BMBLIntegrityCheck", @"IOSSecuritySuite",
+            @"flutter_jailbreak_detection"
         ],
         @"com.zhiliaoapp.musically": @[
             @"TTSecurityManager", @"TTDeviceCheck", @"TTIntegrityValidator",
-            @"TTRuntimeSecurity", @"TTDeviceFingerprint", @"TTSecurityController"
+            @"TTRuntimeSecurity", @"TTDeviceFingerprint", @"TTSecurityController",
+            @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
+            @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
         @"com.snapchat.Snapchat": @[
             @"SCSecurityManager", @"SCDeviceCheck", @"SCIntegrityValidator",
@@ -839,7 +859,8 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"processhiding", @"fridabypass"
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.match.Match": @{
@@ -850,7 +871,8 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"processhiding", @"fridabypass"
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.pof.pof": @{
@@ -861,7 +883,8 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"processhiding", @"fridabypass"
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.bumble.app": @{
@@ -871,8 +894,9 @@
                 @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
-                @"vnodebypass", @"uiimage", @"mobilegestalt",
-                @"processhiding", @"fridabypass"
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.bumble.bff": @{
@@ -882,27 +906,33 @@
                 @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
-                @"vnodebypass", @"uiimage", @"mobilegestalt",
-                @"processhiding", @"fridabypass"
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.badoo.badoo": @{
-            @"level": @"high",
+            @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
-                @"appattest", @"hardwarefprint", @"sandbox",
-                @"urlscheme", @"envvars", @"tweakclasses",
-                @"behavioral", @"vnodebypass", @"uiimage",
-                @"processhiding", @"fridabypass"
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.ftw-and-co.fruitz": @{
-            @"level": @"high",
+            @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
-                @"hardwarefprint", @"sandbox", @"urlscheme",
-                @"envvars", @"tweakclasses", @"behavioral",
-                @"vnodebypass", @"processhiding"
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.feels.Feels": @{
@@ -913,7 +943,8 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"processhiding", @"fridabypass"
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.burbn.instagram": @{
@@ -924,8 +955,8 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"networkinterface", @"procfiles", @"processhiding",
-                @"fridabypass", @"dynamichecker"
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.instagram.barcelona": @{
@@ -936,8 +967,8 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"networkinterface", @"procfiles", @"processhiding",
-                @"fridabypass"
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.burbn.barcelona": @{
@@ -948,8 +979,8 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"networkinterface", @"procfiles", @"processhiding",
-                @"fridabypass", @"dynamichecker"
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.snapchat.Snapchat": @{
@@ -960,8 +991,8 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"networkinterface", @"procfiles", @"processhiding",
-                @"fridabypass", @"dynamichecker"
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.facebook.Facebook": @{
@@ -972,8 +1003,8 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"networkinterface", @"procfiles", @"processhiding",
-                @"fridabypass"
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.zhiliaoapp.musically": @{
@@ -984,8 +1015,56 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
-                @"networkinterface", @"procfiles", @"processhiding",
-                @"fridabypass", @"dynamichecker"
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
+            ]
+        },
+        @"com.happn.happn": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
+            ]
+        },
+        @"com.okcupid.okcupid": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
+            ]
+        },
+        @"com.grindrapp.ios": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
+            ]
+        },
+        @"com.meetic.meetic": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"iohid",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         }
     };

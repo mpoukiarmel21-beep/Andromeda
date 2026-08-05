@@ -21,8 +21,8 @@
 }
 %end
 
-%hook TNDRDeletionDetector
-- (BOOL)isDeviceBanned {
+%hook IOSSecuritySuite
++ (BOOL)amIJailbroken {
     if(!andromeda_appBypassActive()) return %orig;
     return NO;
 }
@@ -774,6 +774,75 @@
 }
 %end
 
+%hook flutter_jailbreak_detection
++ (BOOL)isJailBroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isDebugged {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)checkForJailbreak {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)checkForJailbreak {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isDeviceModified {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceModified {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
+%hook BMBLSecurityManager
+- (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceCompromised {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceRooted {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSafeEnvironment {
+    if(!andromeda_appBypassActive()) return %orig;
+    return YES;
+}
+%end
+
+%hook BMBLAccountManager
+- (BOOL)isBlocked {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSuspended {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isBanned {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
 %end
 
 %group andromeda_fruitz
@@ -930,6 +999,75 @@
 }
 %end
 
+%hook flutter_jailbreak_detection
++ (BOOL)isJailBroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isDebugged {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)checkForJailbreak {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)checkForJailbreak {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isDeviceModified {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceModified {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
+%hook BMBLSecurityManager
+- (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceCompromised {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceRooted {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSafeEnvironment {
+    if(!andromeda_appBypassActive()) return %orig;
+    return YES;
+}
+%end
+
+%hook BMBLAccountManager
+- (BOOL)isBlocked {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSuspended {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isBanned {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
 %end
 
 %group andromeda_feels
@@ -1020,6 +1158,98 @@
 + (NSArray*)amIAttachedToDebugger {
     if(!andromeda_appBypassActive()) return %orig;
     return @[];
+}
+%end
+
+%hook FLSRuntimeSecurity
+- (BOOL)isSubstrateLoaded {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSubstituteLoaded {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)hasInjectedDynamicLibraries {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isHooked {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isRuntimePatched {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
+%hook flutter_jailbreak_detection
++ (BOOL)isJailBroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isDebugged {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)checkForJailbreak {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)checkForJailbreak {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isDeviceModified {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceModified {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
+%hook BMBLSecurityManager
+- (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceCompromised {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceRooted {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSafeEnvironment {
+    if(!andromeda_appBypassActive()) return %orig;
+    return YES;
+}
+%end
+
+%hook BMBLAccountManager
+- (BOOL)isBlocked {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSuspended {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isBanned {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
 }
 %end
 
@@ -1202,6 +1432,64 @@
     return NO;
 }
 + (BOOL)isDebugged {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)checkForJailbreak {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)checkForJailbreak {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isDeviceModified {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceModified {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
+%hook BMBLSecurityManager
+- (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceCompromised {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceRooted {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSafeEnvironment {
+    if(!andromeda_appBypassActive()) return %orig;
+    return YES;
+}
+%end
+
+%hook BMBLAccountManager
+- (BOOL)isBlocked {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSuspended {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isBanned {
     if(!andromeda_appBypassActive()) return %orig;
     return NO;
 }
