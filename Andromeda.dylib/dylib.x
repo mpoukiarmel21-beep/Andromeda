@@ -28,7 +28,23 @@ static void andromeda_runHook(NSString* prefKey, void (^block)(void), NSString* 
         NSString* bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         if(!bundleIdentifier) return;
 
-        if([bundleIdentifier hasPrefix:@"com.andromeda"]) {
+        if([bundleIdentifier hasPrefix:@"com.apple"]
+        || [bundleIdentifier hasPrefix:@"com.andromeda"]
+        || [bundleIdentifier hasPrefix:@"org.coolstar"]
+        || [bundleIdentifier hasPrefix:@"me.jjolano"]
+        || [bundleIdentifier hasPrefix:@"com.saurik"]) {
+            return;
+        }
+
+        NSString* executablePath = [[NSBundle mainBundle] executablePath];
+        if(!executablePath) return;
+        if([executablePath hasPrefix:@"/Applications"]
+        || [executablePath hasPrefix:@"/System"]
+        || [executablePath hasPrefix:@"/private/preboot"]
+        || [executablePath hasPrefix:@"/usr/libexec"]
+        || [executablePath hasPrefix:@"/usr/bin"]
+        || [executablePath hasPrefix:@"/usr/sbin"]
+        || [executablePath hasPrefix:@"/var/jb"]) {
             return;
         }
 
@@ -60,27 +76,6 @@ static void andromeda_runHook(NSString* prefKey, void (^block)(void), NSString* 
 
         if(!isProtected && !debugMode && !applyToAll) {
             NSLog(@"[Andromeda] Skipping %@: no per-app config and not in supported app list. Configure it in Settings, or enable Debug Mode / Apply to All.", bundleIdentifier);
-            return;
-        }
-
-        NSString* executablePath = [[NSBundle mainBundle] executablePath];
-        BOOL isSystemProcess = NO;
-        if(executablePath) {
-            isSystemProcess = ([executablePath hasPrefix:@"/Applications"]
-            || [executablePath hasPrefix:@"/System"]
-            || [executablePath hasPrefix:@"/private/preboot"]
-            || [executablePath hasPrefix:@"/usr/libexec"]
-            || [executablePath hasPrefix:@"/usr/bin"]
-            || [executablePath hasPrefix:@"/usr/sbin"]
-            || [executablePath hasPrefix:@"/var/jb"]);
-        }
-
-        if(isSystemProcess) return;
-
-        if([bundleIdentifier hasPrefix:@"com.apple"]
-        || [bundleIdentifier hasPrefix:@"org.coolstar"]
-        || [bundleIdentifier hasPrefix:@"me.jjolano"]
-        || [bundleIdentifier hasPrefix:@"com.saurik"]) {
             return;
         }
 
