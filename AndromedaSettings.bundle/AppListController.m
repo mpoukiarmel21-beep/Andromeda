@@ -35,17 +35,52 @@ static UIImage* IconForProxy(id proxy) {
     return nil;
 }
 
+static NSSet* SupportedBundleIds(void) {
+    static NSSet* supported = nil;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        NSMutableSet* bids = [NSMutableSet set];
+        NSDictionary* filter = [NSDictionary dictionaryWithContentsOfFile:[SUBSTRATE_PATH stringByAppendingString:@"Andromeda.plist"]];
+        NSDictionary* filt = filter[@"Filter"];
+        NSArray* bundles = filt[@"Bundles"];
+        if([bundles isKindOfClass:[NSArray class]]) {
+            for(NSString* bid in bundles) {
+                if([bid isKindOfClass:[NSString class]] && bid.length) [bids addObject:bid];
+            }
+        }
+        if(bids.count == 0) {
+            [bids addObjectsFromArray:@[
+                @"com.cardify.tinder", @"co.hinge.app", @"com.bumble.app", @"com.bumble.bff",
+                @"co.hily.app", @"com.badoo.badoo", @"com.ftw-and-co.fruitz", @"com.feels.Feels",
+                @"com.happn.happn", @"com.match.Match", @"com.pof.pof", @"com.eharmony.eharmony",
+                @"com.okcupid.okcupid", @"com.zoosk.zoosk", @"com.lex.lex", @"com.grindrapp.ios",
+                @"com.jackd.ios", @"com.scruff.scruff", @"com.weareher.HER", @"com.meetic.meetic",
+                @"com.adopteunmec.ios", @"com.jaumo.ios", @"com.tantan.ios", @"com.lovoo.ios",
+                @"com.hud.ios", @"com.turnup.app", @"com.boo.app", @"com.iris.dating",
+                @"com.once.once", @"com.innercircle.ios", @"com.theleague.ios", @"com.clover.ios",
+                @"com.burbn.instagram", @"com.instagram.barcelona", @"com.facebook.Facebook",
+                @"com.facebook.Messenger", @"net.whatsapp.WhatsApp", @"com.snapchat.Snapchat",
+                @"com.zhiliaoapp.musically", @"com.atebits.Tweetie2", @"com.bereal.ios",
+                @"ph.telegra.Telegraph", @"org.whispersystems.signal", @"com.hammerandchisel.discord",
+                @"com.reddit.Reddit", @"com.linkedin.LinkedIn"
+            ]];
+        }
+        supported = [bids copy];
+    });
+    return supported;
+}
+
 static NSArray* AppEntries(void) {
     id ws = LSWorkspace();
     if(!ws) return @[];
+    NSSet* supported = SupportedBundleIds();
     NSArray* apps = [ws performSelector:@selector(allInstalledApplications)];
     NSMutableArray* entries = [NSMutableArray array];
     for(id proxy in apps) {
         if(![proxy respondsToSelector:@selector(bundleIdentifier)]) continue;
         NSString* bid = [proxy performSelector:@selector(bundleIdentifier)];
         if(!bid.length) continue;
-        if([bid hasPrefix:@"com.apple"]) continue;
-        if([bid hasPrefix:@"com.andromeda"]) continue;
+        if(![supported containsObject:bid]) continue;
         NSString* name = [proxy respondsToSelector:@selector(localizedName)] ? [proxy performSelector:@selector(localizedName)] : nil;
         if(!name.length) name = bid;
         UIImage* icon = IconForProxy(proxy);
@@ -91,7 +126,7 @@ static NSDictionary* ConfigStatusByBid(void) {
         NSDictionary* status = ConfigStatusByBid();
 
         PSSpecifier* appGroup = [PSSpecifier preferenceSpecifierNamed:@"Applications" target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
-        [appGroup setProperty:@"Tap an app to configure its own bypass tools. A checkmark means it is active." forKey:@"footerText"];
+        [appGroup setProperty:@"Supported apps (dating & social media). Tap one to pick its Protection Level. Nothing is applied until you choose a level." forKey:@"footerText"];
         [arr addObject:appGroup];
 
         if(entries.count == 0) {
