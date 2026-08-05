@@ -476,8 +476,8 @@ static void andromeda_loadTinderTweak(NSString* name) {
     if(!name.length) return;
     NSString* path = [NSString stringWithFormat:@"/var/jb/Library/Andromeda/Tweaks/%@.dylib", name];
     if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        void* handle = dlopen(path.UTF8String, RTLD_NOW);
-        DLog(@"[Andromeda] External Tinder tweak '%@' %@ (handle=%p)", name, handle ? @"loaded" : @"failed", handle);
+        dlopen(path.UTF8String, RTLD_NOW);
+        DLog(@"[Andromeda] Loaded external Tinder tweak: %@", name);
     } else {
         DLog(@"[Andromeda] External Tinder tweak '%@' not found at %@", name, path);
     }
