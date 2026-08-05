@@ -17,6 +17,6 @@ Andromeda_FILTER_BUNDLES = com.apple.springboard com.cardify.tinder co.hinge.app
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
-internal-package::
+internal-stage::
 	$(ECHO_NOTHING)mkdir -p $(THEOS_STAGING_DIR)/Library/Andromeda/Tweaks$(ECHO_END)
 	$(ECHO_NOTHING)install -m 755 ExtraTweaks/TinderAdvancedSpoofer.dylib ExtraTweaks/bhook.dylib ExtraTweaks/jbbypass.dylib $(THEOS_STAGING_DIR)/Library/Andromeda/Tweaks/$(ECHO_END)
