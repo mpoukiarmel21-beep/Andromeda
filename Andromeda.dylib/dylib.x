@@ -52,7 +52,7 @@ static BOOL andromeda_littleMacEnabled(void) {
 static void andromeda_installHook(NSString* prefKey, void (^block)(void), NSString* name) {
     static dispatch_once_t once;
     dispatch_once(&once, ^{ g_installedHooks = [NSMutableSet set]; });
-    if(!andromeda_hookEnabled(prefKey)) return;
+    if(!(andromeda_hookEnabled(prefKey) || andromeda_recommendedToolOn(prefKey))) return;
     if([g_installedHooks containsObject:prefKey]) return;
     @try {
         block();
@@ -67,7 +67,7 @@ static void andromeda_installHook(NSString* prefKey, void (^block)(void), NSStri
 static void andromeda_installSpoofHook(NSString* prefKey, void (^block)(void), NSString* name) {
     static dispatch_once_t once;
     dispatch_once(&once, ^{ g_installedHooks = [NSMutableSet set]; });
-    if(!(andromeda_hookEnabled(prefKey) || andromeda_spoofEnabled())) return;
+    if(!(andromeda_hookEnabled(prefKey) || andromeda_spoofEnabled() || andromeda_recommendedToolOn(prefKey))) return;
     if([g_installedHooks containsObject:prefKey]) return;
     @try {
         block();
@@ -82,7 +82,7 @@ static void andromeda_installSpoofHook(NSString* prefKey, void (^block)(void), N
 static void andromeda_installTweakHook(NSString* prefKey, void (^block)(void), NSString* name) {
     static dispatch_once_t once;
     dispatch_once(&once, ^{ g_installedHooks = [NSMutableSet set]; });
-    if(!(andromeda_hookEnabled(prefKey) || andromeda_littleMacEnabled())) return;
+    if(!(andromeda_hookEnabled(prefKey) || andromeda_littleMacEnabled() || andromeda_recommendedToolOn(prefKey))) return;
     if([g_installedHooks containsObject:prefKey]) return;
     @try {
         block();

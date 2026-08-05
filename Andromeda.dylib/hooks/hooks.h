@@ -275,6 +275,108 @@ static inline BOOL andromeda_anyPerAppBypassEnabled(NSString* bid) {
     return NO;
 }
 
+// True when the per-app config explicitly selects at least one bypass tool
+// (regardless of its value). Detects "the user has taken manual control".
+static inline BOOL andromeda_hasExplicitTools(NSString* bid) {
+    @try {
+        NSDictionary* cfg = [[AndromedaCore sharedInstance] perAppConfigurationForBundleId:bid];
+        if(![cfg isKindOfClass:[NSDictionary class]]) return NO;
+        for(NSString* key in cfg) {
+            if([key isKindOfClass:[NSString class]] && ([key hasPrefix:@"Hook_"] || [key hasPrefix:@"Tweak_"])) {
+                return YES;
+            }
+        }
+    } @catch(NSException *e) {}
+    return NO;
+}
+
+// Recommended bypass tools for a protected app, taken from DetectionSignatures'
+// per-app configuration (short hook names mapped to the Hook_* preference keys).
+static inline NSArray* andromeda_recommendedHookKeys(NSString* bid) {
+    static NSDictionary* hookNameMap = nil;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        hookNameMap = @{
+            @"filesystem": @"Hook_Filesystem",
+            @"dyld": @"Hook_Dyld",
+            @"antidebug": @"Hook_AntiDebug",
+            @"devicecheck": @"Hook_DeviceCheck",
+            @"appattest": @"Hook_AppAttest",
+            @"hardwarefprint": @"Hook_HardwareFingerprint",
+            @"iokit": @"Hook_IOKit",
+            @"sandbox": @"Hook_Sandbox",
+            @"symlookup": @"Hook_SymLookup",
+            @"urlscheme": @"Hook_URLScheme",
+            @"envvars": @"Hook_EnvVars",
+            @"machbootstrap": @"Hook_MachBootstrap",
+            @"objcruntime": @"Hook_ObjCRuntime",
+            @"syscall": @"Hook_Syscall",
+            @"tweakclasses": @"Hook_TweakClasses",
+            @"behavioral": @"Hook_Behavioral",
+            @"vnodebypass": @"Hook_VnodeBypass",
+            @"uiimage": @"Hook_UIImage",
+            @"sensors": @"Hook_Sensors",
+            @"iohid": @"Hook_IOHID",
+            @"mobilegestalt": @"Hook_MobileGestalt",
+            @"networkinterface": @"Hook_NetworkInterface",
+            @"procfiles": @"Hook_ProcFiles",
+            @"processhiding": @"Hook_ProcessHiding",
+            @"fridabypass": @"Hook_FridaBypass",
+            @"dynamichecker": @"Hook_DynamicHooker"
+        };
+    });
+    @try {
+        NSDictionary* config = [DetectionSignatures appSpecificConfigurations][bid];
+        NSArray* shortNames = [config isKindOfClass:[NSDictionary class]] ? config[@"hooks"] : nil;
+        NSMutableArray* keys = [NSMutableArray array];
+        for(NSString* sn in shortNames ?: @[]) {
+            NSString* k = hookNameMap[sn];
+            if(k) [keys addObject:k];
+        }
+        if(keys.count > 0) return keys;
+    } @catch(NSException *e) {}
+
+    // No curated per-app config: fall back to the full maximum tool set so
+    // protection always does something, on any app.
+    static NSArray* fullSet = nil;
+    static dispatch_once_t onceFull;
+    dispatch_once(&onceFull, ^{
+        fullSet = @[
+            @"Hook_DetectionBypass", @"Hook_Filesystem", @"Hook_Dyld", @"Hook_AntiDebug",
+            @"Hook_DeviceCheck", @"Hook_AppAttest", @"Hook_Sandbox", @"Hook_SymLookup",
+            @"Hook_EnvVars", @"Hook_MachBootstrap", @"Hook_ObjCRuntime", @"Hook_Syscall",
+            @"Hook_Behavioral", @"Hook_UIImage", @"Hook_HardwareFingerprint", @"Hook_IOKit",
+            @"Hook_MobileGestalt", @"Hook_NetworkInterface", @"Hook_Sensors", @"Hook_ProcFiles",
+            @"Hook_IOHID", @"Hook_ProcessHiding", @"Hook_FridaBypass", @"Hook_DynamicHooker",
+            @"Hook_URLScheme"
+        ];
+    });
+    return fullSet;
+}
+
+// "Just works" mode: the app is protected but no bypass tool was picked
+// explicitly, so the recommended per-app tool set applies automatically.
+static inline BOOL andromeda_defaultsMode(void) {
+    @try {
+        NSString* bid = [[NSBundle mainBundle] bundleIdentifier];
+        if(!bid.length) return NO;
+        NSDictionary* cfg = [[AndromedaCore sharedInstance] perAppConfigurationForBundleId:bid];
+        if(![cfg isKindOfClass:[NSDictionary class]]) return NO;
+        id enabled = cfg[@"enabled"];
+        if(enabled && [enabled isKindOfClass:[NSNumber class]] && ![enabled boolValue]) return NO;
+        if(andromeda_hasExplicitTools(bid)) return NO;
+        return YES;
+    } @catch(NSException *e) {
+        return NO;
+    }
+}
+
+// In defaults mode, is this specific tool part of the app's recommended set?
+static inline BOOL andromeda_recommendedToolOn(NSString* prefKey) {
+    if(!andromeda_defaultsMode()) return NO;
+    return [andromeda_recommendedHookKeys([[NSBundle mainBundle] bundleIdentifier]) containsObject:prefKey];
+}
+
 // Runtime gate for the per-app detection-class hooks (adapted LittleMac).
 // Lets already-installed %hook methods pass through when the app's bypass is
 // toggled off, so disabling takes effect immediately without a respring.
@@ -288,6 +390,8 @@ static inline BOOL andromeda_appBypassActive(void) {
             id enabled = cfg[@"enabled"];
             if(enabled && [enabled isKindOfClass:[NSNumber class]] && ![enabled boolValue]) return NO;
             if(andromeda_anyPerAppBypassEnabled(bid)) return YES;
+            // Protected app with no explicit tool choice: recommended set applies.
+            if(!andromeda_hasExplicitTools(bid)) return YES;
         }
 
         return andromeda_hookEnabledForKey(@"Hook_DatingApps")

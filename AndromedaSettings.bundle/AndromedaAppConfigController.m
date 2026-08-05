@@ -85,6 +85,23 @@ static NSSet* AndromedaSocialBundleIds(void) {
         @"com.bereal.ios", @"com.linkedin.LinkedIn", nil];
 }
 
+// The bypass tools that are checked by default when protection is enabled, so
+// the app works out of the box without having to hunt through every switch.
+static NSArray* AndromedaRecommendedHookKeys(NSString* bid) {
+    NSMutableArray* keys = [NSMutableArray arrayWithArray:@[
+        @"Hook_DetectionBypass", @"Hook_Filesystem", @"Hook_Dyld", @"Hook_AntiDebug",
+        @"Hook_DeviceCheck", @"Hook_AppAttest", @"Hook_Sandbox", @"Hook_SymLookup",
+        @"Hook_EnvVars", @"Hook_MachBootstrap", @"Hook_ObjCRuntime", @"Hook_Syscall",
+        @"Hook_Behavioral", @"Hook_UIImage", @"Hook_HardwareFingerprint", @"Hook_IOKit",
+        @"Hook_MobileGestalt", @"Hook_NetworkInterface", @"Hook_Sensors", @"Hook_ProcFiles",
+        @"Hook_IOHID", @"Hook_ProcessHiding", @"Hook_FridaBypass", @"Hook_DynamicHooker",
+        @"Hook_URLScheme"
+    ]];
+    if([AndromedaDatingBundleIds() containsObject:bid]) [keys addObject:@"Hook_DatingApps"];
+    if([AndromedaSocialBundleIds() containsObject:bid]) [keys addObject:@"Hook_SocialApps"];
+    return keys;
+}
+
 @implementation AndromedaAppConfigController
 
 static NSMutableDictionary* AndromedaLoadPrefs(void) {
@@ -135,8 +152,36 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
 - (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
     NSString* key = [specifier propertyForKey:@"key"];
     if(!key) return;
+
+    BOOL togglingEnable = [key isEqualToString:@"enabled"];
+    BOOL nowEnabled = [value respondsToSelector:@selector(boolValue)] && [value boolValue];
+    NSDictionary* cfgBefore = AndromedaAppConfig(self.bundleId);
+
+    // First time protection is turned on: auto-check the recommended bypass
+    // tools so the app works right away (one single save + notification).
+    if(togglingEnable && nowEnabled) {
+        BOOL anyToolSet = NO;
+        for(NSString* k in cfgBefore ?: @{}) {
+            if([k isKindOfClass:[NSString class]] && ([k hasPrefix:@"Hook_"] || [k hasPrefix:@"Tweak_"])) {
+                anyToolSet = YES;
+                break;
+            }
+        }
+        if(!anyToolSet) {
+            NSMutableDictionary* cfg = [NSMutableDictionary dictionaryWithDictionary:cfgBefore ?: @{}];
+            cfg[key] = value;
+            for(NSString* hookKey in AndromedaRecommendedHookKeys(self.bundleId)) {
+                cfg[hookKey] = @YES;
+            }
+            [self writeConfig:cfg];
+            AndromedaSettingsSyncFilter();
+            [self reloadSpecifiers];
+            return;
+        }
+    }
+
     [self writeValue:(value ?: @"") forKey:key];
-    if([key isEqualToString:@"enabled"]) {
+    if(togglingEnable) {
         AndromedaSettingsSyncFilter();
     }
 }

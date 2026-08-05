@@ -1061,8 +1061,8 @@ void andromeda_hook_DatingApps(void) {
 
     // Adapted LittleMac for every other dating app = hooking the app's own
     // jailbreak-detection classes (same technique, ported to that app).
-    // Enabled by the built-in Hook_DatingApps switch or the per-app LittleMac switch.
-    BOOL classHooks = andromeda_hookEnabledForKey(@"Hook_DatingApps") || andromeda_appTweakEnabled(bid, @"Tweak_LittleMac");
+    // Active whenever this app is protected and any bypass tool is on.
+    BOOL classHooks = andromeda_appBypassActive();
 
     if(classHooks) {
         if([bid isEqualToString:@"com.bumble.app"]) {

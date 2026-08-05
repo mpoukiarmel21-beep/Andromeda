@@ -9,6 +9,9 @@
 // Mots-clés à rechercher dans les noms de classes
 static NSArray* detectionKeywords = nil;
 
+// Already-hooked class+selector pairs, so deferred re-scans stay idempotent.
+static NSMutableSet* g_dynamicHooked = nil;
+
 __attribute__((unused)) static BOOL dynamicHook_returnYES(id self, SEL _cmd) {
     return YES;
 }
@@ -32,11 +35,14 @@ __attribute__((unused)) static id dynamicHook_returnYES_dict(id self, SEL _cmd) 
 static void scanAndHookDetectionClasses(void) {
     NSLog(@"[Andromeda] DynamicHooker: Scanning runtime for detection classes...");
 
+    if(!g_dynamicHooked) g_dynamicHooked = [NSMutableSet set];
+
     unsigned int classCount = 0;
     Class* classes = objc_copyClassList(&classCount);
     if(!classes) return;
 
     int hookedCount = 0;
+    int scannedCount = 0;
 
     for(unsigned int i = 0; i < classCount; i++) {
         const char* className = class_getName(classes[i]);
@@ -54,6 +60,7 @@ static void scanAndHookDetectionClasses(void) {
         }
 
         if(!shouldHook) continue;
+        scannedCount++;
 
         // Hook toutes les méthodes retournant BOOL
         unsigned int methodCount = 0;
@@ -112,6 +119,9 @@ static void scanAndHookDetectionClasses(void) {
                 method_getReturnType(methods[j], &retType, sizeof(retType));
 
                 if(retType == 'B' || retType == 'c') {
+                    NSString* key = [NSString stringWithFormat:@"%@|%s", name, selName];
+                    if([g_dynamicHooked containsObject:key]) continue;
+
                     IMP newIMP;
                     if([selStr containsString:@"isJailbroken"]
                     || [selStr containsString:@"isRooted"]
@@ -143,6 +153,7 @@ static void scanAndHookDetectionClasses(void) {
                     }
 
                     method_setImplementation(methods[j], newIMP);
+                    [g_dynamicHooked addObject:key];
                     hookedCount++;
                     NSLog(@"[Andromeda] DynamicHooker: Hooked -[%@ %s]", name, selName);
                 }
@@ -153,7 +164,7 @@ static void scanAndHookDetectionClasses(void) {
     }
 
     free(classes);
-    NSLog(@"[Andromeda] DynamicHooker: Scan complete. Hooked %d methods", hookedCount);
+    NSLog(@"[Andromeda] DynamicHooker: Scan complete. Hooked %d methods (%d classes scanned)", hookedCount, scannedCount);
 }
 
 // ============================================================================
@@ -215,6 +226,15 @@ void andromeda_hook_DynamicHooker(void) {
 
     // Scanner et hooker
     scanAndHookDetectionClasses();
+
+    // Re-scan après quelques secondes: les classes de détection se chargent
+    // souvent après le constructeur du tweak. Idempotent (pas de double hook).
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        scanAndHookDetectionClasses();
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        scanAndHookDetectionClasses();
+    });
 
     NSLog(@"[Andromeda] DynamicHooker: Installation complete");
 }

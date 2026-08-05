@@ -628,7 +628,8 @@
     return [self _mergedDict:@{
         @"co.hily.app": @[
             @"HLYSecurityManager", @"HLYDeviceIntegrity", @"HLYAppIntegrityCheck",
-            @"HLYRuntimeSecurity", @"HLYFingerprintManager", @"HLYTrustEvaluator"
+            @"HLYRuntimeSecurity", @"HLYFingerprintManager", @"HLYTrustEvaluator",
+            @"IOSSecuritySuite"
         ],
         @"com.cardify.tinder": @[
             @"TNDRSecurityManager", @"TNDRDeviceIntegrity", @"TNDRAppIntegrity",
@@ -806,7 +807,8 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"iohid",
-                @"mobilegestalt", @"networkinterface"
+                @"mobilegestalt", @"networkinterface", @"procfiles",
+                @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
         @"com.cardify.tinder": @{
