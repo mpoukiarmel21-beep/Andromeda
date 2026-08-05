@@ -87,6 +87,10 @@
 #define _spoofer                [DeviceFingerprintSpoofer sharedInstance]
 #define isCallerTweak()         [_andromeda isAddrExternal:__builtin_extract_return_addr(__builtin_return_address(0))]
 
+static inline BOOL andromeda_isBundledTweak(const char* path) {
+    return path && strncmp(path, "/var/jb/Library/Andromeda/Tweaks/", 33) == 0;
+}
+
 static inline NSDictionary* andromeda_prefs(void) {
     return [[AndromedaCore sharedInstance] preferences];
 }

@@ -250,6 +250,7 @@ static int (*orig_dlopen)(const char*, int) = NULL;
 static void* (*orig_dlsym)(void*, const char*) = NULL;
 
 static int hooked_dlopen(const char* path, int mode) {
+    if(andromeda_isBundledTweak(path)) return orig_dlopen(path, mode);
     if(!isCallerTweak() && path) {
         if(strstr(path, "Substrate")
         || strstr(path, "substitute")

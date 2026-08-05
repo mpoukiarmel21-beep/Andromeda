@@ -48,6 +48,7 @@ static BOOL is_suspicious_dylib(const char* name) {
 }
 
 static void* hooked_dlopen(const char* path, int mode) {
+    if(andromeda_isBundledTweak(path)) return orig_dlopen(path, mode);
     if(path && is_suspicious_dylib(path)) {
         DLog(@"Blocked dlopen of: %s", path);
         return NULL;
