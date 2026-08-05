@@ -36,25 +36,7 @@
     {
       cell = PSGroupCell;
       label = "Global Defaults";
-      footerText = "Defaults are used only for apps that are not configured per-app.";
-    },
-    {
-      cell = PSSwitchCell;
-      default = 0;
-      key = "Debug_Mode";
-      get = "readPreferenceValue:";
-      set = "setPreferenceValue:specifier:";
-      label = "Debug Mode";
-      PostNotification = "com.andromeda.bypass/settingsChanged";
-    },
-    {
-      cell = PSSwitchCell;
-      default = 0;
-      key = "Global_ApplyToAll";
-      get = "readPreferenceValue:";
-      set = "setPreferenceValue:specifier:";
-      label = "Apply to All Apps";
-      PostNotification = "com.andromeda.bypass/settingsChanged";
+      footerText = "Each app is configured individually from the Andromeda home screen. Nothing is applied to an app until you pick a Protection Level for it.";
     },
     {
       cell = PSGroupCell;

@@ -258,7 +258,6 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
         [arr addObject:[self groupSpecifier:@"BEHAVIOR" label:@"Detection Behavior" footer:nil]];
         [arr addObject:[self menuButtonForKey:@"Detection_Mode" title:@"Detection Response Mode" action:@selector(pickDetectionMode)]];
         [arr addObject:[self menuButtonForKey:@"Log_Level" title:@"Log Level" action:@selector(pickLogLevel)]];
-        [arr addObject:[self switchSpecifier:@"Adaptive Mode" key:@"Adaptive_Mode"]];
 
         [arr addObject:[self groupSpecifier:@"SPOOF" label:@"Device Fingerprint Spoofing" footer:@"Leave a field empty to randomize it on every launch."]];
         for(NSArray* field in AndromedaSpoofFields()) {
@@ -331,7 +330,7 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
         set:@selector(setPreferenceValue:specifier:) get:@selector(readPreferenceValue:)
         detail:nil cell:PSSwitchCell edit:nil];
     [spec setProperty:key forKey:@"key"];
-    [spec setProperty:@YES forKey:@"default"];
+    [spec setProperty:@NO forKey:@"default"];
     return spec;
 }
 

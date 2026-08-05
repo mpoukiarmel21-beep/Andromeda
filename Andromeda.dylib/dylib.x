@@ -8,7 +8,7 @@
 
 static BOOL andromeda_hookEnabled(NSString* key) {
     NSNumber* val = andromeda_prefs()[key];
-    if(!val) return YES;
+    if(!val) return NO;
     return [val boolValue];
 }
 
@@ -61,7 +61,7 @@ static void andromeda_runHook(NSString* prefKey, void (^block)(void), NSString* 
 
         BOOL isDating = [[AndromedaCore sharedInstance] isDatingApp];
         BOOL isSocial = [[AndromedaCore sharedInstance] isSocialApp];
-        BOOL isProtected = isDating || isSocial;
+        BOOL isProtected = NO;
 
         if(perAppCfg) {
             id enabled = perAppCfg[@"enabled"];
@@ -71,6 +71,8 @@ static void andromeda_runHook(NSString* prefKey, void (^block)(void), NSString* 
             NSNumber* appOverride = andromeda_prefs()[appKey];
             if(appOverride && [appOverride isKindOfClass:[NSNumber class]]) {
                 isProtected = [appOverride boolValue];
+            } else if(debugMode || applyToAll) {
+                isProtected = YES;
             }
         }
 

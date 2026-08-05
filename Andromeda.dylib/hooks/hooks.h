@@ -98,10 +98,10 @@ static inline NSDictionary* andromeda_prefs(void) {
 static inline BOOL andromeda_prefEnabled(NSString* key) {
     @try {
         NSNumber* val = andromeda_prefs()[key];
-        if(!val) return YES;
+        if(!val) return NO;
         return [val boolValue];
     } @catch(NSException *e) {
-        return YES;
+        return NO;
     }
 }
 
@@ -185,7 +185,7 @@ static inline BOOL andromeda_isProtectedProcess(void) {
             return [appOverride boolValue];
         }
 
-        return [[AndromedaCore sharedInstance] isProtectedApp];
+        return NO;
     } @catch(NSException *e) {
         return NO;
     }
