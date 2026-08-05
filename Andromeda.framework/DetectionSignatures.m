@@ -823,6 +823,7 @@
                 @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
                 @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
                 @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"networkinterface", @"procfiles", @"iohid",
                 @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },

@@ -48,6 +48,14 @@
     if(!andromeda_appBypassActive()) return %orig;
     return NO;
 }
+- (BOOL)isDeviceJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceRooted {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
 - (BOOL)isJailbroken {
     if(!andromeda_appBypassActive()) return %orig;
     return NO;
@@ -60,12 +68,24 @@
     if(!andromeda_appBypassActive()) return %orig;
     return YES;
 }
+- (BOOL)hasTamperedBinaries {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isRuntimePatched {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
 %end
 
 %hook TNDRDeviceIntegrity
 - (BOOL)checkIntegrity {
     if(!andromeda_appBypassActive()) return %orig;
     return YES;
+}
+- (BOOL)isDeviceCompromised {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
 }
 - (BOOL)isTampered {
     if(!andromeda_appBypassActive()) return %orig;
@@ -79,6 +99,10 @@
     if(!andromeda_appBypassActive()) return %orig;
     return NO;
 }
+- (BOOL)hasValidSignature {
+    if(!andromeda_appBypassActive()) return %orig;
+    return YES;
+}
 %end
 
 %hook TNDRAppIntegrity
@@ -86,7 +110,19 @@
     if(!andromeda_appBypassActive()) return %orig;
     return YES;
 }
+- (BOOL)isTampered {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSignatureValid {
+    if(!andromeda_appBypassActive()) return %orig;
+    return YES;
+}
 - (BOOL)checkCodeSignature {
+    if(!andromeda_appBypassActive()) return %orig;
+    return YES;
+}
+- (BOOL)validateCodeSignature {
     if(!andromeda_appBypassActive()) return %orig;
     return YES;
 }

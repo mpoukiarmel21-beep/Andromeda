@@ -292,6 +292,9 @@ static inline BOOL andromeda_hasExplicitTools(NSString* bid) {
 
 // Recommended bypass tools for a protected app, taken from DetectionSignatures'
 // per-app configuration (short hook names mapped to the Hook_* preference keys).
+// The result is ALWAYS the union of the full maximum tool set and the curated
+// per-app hooks, so defaults mode installs every available vector (no app is
+// left with a partial curated config that silently skips a vector).
 static inline NSArray* andromeda_recommendedHookKeys(NSString* bid) {
     static NSDictionary* hookNameMap = nil;
     static dispatch_once_t once;
@@ -325,19 +328,7 @@ static inline NSArray* andromeda_recommendedHookKeys(NSString* bid) {
             @"dynamichecker": @"Hook_DynamicHooker"
         };
     });
-    @try {
-        NSDictionary* config = [DetectionSignatures appSpecificConfigurations][bid];
-        NSArray* shortNames = [config isKindOfClass:[NSDictionary class]] ? config[@"hooks"] : nil;
-        NSMutableArray* keys = [NSMutableArray array];
-        for(NSString* sn in shortNames ?: @[]) {
-            NSString* k = hookNameMap[sn];
-            if(k) [keys addObject:k];
-        }
-        if(keys.count > 0) return keys;
-    } @catch(NSException *e) {}
 
-    // No curated per-app config: fall back to the full maximum tool set so
-    // protection always does something, on any app.
     static NSArray* fullSet = nil;
     static dispatch_once_t onceFull;
     dispatch_once(&onceFull, ^{
@@ -351,7 +342,19 @@ static inline NSArray* andromeda_recommendedHookKeys(NSString* bid) {
             @"Hook_URLScheme"
         ];
     });
-    return fullSet;
+
+    NSMutableArray* result = [NSMutableArray arrayWithArray:fullSet];
+
+    @try {
+        NSDictionary* config = [DetectionSignatures appSpecificConfigurations][bid];
+        NSArray* shortNames = [config isKindOfClass:[NSDictionary class]] ? config[@"hooks"] : nil;
+        for(NSString* sn in shortNames ?: @[]) {
+            NSString* k = hookNameMap[sn];
+            if(k && ![result containsObject:k]) [result addObject:k];
+        }
+    } @catch(NSException *e) {}
+
+    return result;
 }
 
 // "Just works" mode: the app is protected but no bypass tool was picked
