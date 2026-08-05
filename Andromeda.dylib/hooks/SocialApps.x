@@ -3,74 +3,75 @@
 %group andromeda_instagram
 
 %hook IGAnalyticsSession
-- (BOOL)isJailbroken { return NO; }
-- (BOOL)isDeviceCompromised { return NO; }
+- (BOOL)isJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDeviceCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook IGDeviceChecker
-- (BOOL)isDeviceJailbroken { return NO; }
-- (BOOL)isDeviceCompromised { return NO; }
-- (BOOL)isDeveloperModeEnabled { return NO; }
-- (BOOL)isDeviceSafe { return YES; }
+- (BOOL)isDeviceJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDeviceCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDeveloperModeEnabled { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDeviceSafe { if(!andromeda_appBypassActive()) return %orig; return YES;}
 %end
 
 %hook IGSecurityManager
-- (BOOL)isDeviceSafe { return YES; }
-- (BOOL)isJailbroken { return NO; }
-- (BOOL)isCompromised { return NO; }
+- (BOOL)isDeviceSafe { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook IGIntegrityCheck
-- (BOOL)isValid { return YES; }
-- (BOOL)checkAppIntegrity { return YES; }
-- (BOOL)checkDeviceIntegrity { return YES; }
-- (BOOL)isTampered { return NO; }
+- (BOOL)isValid { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)checkAppIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)checkDeviceIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isTampered { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook FBAnalytics
-- (BOOL)isDeviceJailbroken { return NO; }
-- (BOOL)isDeviceCompromised { return NO; }
+- (BOOL)isDeviceJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDeviceCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook FBDeviceInformation
-- (BOOL)isJailbroken { return NO; }
-- (BOOL)isCompromised { return NO; }
-- (BOOL)isDeviceSafe { return YES; }
-- (BOOL)isRooted { return NO; }
-- (BOOL)isTampered { return NO; }
+- (BOOL)isJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDeviceSafe { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isRooted { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isTampered { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook FBAppIntegrity
-- (BOOL)isValid { return YES; }
-- (BOOL)checkIntegrity { return YES; }
-- (BOOL)isCodeSigned { return YES; }
+- (BOOL)isValid { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)checkIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isCodeSigned { if(!andromeda_appBypassActive()) return %orig; return YES;}
 %end
 
 %hook RCTDeviceInfo
-- (BOOL)isDeviceJailbroken { return NO; }
-- (BOOL)isDeviceCompromised { return NO; }
+- (BOOL)isDeviceJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDeviceCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook IGDirectSecurity
-- (BOOL)isDeviceTrusted { return YES; }
-- (BOOL)isDeviceSafe { return YES; }
+- (BOOL)isDeviceTrusted { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isDeviceSafe { if(!andromeda_appBypassActive()) return %orig; return YES;}
 %end
 
 %hook IGUserSession
-- (BOOL)isSuspended { return NO; }
-- (BOOL)isBanned { return NO; }
-- (BOOL)isBlocked { return NO; }
+- (BOOL)isSuspended { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isBanned { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isBlocked { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook IGRuntimeSecurity
-- (BOOL)isSubstrateLoaded { return NO; }
-- (BOOL)isSubstituteLoaded { return NO; }
-- (BOOL)hasInjectedDynamicLibraries { return NO; }
-- (BOOL)isRuntimePatched { return NO; }
+- (BOOL)isSubstrateLoaded { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isSubstituteLoaded { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)hasInjectedDynamicLibraries { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isRuntimePatched { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook IGDeviceFingerprint
 - (NSDictionary*)deviceFingerprint {
+    if(!andromeda_appBypassActive()) return %orig;
     return @{
         @"model": [_spoofer spoofedDeviceModel],
         @"os_version": [_spoofer spoofedOSVersion],
@@ -83,22 +84,22 @@
 %end
 
 %hook FBDeviceIntegrity
-- (BOOL)isDeviceIntact { return YES; }
-- (BOOL)hasValidSignature { return YES; }
-- (BOOL)isTamperDetected { return NO; }
+- (BOOL)isDeviceIntact { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)hasValidSignature { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isTamperDetected { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook FBBuildEnvironment
-- (BOOL)isAppStoreBuild { return YES; }
-- (BOOL)isDebuggerAttached { return NO; }
-- (BOOL)isInternalBuild { return NO; }
+- (BOOL)isAppStoreBuild { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isDebuggerAttached { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isInternalBuild { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook IGSecurityController
-- (BOOL)isDeviceCompromised { return NO; }
-- (BOOL)isJailbroken { return NO; }
-- (BOOL)isRootDetectionEnabled { return NO; }
-- (BOOL)shouldBlockAction { return NO; }
+- (BOOL)isDeviceCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isRootDetectionEnabled { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)shouldBlockAction { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %end
@@ -106,38 +107,39 @@
 %group andromeda_threads
 
 %hook THAppSecurityManager
-- (BOOL)isDeviceCompromised { return NO; }
-- (BOOL)isJailbroken { return NO; }
-- (BOOL)isDeviceSafe { return YES; }
-- (BOOL)isRooted { return NO; }
+- (BOOL)isDeviceCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDeviceSafe { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isRooted { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook THDeviceIntegrity
-- (BOOL)checkIntegrity { return YES; }
-- (BOOL)isValid { return YES; }
-- (BOOL)isTampered { return NO; }
-- (BOOL)isDebuggerPresent { return NO; }
+- (BOOL)checkIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isValid { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isTampered { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDebuggerPresent { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook THSecurityCheck
-- (BOOL)isDeviceSafe { return YES; }
-- (BOOL)isJailbroken { return NO; }
-- (BOOL)isCompromised { return NO; }
+- (BOOL)isDeviceSafe { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook BHInstagramAppIntegrity
-- (BOOL)isValid { return YES; }
-- (BOOL)checkIntegrity { return YES; }
+- (BOOL)isValid { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)checkIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
 %end
 
 %hook THRuntimeSecurity
-- (BOOL)isSubstrateLoaded { return NO; }
-- (BOOL)isSubstituteLoaded { return NO; }
-- (BOOL)hasInjectedDynamicLibraries { return NO; }
+- (BOOL)isSubstrateLoaded { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isSubstituteLoaded { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)hasInjectedDynamicLibraries { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook THDeviceFingerprint
 - (NSDictionary*)deviceFingerprint {
+    if(!andromeda_appBypassActive()) return %orig;
     return @{
         @"model": [_spoofer spoofedDeviceModel],
         @"os_version": [_spoofer spoofedOSVersion],
@@ -148,9 +150,9 @@
 %end
 
 %hook THIntegrityValidator
-- (BOOL)validateAppIntegrity { return YES; }
-- (BOOL)validateDeviceIntegrity { return YES; }
-- (BOOL)hasTampering { return NO; }
+- (BOOL)validateAppIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)validateDeviceIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)hasTampering { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %end
@@ -158,31 +160,31 @@
 %group andromeda_facebook
 
 %hook FBSecurityManager
-- (BOOL)isDeviceSafe { return YES; }
-- (BOOL)isJailbroken { return NO; }
-- (BOOL)isCompromised { return NO; }
+- (BOOL)isDeviceSafe { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook FBDeviceCheck
-- (BOOL)isDeviceJailbroken { return NO; }
-- (BOOL)isDeviceCompromised { return NO; }
+- (BOOL)isDeviceJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDeviceCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook FBDeviceIntegrity
-- (BOOL)isDeviceIntact { return YES; }
-- (BOOL)hasValidSignature { return YES; }
-- (BOOL)isTamperDetected { return NO; }
+- (BOOL)isDeviceIntact { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)hasValidSignature { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isTamperDetected { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook FBBuildEnvironment
-- (BOOL)isAppStoreBuild { return YES; }
-- (BOOL)isDebuggerAttached { return NO; }
-- (BOOL)isInternalBuild { return NO; }
+- (BOOL)isAppStoreBuild { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isDebuggerAttached { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isInternalBuild { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook FBAppIntegrity
-- (BOOL)isValid { return YES; }
-- (BOOL)checkIntegrity { return YES; }
+- (BOOL)isValid { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)checkIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
 %end
 
 %end
@@ -190,30 +192,31 @@
 %group andromeda_snapchat
 
 %hook SCSecurityManager
-- (BOOL)isDeviceSafe { return YES; }
-- (BOOL)isJailbroken { return NO; }
-- (BOOL)isCompromised { return NO; }
+- (BOOL)isDeviceSafe { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook SCDeviceCheck
-- (BOOL)isDeviceJailbroken { return NO; }
-- (BOOL)isDeviceCompromised { return NO; }
+- (BOOL)isDeviceJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDeviceCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook SCIntegrityValidator
-- (BOOL)validateDeviceIntegrity { return YES; }
-- (BOOL)validateAppIntegrity { return YES; }
-- (BOOL)hasTamperDetection { return NO; }
+- (BOOL)validateDeviceIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)validateAppIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)hasTamperDetection { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook SCRuntimeSecurity
-- (BOOL)isHooked { return NO; }
-- (BOOL)isSubstrateLoaded { return NO; }
-- (BOOL)hasInjectedLibraries { return NO; }
+- (BOOL)isHooked { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isSubstrateLoaded { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)hasInjectedLibraries { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook SCDeviceFingerprint
 - (NSDictionary*)deviceFingerprint {
+    if(!andromeda_appBypassActive()) return %orig;
     return @{
         @"model": [_spoofer spoofedDeviceModel],
         @"os_version": [_spoofer spoofedOSVersion],
@@ -228,31 +231,32 @@
 %group andromeda_tiktok
 
 %hook TTSecurityManager
-- (BOOL)isDeviceSafe { return YES; }
-- (BOOL)isJailbroken { return NO; }
-- (BOOL)isCompromised { return NO; }
+- (BOOL)isDeviceSafe { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)isJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook TTDeviceCheck
-- (BOOL)isDeviceJailbroken { return NO; }
-- (BOOL)isDeviceCompromised { return NO; }
+- (BOOL)isDeviceJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDeviceCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook TTIntegrityValidator
-- (BOOL)validateDeviceIntegrity { return YES; }
-- (BOOL)validateAppIntegrity { return YES; }
-- (BOOL)hasTamperDetection { return NO; }
+- (BOOL)validateDeviceIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)validateAppIntegrity { if(!andromeda_appBypassActive()) return %orig; return YES;}
+- (BOOL)hasTamperDetection { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook TTRuntimeSecurity
-- (BOOL)isHooked { return NO; }
-- (BOOL)isSubstrateLoaded { return NO; }
-- (BOOL)hasInjectedLibraries { return NO; }
-- (BOOL)isDebuggerDetected { return NO; }
+- (BOOL)isHooked { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isSubstrateLoaded { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)hasInjectedLibraries { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isDebuggerDetected { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %hook TTDeviceFingerprint
 - (NSDictionary*)deviceFingerprint {
+    if(!andromeda_appBypassActive()) return %orig;
     return @{
         @"model": [_spoofer spoofedDeviceModel],
         @"os_version": [_spoofer spoofedOSVersion],
@@ -263,9 +267,9 @@
 %end
 
 %hook TTSecurityController
-- (BOOL)isDeviceCompromised { return NO; }
-- (BOOL)isJailbroken { return NO; }
-- (BOOL)shouldBlockAction { return NO; }
+- (BOOL)isDeviceCompromised { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)isJailbroken { if(!andromeda_appBypassActive()) return %orig; return NO;}
+- (BOOL)shouldBlockAction { if(!andromeda_appBypassActive()) return %orig; return NO;}
 %end
 
 %end

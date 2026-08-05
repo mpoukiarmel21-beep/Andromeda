@@ -257,6 +257,28 @@ static inline BOOL andromeda_isProtectedProcess(void) {
     }
 }
 
+// Runtime gate for the per-app detection-class hooks (adapted LittleMac).
+// Lets already-installed %hook methods pass through when the app's bypass is
+// toggled off, so disabling takes effect immediately without a respring.
+static inline BOOL andromeda_appBypassActive(void) {
+    @try {
+        NSString* bid = [[NSBundle mainBundle] bundleIdentifier];
+        if(!bid.length) return NO;
+
+        NSDictionary* cfg = [[AndromedaCore sharedInstance] perAppConfigurationForBundleId:bid];
+        if(cfg) {
+            id enabled = cfg[@"enabled"];
+            if(enabled && [enabled isKindOfClass:[NSNumber class]] && ![enabled boolValue]) return NO;
+        }
+
+        return andromeda_hookEnabledForKey(@"Hook_DatingApps")
+            || andromeda_hookEnabledForKey(@"Hook_SocialApps")
+            || andromeda_appTweakEnabled(bid, @"Tweak_LittleMac");
+    } @catch(NSException *e) {
+        return NO;
+    }
+}
+
 extern void andromeda_hook_Filesystem(void);
 extern void andromeda_hook_Dyld(void);
 extern void andromeda_hook_AntiDebug(void);
