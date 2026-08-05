@@ -680,10 +680,14 @@
             @"OKCDeviceCheck"
         ],
         @"com.match.Match": @[
-            @"MatchSecurityManager"
+            @"MatchSecurityManager", @"MatchIntegrityManager", @"MatchDeviceCheck",
+            @"MatchJailbreakDetection", @"MatchRuntimeSecurity", @"MatchTrustEvaluator",
+            @"IOSSecuritySuite"
         ],
         @"com.pof.pof": @[
-            @"POFSecurityManager"
+            @"POFSecurityManager", @"POFIntegrityManager", @"POFDeviceCheck",
+            @"POFJailbreakDetection", @"POFRuntimeSecurity", @"POFTrustEvaluator",
+            @"IOSSecuritySuite"
         ],
         @"com.grindrapp.ios": @[
             @"GRDRSecurityManager"
@@ -828,6 +832,28 @@
             ]
         },
         @"co.hinge.app": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"processhiding", @"fridabypass"
+            ]
+        },
+        @"com.match.Match": @{
+            @"level": @"maximum",
+            @"hooks": @[
+                @"filesystem", @"dyld", @"antidebug", @"devicecheck",
+                @"appattest", @"hardwarefprint", @"iokit", @"sandbox",
+                @"symlookup", @"urlscheme", @"envvars", @"machbootstrap",
+                @"objcruntime", @"syscall", @"tweakclasses", @"behavioral",
+                @"vnodebypass", @"uiimage", @"sensors", @"mobilegestalt",
+                @"processhiding", @"fridabypass"
+            ]
+        },
+        @"com.pof.pof": @{
             @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",

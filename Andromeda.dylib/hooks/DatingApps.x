@@ -1124,9 +1124,175 @@
 %end
 
 %group andromeda_match
+
+%hook MatchSecurityManager
+- (BOOL)isDeviceCompromised {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceRooted {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isRooted {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSafeEnvironment {
+    if(!andromeda_appBypassActive()) return %orig;
+    return YES;
+}
+- (BOOL)hasTamperedBinaries {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isRuntimePatched {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
+%hook IOSSecuritySuite
++ (BOOL)amIJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)amIReverseEngineered {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)amIDebugged {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)amIProxied {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)amIManipulated {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)amIJailbrokenWithFailMessage:(id*)msg {
+    if(!andromeda_appBypassActive()) return %orig;
+    if(msg) *msg = @"";
+    return NO;
+}
++ (NSString*)deviceIdiomString {
+    if(!andromeda_appBypassActive()) return %orig;
+    return @"iPhone";
+}
++ (NSArray*)amIAttachedToDebugger {
+    if(!andromeda_appBypassActive()) return %orig;
+    return @[];
+}
+%end
+
+%hook flutter_jailbreak_detection
++ (BOOL)isJailBroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isDebugged {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
 %end
 
 %group andromeda_pof
+
+%hook POFSecurityManager
+- (BOOL)isDeviceCompromised {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isDeviceRooted {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isRooted {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isSafeEnvironment {
+    if(!andromeda_appBypassActive()) return %orig;
+    return YES;
+}
+- (BOOL)hasTamperedBinaries {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+- (BOOL)isRuntimePatched {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
+%hook IOSSecuritySuite
++ (BOOL)amIJailbroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)amIReverseEngineered {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)amIDebugged {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)amIProxied {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)amIManipulated {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)amIJailbrokenWithFailMessage:(id*)msg {
+    if(!andromeda_appBypassActive()) return %orig;
+    if(msg) *msg = @"";
+    return NO;
+}
++ (NSString*)deviceIdiomString {
+    if(!andromeda_appBypassActive()) return %orig;
+    return @"iPhone";
+}
++ (NSArray*)amIAttachedToDebugger {
+    if(!andromeda_appBypassActive()) return %orig;
+    return @[];
+}
+%end
+
+%hook flutter_jailbreak_detection
++ (BOOL)isJailBroken {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
++ (BOOL)isDebugged {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
+%end
+
 %end
 
 %group andromeda_eharmony
