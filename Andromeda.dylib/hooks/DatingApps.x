@@ -21,17 +21,6 @@
 }
 %end
 
-%hook IOSSecuritySuite
-+ (BOOL)amIJailbroken {
-    if(!andromeda_appBypassActive()) return %orig;
-    return NO;
-}
-- (BOOL)isDeviceFlagged {
-    if(!andromeda_appBypassActive()) return %orig;
-    return NO;
-}
-%end
-
 %hook TNDRMetaManager
 - (BOOL)hasBannedDevice {
     if(!andromeda_appBypassActive()) return %orig;
@@ -129,6 +118,10 @@
 %end
 
 %hook IOSSecuritySuite
+- (BOOL)isDeviceFlagged {
+    if(!andromeda_appBypassActive()) return %orig;
+    return NO;
+}
 + (BOOL)amIJailbroken {
     if(!andromeda_appBypassActive()) return %orig;
     return NO;
