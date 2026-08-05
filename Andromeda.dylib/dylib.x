@@ -181,8 +181,6 @@ static void andromeda_settingsChanged(CFNotificationCenterRef center, void* obse
         BOOL applyToAll = [andromeda_prefs()[@"Global_ApplyToAll"] boolValue];
         BOOL debugMode = [andromeda_prefs()[@"Debug_Mode"] boolValue];
 
-        BOOL isDating = [[AndromedaCore sharedInstance] isDatingApp];
-        BOOL isSocial = [[AndromedaCore sharedInstance] isSocialApp];
         BOOL isProtected = NO;
 
         if(perAppCfg) {
