@@ -124,7 +124,6 @@ static void andromeda_applyAppHooks(void) {
     NSString* bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
     BOOL isDating = [[AndromedaCore sharedInstance] isDatingApp];
     BOOL isSocial = [[AndromedaCore sharedInstance] isSocialApp];
-    NSArray* tweakKeys = @[@"Tweak_LittleMac", @"Tweak_CodingJesus"];
 
     BOOL datingSwitch = andromeda_hookEnabled(@"Hook_DatingApps");
     BOOL socialSwitch = andromeda_hookEnabled(@"Hook_SocialApps");
