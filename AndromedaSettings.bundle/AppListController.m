@@ -8,9 +8,6 @@
 @interface AndromedaAppListController : PSListController
 @end
 
-@class AndromedaRootListController;
-@class AndromedaAppConfigController;
-
 @implementation AndromedaAppListController
 
 static id LSWorkspace(void) {
@@ -86,7 +83,7 @@ static NSDictionary* ConfigStatusByBid(void) {
         PSSpecifier* mainGroup = [PSSpecifier preferenceSpecifierNamed:@"Andromeda" target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
         [arr addObject:mainGroup];
 
-        PSSpecifier* globalLink = [PSSpecifier preferenceSpecifierNamed:@"Global Settings" target:self set:nil get:nil detail:[AndromedaRootListController class] cell:PSLinkCell edit:nil];
+        PSSpecifier* globalLink = [PSSpecifier preferenceSpecifierNamed:@"Global Settings" target:self set:nil get:nil detail:NSClassFromString(@"AndromedaRootListController") cell:PSLinkCell edit:nil];
         [globalLink setProperty:@"Master switch, debug mode, log level." forKey:@"footerText"];
         [arr addObject:globalLink];
 
@@ -105,7 +102,7 @@ static NSDictionary* ConfigStatusByBid(void) {
                 if([status[entry[@"bundleId"]] boolValue]) {
                     name = [name stringByAppendingString:@" ✓"];
                 }
-                PSSpecifier* spec = [PSSpecifier preferenceSpecifierNamed:name target:self set:nil get:nil detail:[AndromedaAppConfigController class] cell:PSLinkCell edit:nil];
+                PSSpecifier* spec = [PSSpecifier preferenceSpecifierNamed:name target:self set:nil get:nil detail:NSClassFromString(@"AndromedaAppConfigController") cell:PSLinkCell edit:nil];
                 [spec setProperty:entry[@"bundleId"] forKey:@"appBundleId"];
                 [spec setProperty:entry[@"name"] forKey:@"appName"];
                 UIImage* icon = entry[@"icon"];
