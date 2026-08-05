@@ -193,9 +193,12 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
             }
         }
 
+        [arr addObject:[self groupSpecifier:@"EXTERNAL TWEAKS" label:@"LittleMac & CodingJesus" footer:@"LittleMac adapted for this app = its jailbreak-detection classes are hooked. CodingJesus adapted for this app = device fingerprint spoofing (model, serial, UDID, iOS version...). Each toggle applies immediately via manual re-injection, no relaunch needed. On Tinder, the original external tweaks load as well. Both switches off = disabled."]];
+        [arr addObject:[self switchSpecifier:@"LittleMac (app bypass)" key:@"Tweak_LittleMac"]];
+        [arr addObject:[self switchSpecifier:@"CodingJesus (device spoofer)" key:@"Tweak_CodingJesus"]];
+
         if([bid isEqualToString:@"com.cardify.tinder"]) {
-            [arr addObject:[self groupSpecifier:@"TINDER" label:@"Tinder Bypass" footer:nil]];
-            [arr addObject:[self menuButtonForKey:@"Tinder_Bypass_Mode" title:@"Bypass Method" action:@selector(pickTinderBypass)]];
+            [arr addObject:[self menuButtonForKey:@"Tinder_Bypass_Mode" title:@"Legacy Tinder Bypass Method" action:@selector(pickTinderBypass)]];
         }
 
         [arr addObject:[self groupSpecifier:@"BEHAVIOR" label:@"Detection Behavior" footer:nil]];

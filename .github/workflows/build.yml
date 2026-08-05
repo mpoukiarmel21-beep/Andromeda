@@ -43,7 +43,7 @@ jobs:
           Depends: firmware (>= 15.0), preferenceloader
           Recommends: mobilesubstrate
           Suggests: com.opa334.choicy
-          Version: 4.2.2
+          Version: 4.3.0
           Architecture: iphoneos-arm64
           Description: Rootless jailbreak detection bypass for dating apps and social media (Tinder, Bumble, Hinge, Instagram, WhatsApp and more). List every app on your device, enable protection per app and pick the bypass tools you want for each one. Targeted dynamic injection means only the apps you enable are affected.
           Maintainer: AndromedaTeam
@@ -99,7 +99,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v4.2.2
+          tag_name: v4.3.0
           files: packages/com.andromeda.bypass_*.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

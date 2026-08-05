@@ -95,6 +95,32 @@ static inline NSDictionary* andromeda_prefs(void) {
     return [[AndromedaCore sharedInstance] preferences];
 }
 
+// Loads an external bypass dylib shipped under /var/jb/Library/Andromeda/Tweaks/.
+// dlopen is idempotent: re-selecting a method re-injects without double-loading.
+static inline void andromeda_loadTweakDylib(NSString* name) {
+    if(!name.length) return;
+    NSString* path = [NSString stringWithFormat:@"/var/jb/Library/Andromeda/Tweaks/%@.dylib", name];
+    if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        dlopen(path.UTF8String, RTLD_NOW);
+        const char* err = dlerror();
+        NSLog(@"[Andromeda] External tweak '%@' %@", name, err ? [NSString stringWithUTF8String:err] : @"loaded successfully");
+    } else {
+        NSLog(@"[Andromeda] External tweak '%@' NOT FOUND at %@", name, path);
+    }
+}
+
+// Applies one of the original Tinder tweaks for the Tinder app.
+static inline void andromeda_applyExternalBypass(NSString* bid, NSString* method) {
+    if([method isEqualToString:@"codingjesus"]) {
+        NSLog(@"[Andromeda] %@: CodingJesus -> loading Tinder Advanced Spoofer.", bid);
+        andromeda_loadTweakDylib(@"TinderAdvancedSpoofer");
+    } else if([method isEqualToString:@"littlemac"]) {
+        NSLog(@"[Andromeda] %@: LittleMac -> loading LittleMac Tinder Bypass.", bid);
+        andromeda_loadTweakDylib(@"bhook");
+        andromeda_loadTweakDylib(@"jbbypass");
+    }
+}
+
 static inline BOOL andromeda_prefEnabled(NSString* key) {
     @try {
         NSNumber* val = andromeda_prefs()[key];
@@ -103,6 +129,46 @@ static inline BOOL andromeda_prefEnabled(NSString* key) {
     } @catch(NSException *e) {
         return NO;
     }
+}
+
+static inline BOOL andromeda_hookEnabledForKey(NSString* key) {
+    @try {
+        NSNumber* val = andromeda_prefs()[key];
+        if(!val) return NO;
+        return [val boolValue];
+    } @catch(NSException *e) {
+        return NO;
+    }
+}
+
+static inline BOOL andromeda_appTweakEnabled(NSString* bid, NSString* key) {
+    @try {
+        NSDictionary* perApp = andromeda_prefs()[@"PerApp"];
+        if([perApp isKindOfClass:[NSDictionary class]]) {
+            NSDictionary* cfg = perApp[bid];
+            if([cfg isKindOfClass:[NSDictionary class]]) {
+                id v = cfg[key];
+                if([v isKindOfClass:[NSNumber class]]) return [v boolValue];
+            }
+        }
+    } @catch(NSException *e) {}
+    return NO;
+}
+
+static inline BOOL andromeda_appTweakEnabledAny(NSString* bid, NSArray* keys) {
+    @try {
+        NSDictionary* perApp = andromeda_prefs()[@"PerApp"];
+        if([perApp isKindOfClass:[NSDictionary class]]) {
+            NSDictionary* cfg = perApp[bid];
+            if([cfg isKindOfClass:[NSDictionary class]]) {
+                for(NSString* key in keys) {
+                    id v = cfg[key];
+                    if([v isKindOfClass:[NSNumber class]] && [v boolValue]) return YES;
+                }
+            }
+        }
+    } @catch(NSException *e) {}
+    return NO;
 }
 
 static inline NSArray* andromeda_extraList(NSString* key) {

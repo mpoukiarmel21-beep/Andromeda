@@ -472,16 +472,25 @@
 %group andromeda_tantan
 %end
 
-static void andromeda_loadTinderTweak(NSString* name) {
-    if(!name.length) return;
-    NSString* path = [NSString stringWithFormat:@"/var/jb/Library/Andromeda/Tweaks/%@.dylib", name];
-    if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        dlopen(path.UTF8String, RTLD_NOW);
-        const char* err = dlerror();
-        NSLog(@"[Andromeda] External Tinder tweak '%@' %@", name, err ? [NSString stringWithUTF8String:err] : @"loaded successfully");
-    } else {
-        NSLog(@"[Andromeda] External Tinder tweak '%@' NOT FOUND at %@", name, path);
+static BOOL andromeda_datingInitDone = NO;
+
+static NSString* andromeda_resolveTinderMode(void) {
+    // Legacy Tinder_Bypass_Mode selector; kept only as fallback for the
+    // per-app Tweak_LittleMac / Tweak_CodingJesus switches.
+    NSString* legacy = andromeda_prefs()[@"Tinder_Bypass_Mode"];
+    if([legacy isKindOfClass:[NSString class]] && legacy.length) return legacy;
+    return @"default";
+}
+
+static BOOL andromeda_tweakSwitch(NSString* bid, NSString* key) {
+    // Per-app switch, with the legacy global Tinder selector as fallback.
+    if(andromeda_appTweakEnabled(bid, key)) return YES;
+    if([bid isEqualToString:@"com.cardify.tinder"]) {
+        NSString* legacy = andromeda_resolveTinderMode();
+        if([key isEqualToString:@"Tweak_LittleMac"]) return [legacy isEqualToString:@"littlemac"];
+        if([key isEqualToString:@"Tweak_CodingJesus"]) return [legacy isEqualToString:@"codingjesus"];
     }
+    return NO;
 }
 
 void andromeda_hook_DatingApps(void) {
@@ -489,97 +498,114 @@ void andromeda_hook_DatingApps(void) {
     DLog(@"Setting up dating app hooks for: %@", bid);
 
     if([bid isEqualToString:@"com.cardify.tinder"]) {
-        NSString* tinderMode = andromeda_prefs()[@"Tinder_Bypass_Mode"];
-        if([tinderMode isEqualToString:@"codingjesus"]) {
-            DLog(@"[Andromeda] Tinder: using Tinder Advanced Spoofer (codingjesus)");
-            andromeda_loadTinderTweak(@"TinderAdvancedSpoofer");
-        } else if([tinderMode isEqualToString:@"littlemac"]) {
-            DLog(@"[Andromeda] Tinder: using LittleMac Tinder Bypass");
-            andromeda_loadTinderTweak(@"bhook");
-            andromeda_loadTinderTweak(@"jbbypass");
-        } else {
+        // CodingJesus adapted for Tinder = the original external spoofer.
+        // LittleMac adapted for Tinder = the original external bypass.
+        if(andromeda_tweakSwitch(bid, @"Tweak_CodingJesus")) {
+            DLog(@"[Andromeda] Tinder: CodingJesus ON -> loading Tinder Advanced Spoofer");
+            andromeda_applyExternalBypass(bid, @"codingjesus");
+        }
+        if(andromeda_tweakSwitch(bid, @"Tweak_LittleMac")) {
+            DLog(@"[Andromeda] Tinder: LittleMac ON -> loading LittleMac Tinder Bypass");
+            andromeda_applyExternalBypass(bid, @"littlemac");
+        }
+        if(andromeda_datingInitDone) return;
+        // Built-in detection-class hooks only when neither external tweak is active.
+        if(!andromeda_tweakSwitch(bid, @"Tweak_CodingJesus") && !andromeda_tweakSwitch(bid, @"Tweak_LittleMac")) {
             %init(andromeda_tinder);
         }
+        andromeda_datingInitDone = YES;
+        return;
     }
-    else if([bid isEqualToString:@"com.bumble.app"]) {
-        %init(andromeda_bumble);
+
+    if(andromeda_datingInitDone) return;
+
+    // Adapted LittleMac for every other dating app = hooking the app's own
+    // jailbreak-detection classes (same technique, ported to that app).
+    // Enabled by the built-in Hook_DatingApps switch or the per-app LittleMac switch.
+    BOOL classHooks = andromeda_hookEnabledForKey(@"Hook_DatingApps") || andromeda_appTweakEnabled(bid, @"Tweak_LittleMac");
+
+    if(classHooks) {
+        if([bid isEqualToString:@"com.bumble.app"]) {
+            %init(andromeda_bumble);
+        }
+        else if([bid isEqualToString:@"co.hily.app"]) {
+            %init(andromeda_hily);
+        }
+        else if([bid isEqualToString:@"com.badoo.badoo"]) {
+            %init(andromeda_badoo);
+        }
+        else if([bid isEqualToString:@"com.ftw-and-co.fruitz"]) {
+            %init(andromeda_fruitz);
+        }
+        else if([bid isEqualToString:@"com.feels.Feels"]) {
+            %init(andromeda_feels);
+        }
+        else if([bid isEqualToString:@"co.hinge.app"]) {
+            %init(andromeda_hinge);
+        }
+        else if([bid isEqualToString:@"com.grindrapp.ios"]) {
+            %init(andromeda_grindr);
+        }
+        else if([bid isEqualToString:@"com.happn.happn"]) {
+            %init(andromeda_happn);
+        }
+        else if([bid isEqualToString:@"com.okcupid.okcupid"]) {
+            %init(andromeda_okcupid);
+        }
+        else if([bid isEqualToString:@"com.meetic.meetic"]) {
+            %init(andromeda_meetic);
+        }
+        else if([bid isEqualToString:@"com.match.Match"]) {
+            %init(andromeda_match);
+        }
+        else if([bid isEqualToString:@"com.pof.pof"]) {
+            %init(andromeda_pof);
+        }
+        else if([bid isEqualToString:@"com.eharmony.eharmony"]) {
+            %init(andromeda_eharmony);
+        }
+        else if([bid isEqualToString:@"com.zoosk.zoosk"]) {
+            %init(andromeda_zoosk);
+        }
+        else if([bid isEqualToString:@"com.lex.lex"]) {
+            %init(andromeda_lex);
+        }
+        else if([bid isEqualToString:@"com.bumble.bff"]) {
+            %init(andromeda_bumble_bff);
+        }
+        else if([bid isEqualToString:@"com.once.once"]) {
+            %init(andromeda_once);
+        }
+        else if([bid isEqualToString:@"com.theleague.ios"]) {
+            %init(andromeda_theleague);
+        }
+        else if([bid isEqualToString:@"com.clover.ios"]) {
+            %init(andromeda_clover);
+        }
+        else if([bid isEqualToString:@"com.hud.ios"]) {
+            %init(andromeda_hud);
+        }
+        else if([bid isEqualToString:@"com.turnup.app"]) {
+            %init(andromeda_turnup);
+        }
+        else if([bid isEqualToString:@"com.boo.app"]) {
+            %init(andromeda_boo);
+        }
+        else if([bid isEqualToString:@"com.iris.dating"]) {
+            %init(andromeda_iris);
+        }
+        else if([bid isEqualToString:@"com.lovoo.ios"]) {
+            %init(andromeda_lovoo);
+        }
+        else if([bid isEqualToString:@"com.adopteunmec.ios"]) {
+            %init(andromeda_adopte);
+        }
+        else if([bid isEqualToString:@"com.jaumo.ios"]) {
+            %init(andromeda_jaumo);
+        }
+        else if([bid isEqualToString:@"com.tantan.ios"]) {
+            %init(andromeda_tantan);
+        }
     }
-    else if([bid isEqualToString:@"co.hily.app"]) {
-        %init(andromeda_hily);
-    }
-    else if([bid isEqualToString:@"com.badoo.badoo"]) {
-        %init(andromeda_badoo);
-    }
-    else if([bid isEqualToString:@"com.ftw-and-co.fruitz"]) {
-        %init(andromeda_fruitz);
-    }
-    else if([bid isEqualToString:@"com.feels.Feels"]) {
-        %init(andromeda_feels);
-    }
-    else if([bid isEqualToString:@"co.hinge.app"]) {
-        %init(andromeda_hinge);
-    }
-    else if([bid isEqualToString:@"com.grindrapp.ios"]) {
-        %init(andromeda_grindr);
-    }
-    else if([bid isEqualToString:@"com.happn.happn"]) {
-        %init(andromeda_happn);
-    }
-    else if([bid isEqualToString:@"com.okcupid.okcupid"]) {
-        %init(andromeda_okcupid);
-    }
-    else if([bid isEqualToString:@"com.meetic.meetic"]) {
-        %init(andromeda_meetic);
-    }
-    else if([bid isEqualToString:@"com.match.Match"]) {
-        %init(andromeda_match);
-    }
-    else if([bid isEqualToString:@"com.pof.pof"]) {
-        %init(andromeda_pof);
-    }
-    else if([bid isEqualToString:@"com.eharmony.eharmony"]) {
-        %init(andromeda_eharmony);
-    }
-    else if([bid isEqualToString:@"com.zoosk.zoosk"]) {
-        %init(andromeda_zoosk);
-    }
-    else if([bid isEqualToString:@"com.lex.lex"]) {
-        %init(andromeda_lex);
-    }
-    else if([bid isEqualToString:@"com.bumble.bff"]) {
-        %init(andromeda_bumble_bff);
-    }
-    else if([bid isEqualToString:@"com.once.once"]) {
-        %init(andromeda_once);
-    }
-    else if([bid isEqualToString:@"com.theleague.ios"]) {
-        %init(andromeda_theleague);
-    }
-    else if([bid isEqualToString:@"com.clover.ios"]) {
-        %init(andromeda_clover);
-    }
-    else if([bid isEqualToString:@"com.hud.ios"]) {
-        %init(andromeda_hud);
-    }
-    else if([bid isEqualToString:@"com.turnup.app"]) {
-        %init(andromeda_turnup);
-    }
-    else if([bid isEqualToString:@"com.boo.app"]) {
-        %init(andromeda_boo);
-    }
-    else if([bid isEqualToString:@"com.iris.dating"]) {
-        %init(andromeda_iris);
-    }
-    else if([bid isEqualToString:@"com.lovoo.ios"]) {
-        %init(andromeda_lovoo);
-    }
-    else if([bid isEqualToString:@"com.adopteunmec.ios"]) {
-        %init(andromeda_adopte);
-    }
-    else if([bid isEqualToString:@"com.jaumo.ios"]) {
-        %init(andromeda_jaumo);
-    }
-    else if([bid isEqualToString:@"com.tantan.ios"]) {
-        %init(andromeda_tantan);
-    }
+    andromeda_datingInitDone = YES;
 }

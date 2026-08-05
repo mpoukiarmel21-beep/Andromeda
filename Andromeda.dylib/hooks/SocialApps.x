@@ -270,23 +270,35 @@
 
 %end
 
+static BOOL andromeda_socialInitDone = NO;
+
 void andromeda_hook_SocialApps(void) {
     NSString* bid = [[AndromedaCore sharedInstance] bundleIdentifier];
     DLog(@"Setting up social app hooks for: %@", bid);
 
-    if([bid isEqualToString:@"com.burbn.instagram"]) {
-        %init(andromeda_instagram);
+    if(andromeda_socialInitDone) return;
+
+    // Adapted LittleMac for social apps = hooking the app's own detection classes.
+    // Enabled by the built-in Hook_SocialApps switch or the per-app LittleMac switch.
+    // CodingJesus = device fingerprint spoofing (applied by reinjectNow via the spoof hooks).
+    BOOL classHooks = andromeda_hookEnabledForKey(@"Hook_SocialApps") || andromeda_appTweakEnabled(bid, @"Tweak_LittleMac");
+
+    if(classHooks) {
+        if([bid isEqualToString:@"com.burbn.instagram"]) {
+            %init(andromeda_instagram);
+        }
+        else if([bid isEqualToString:@"com.instagram.barcelona"]) {
+            %init(andromeda_threads);
+        }
+        else if([bid isEqualToString:@"com.facebook.Facebook"]) {
+            %init(andromeda_facebook);
+        }
+        else if([bid isEqualToString:@"com.snapchat.Snapchat"]) {
+            %init(andromeda_snapchat);
+        }
+        else if([bid isEqualToString:@"com.zhiliaoapp.musically"]) {
+            %init(andromeda_tiktok);
+        }
     }
-    else if([bid isEqualToString:@"com.instagram.barcelona"]) {
-        %init(andromeda_threads);
-    }
-    else if([bid isEqualToString:@"com.facebook.Facebook"]) {
-        %init(andromeda_facebook);
-    }
-    else if([bid isEqualToString:@"com.snapchat.Snapchat"]) {
-        %init(andromeda_snapchat);
-    }
-    else if([bid isEqualToString:@"com.zhiliaoapp.musically"]) {
-        %init(andromeda_tiktok);
-    }
+    andromeda_socialInitDone = YES;
 }
