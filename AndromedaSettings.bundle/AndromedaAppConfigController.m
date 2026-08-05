@@ -206,11 +206,12 @@ static NSDictionary* AndromedaAppConfig(NSString* bundleId) {
         cfg[@"enabled"] = @NO;
     } else {
         cfg[@"enabled"] = @YES;
-        if(![level isEqualToString:@"custom"]) {
-            NSSet* tools = AndromedaToolKeysForLevel(level);
-            for(NSString* key in AndromedaAllToolKeys()) {
-                cfg[key] = [tools containsObject:key] ? @YES : @NO;
-            }
+        BOOL custom = [level isEqualToString:@"custom"];
+        NSSet* tools = custom ? [NSSet set] : AndromedaToolKeysForLevel(level);
+        for(NSString* key in AndromedaAllToolKeys()) {
+            cfg[key] = [tools containsObject:key] ? @YES : @NO;
+        }
+        if(!custom) {
             if([AndromedaDatingBundleIds() containsObject:self.bundleId]) cfg[@"Hook_DatingApps"] = @YES;
             if([AndromedaSocialBundleIds() containsObject:self.bundleId]) cfg[@"Hook_SocialApps"] = @YES;
         }
