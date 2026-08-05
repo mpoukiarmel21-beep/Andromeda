@@ -2,7 +2,7 @@
   entry = {
     bundle = "AndromedaSettings";
     cell = PSLinkCell;
-    detail = "AndromedaRootListController";
+    detail = "AndromedaAppListController";
     icon = "/var/jb/Library/PreferenceBundles/AndromedaSettings.bundle/icon.png";
     isController = true;
     label = "Andromeda";

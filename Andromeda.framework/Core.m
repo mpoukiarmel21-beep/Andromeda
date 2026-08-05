@@ -78,7 +78,33 @@
 }
 
 - (NSDictionary*)preferences {
+    return self.effectivePreferences;
+}
+
+- (NSDictionary*)rawPreferences {
     return _prefs;
+}
+
+- (NSDictionary*)perAppConfigurationForBundleId:(NSString*)bundleId {
+    if(!bundleId.length) return nil;
+    NSDictionary* perApp = [_prefs objectForKey:@"PerApp"];
+    if(![perApp isKindOfClass:[NSDictionary class]]) return nil;
+    NSDictionary* cfg = [perApp objectForKey:bundleId];
+    if(![cfg isKindOfClass:[NSDictionary class]]) return nil;
+    return cfg;
+}
+
+- (NSDictionary*)effectivePreferences {
+    NSMutableDictionary* eff = [NSMutableDictionary dictionaryWithDictionary:_prefs];
+    NSDictionary* cfg = [self perAppConfigurationForBundleId:self.bundleIdentifier];
+    if([cfg isKindOfClass:[NSDictionary class]]) {
+        for(NSString* key in cfg) {
+            if(![key isEqualToString:@"enabled"]) {
+                eff[key] = cfg[key];
+            }
+        }
+    }
+    return eff;
 }
 
 - (NSArray*)appSpecificBypasses {

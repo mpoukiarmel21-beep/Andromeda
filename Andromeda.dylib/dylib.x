@@ -38,11 +38,7 @@ static void andromeda_runHook(NSString* prefKey, void (^block)(void), NSString* 
             return;
         }
 
-        NSNumber* autoPatch = andromeda_prefs()[@"AutoPatch_Enabled"];
-        if(autoPatch && ![autoPatch boolValue]) {
-            NSLog(@"[Andromeda] Skipping %@: Auto-Patch disabled in Settings.", bundleIdentifier);
-            return;
-        }
+        NSDictionary* perAppCfg = [[AndromedaCore sharedInstance] perAppConfigurationForBundleId:bundleIdentifier];
 
         BOOL applyToAll = [andromeda_prefs()[@"Global_ApplyToAll"] boolValue];
         BOOL debugMode = [andromeda_prefs()[@"Debug_Mode"] boolValue];
@@ -51,14 +47,19 @@ static void andromeda_runHook(NSString* prefKey, void (^block)(void), NSString* 
         BOOL isSocial = [[AndromedaCore sharedInstance] isSocialApp];
         BOOL isProtected = isDating || isSocial;
 
-        NSString* appKey = [@"App_" stringByAppendingString:bundleIdentifier];
-        NSNumber* appOverride = andromeda_prefs()[appKey];
-        if(appOverride && [appOverride isKindOfClass:[NSNumber class]]) {
-            isProtected = [appOverride boolValue];
+        if(perAppCfg) {
+            id enabled = perAppCfg[@"enabled"];
+            isProtected = (!enabled || ![enabled isKindOfClass:[NSNumber class]]) ? YES : [enabled boolValue];
+        } else {
+            NSString* appKey = [@"App_" stringByAppendingString:bundleIdentifier];
+            NSNumber* appOverride = andromeda_prefs()[appKey];
+            if(appOverride && [appOverride isKindOfClass:[NSNumber class]]) {
+                isProtected = [appOverride boolValue];
+            }
         }
 
         if(!isProtected && !debugMode && !applyToAll) {
-            NSLog(@"[Andromeda] Skipping %@: not in supported app list. Enable Debug Mode or Apply to All to force patching.", bundleIdentifier);
+            NSLog(@"[Andromeda] Skipping %@: no per-app config and not in supported app list. Configure it in Settings, or enable Debug Mode / Apply to All.", bundleIdentifier);
             return;
         }
 

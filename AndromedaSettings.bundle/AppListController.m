@@ -1,6 +1,7 @@
 #import <Preferences/Preferences.h>
 #import <UIKit/UIKit.h>
 #import <dlfcn.h>
+#import <CoreFoundation/CoreFoundation.h>
 
 #import "../common.h"
 
@@ -20,165 +21,112 @@ static id LSWorkspace(void) {
     return ws;
 }
 
-static NSSet* InstalledBundleIds(void) {
-    id ws = LSWorkspace();
-    if (!ws) return [NSSet set];
-    NSMutableSet* set = [NSMutableSet set];
-    NSArray* apps = [ws performSelector:@selector(allInstalledApplications)];
-    for (id proxy in apps) {
-        if ([proxy respondsToSelector:@selector(bundleIdentifier)]) {
-            NSString* bid = [proxy performSelector:@selector(bundleIdentifier)];
-            if (bid.length) [set addObject:bid];
+static UIImage* IconForProxy(id proxy) {
+    SEL sel = NSSelectorFromString(@"iconDataForVariant:");
+    if(![proxy respondsToSelector:sel]) return nil;
+    id (*fn)(id, SEL, long) = (id (*)(id, SEL, long))[proxy methodForSelector:sel];
+    for(long v = 1; v <= 4; v++) {
+        NSData* data = fn(proxy, sel, v);
+        if([data isKindOfClass:[NSData class]] && data.length) {
+            UIImage* img = [UIImage imageWithData:data];
+            if(img) return img;
         }
     }
-    return set;
+    return nil;
 }
 
-static NSMutableDictionary* LoadPrefs(void) {
-    NSMutableDictionary* prefs = [NSMutableDictionary dictionaryWithContentsOfFile:@ANDROMEDA_PREFS];
-    if (!prefs) prefs = [NSMutableDictionary dictionary];
-    return prefs;
+static NSArray* AppEntries(void) {
+    id ws = LSWorkspace();
+    if(!ws) return @[];
+    NSArray* apps = [ws performSelector:@selector(allInstalledApplications)];
+    NSMutableArray* entries = [NSMutableArray array];
+    for(id proxy in apps) {
+        if(![proxy respondsToSelector:@selector(bundleIdentifier)]) continue;
+        NSString* bid = [proxy performSelector:@selector(bundleIdentifier)];
+        if(!bid.length) continue;
+        if([bid hasPrefix:@"com.apple"]) continue;
+        if([bid hasPrefix:@"com.andromeda"]) continue;
+        NSString* name = [proxy respondsToSelector:@selector(localizedName)] ? [proxy performSelector:@selector(localizedName)] : nil;
+        if(!name.length) name = bid;
+        UIImage* icon = IconForProxy(proxy);
+        [entries addObject:@{
+            @"name": name,
+            @"bundleId": bid,
+            @"icon": (icon ?: (id)[NSNull null])
+        }];
+    }
+    [entries sortUsingComparator:^NSComparisonResult(NSDictionary* a, NSDictionary* b) {
+        return [a[@"name"] localizedStandardCompare:b[@"name"]];
+    }];
+    return entries;
 }
 
-static void SavePrefs(NSMutableDictionary* prefs) {
-    [prefs writeToFile:@ANDROMEDA_PREFS atomically:YES];
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.andromeda.bypass/settingsChanged"), NULL, NULL, YES);
-}
-
-- (id)readPreferenceValue:(PSSpecifier*)specifier {
-    NSString* key = [specifier propertyForKey:@"key"];
-    id value = LoadPrefs()[key];
-    if (!value) return @YES;
-    return value;
-}
-
-- (void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier {
-    NSString* key = [specifier propertyForKey:@"key"];
-    if (!key) return;
-    NSMutableDictionary* prefs = LoadPrefs();
-    prefs[key] = value;
-    SavePrefs(prefs);
+static NSDictionary* ConfigStatusByBid(void) {
+    NSDictionary* prefs = [NSDictionary dictionaryWithContentsOfFile:@ANDROMEDA_PREFS];
+    NSDictionary* perApp = [prefs isKindOfClass:[NSDictionary class]] ? prefs[@"PerApp"] : nil;
+    if(![perApp isKindOfClass:[NSDictionary class]]) return @{};
+    NSMutableDictionary* status = [NSMutableDictionary dictionary];
+    for(NSString* bid in perApp) {
+        NSDictionary* cfg = perApp[bid];
+        if([cfg isKindOfClass:[NSDictionary class]]) {
+            id enabled = cfg[@"enabled"];
+            status[bid] = (enabled && [enabled isKindOfClass:[NSNumber class]]) ? enabled : @NO;
+        }
+    }
+    return status;
 }
 
 - (NSArray*)specifiers {
     if(!_specifiers) {
-        _specifiers = [NSMutableArray array];
+        NSMutableArray* arr = [NSMutableArray array];
 
-        NSArray* datingApps = @[
-            @[@"Tinder", @"com.cardify.tinder"],
-            @[@"Bumble", @"com.bumble.app"],
-            @[@"Bumble BFF", @"com.bumble.bff"],
-            @[@"Hinge", @"co.hinge.app"],
-            @[@"Hily", @"co.hily.app"],
-            @[@"Badoo", @"com.badoo.badoo"],
-            @[@"Fruitz", @"com.ftw-and-co.fruitz"],
-            @[@"Feels", @"com.feels.Feels"],
-            @[@"Happn", @"com.happn.happn"],
-            @[@"Match", @"com.match.Match"],
-            @[@"OkCupid", @"com.okcupid.okcupid"],
-            @[@"POF", @"com.pof.pof"],
-            @[@"Grindr", @"com.grindrapp.ios"],
-            @[@"Jack'd", @"com.jackd.ios"],
-            @[@"Scruff", @"com.scruff.scruff"],
-            @[@"HER", @"com.weareher.HER"],
-            @[@"Meetic", @"com.meetic.meetic"],
-            @[@"AdopteUnMec", @"com.adopteunmec.ios"],
-            @[@"Jaumo", @"com.jaumo.ios"],
-            @[@"Tantan", @"com.tantan.ios"],
-            @[@"Lovoo", @"com.lovoo.ios"],
-            @[@"Boo", @"com.boo.app"],
-            @[@"The League", @"com.theleague.ios"],
-            @[@"Inner Circle", @"com.innercircle.ios"],
-            @[@"Once", @"com.once.once"],
-            @[@"Clover", @"com.clover.ios"]
-        ];
+        PSSpecifier* mainGroup = [PSSpecifier preferenceSpecifierNamed:@"Andromeda" target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
+        [arr addObject:mainGroup];
 
-        NSArray* socialApps = @[
-            @[@"Instagram", @"com.burbn.instagram"],
-            @[@"Threads", @"com.instagram.barcelona"],
-            @[@"Facebook", @"com.facebook.Facebook"],
-            @[@"Messenger", @"com.facebook.Messenger"],
-            @[@"Snapchat", @"com.snapchat.Snapchat"],
-            @[@"TikTok", @"com.zhiliaoapp.musically"],
-            @[@"Twitter/X", @"com.atebits.Tweetie2"],
-            @[@"Discord", @"com.hammerandchisel.discord"],
-            @[@"Reddit", @"com.reddit.Reddit"],
-            @[@"WhatsApp", @"net.whatsapp.WhatsApp"],
-            @[@"Telegram", @"ph.telegra.Telegraph"],
-            @[@"Signal", @"org.whispersystems.signal"],
-            @[@"BeReal", @"com.bereal.ios"],
-            @[@"LinkedIn", @"com.linkedin.LinkedIn"]
-        ];
+        PSSpecifier* globalLink = [PSSpecifier preferenceSpecifierNamed:@"Global Settings" target:self set:nil get:nil detail:@"AndromedaRootListController" cell:PSLinkCell edit:nil];
+        [globalLink setProperty:@"Master switch, debug mode, log level." forKey:@"footerText"];
+        [arr addObject:globalLink];
 
-        NSSet* installed = InstalledBundleIds();
+        NSArray* entries = AppEntries();
+        NSDictionary* status = ConfigStatusByBid();
 
-        NSMutableArray* detected = [NSMutableArray array];
-        for(NSArray* app in datingApps) {
-            if([installed containsObject:app[1]]) {
-                [detected addObject:@{ @"name": app[0], @"bundleId": app[1] }];
-            }
-        }
-        for(NSArray* app in socialApps) {
-            if([installed containsObject:app[1]]) {
-                [detected addObject:@{ @"name": app[0], @"bundleId": app[1] }];
-            }
-        }
+        PSSpecifier* appGroup = [PSSpecifier preferenceSpecifierNamed:@"Applications" target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
+        [appGroup setProperty:@"Tap an app to configure its own bypass tools. A checkmark means it is active." forKey:@"footerText"];
+        [arr addObject:appGroup];
 
-        [_specifiers addObject:[self createGroupSpecifier:@"AUTOPATCH" label:@"Auto-Patch"]];
-        PSSpecifier* autoPatch = [PSSpecifier preferenceSpecifierNamed:@"Patch Detected Apps" target:self
-            set:@selector(setPreferenceValue:specifier:) get:@selector(readPreferenceValue:)
-            detail:nil cell:PSSwitchCell edit:nil];
-        [autoPatch setProperty:@"AutoPatch_Enabled" forKey:@"key"];
-        [autoPatch setProperty:@"Every detected app is patched automatically. Disable to stop patching, or turn off individual apps below." forKey:@"footerText"];
-        [_specifiers addObject:autoPatch];
-
-        [_specifiers addObject:[self createGroupSpecifier:@"DETECTED" label:@"Detected Apps"]];
-        if(detected.count == 0) {
-            [_specifiers addObject:[self createNoteSpecifier:@"No supported apps detected on this device."]];
+        if(entries.count == 0) {
+            [arr addObject:[PSSpecifier preferenceSpecifierNamed:@"No apps found." target:self set:nil get:nil detail:nil cell:PSStaticTextCell edit:nil]];
         } else {
-            for(NSDictionary* app in detected) {
-                [_specifiers addObject:[self createToggleSpecifier:app[@"name"] bundleId:app[@"bundleId"] installed:YES]];
+            for(NSDictionary* entry in entries) {
+                NSString* name = entry[@"name"];
+                if([status[entry[@"bundleId"]] boolValue]) {
+                    name = [name stringByAppendingString:@" ✓"];
+                }
+                PSSpecifier* spec = [PSSpecifier preferenceSpecifierNamed:name target:self set:nil get:nil detail:@"AndromedaAppConfigController" cell:PSLinkCell edit:nil];
+                [spec setProperty:entry[@"bundleId"] forKey:@"appBundleId"];
+                [spec setProperty:entry[@"name"] forKey:@"appName"];
+                UIImage* icon = entry[@"icon"];
+                if([icon isKindOfClass:[UIImage class]]) {
+                    [spec setProperty:icon forKey:@"iconImage"];
+                }
+                [arr addObject:spec];
             }
         }
 
-        [_specifiers addObject:[self createGroupSpecifier:@"DATING_APPS" label:@"Dating Apps - All"]];
-        for(NSArray* app in datingApps) {
-            [_specifiers addObject:[self createToggleSpecifier:app[0] bundleId:app[1] installed:[installed containsObject:app[1]]]];
-        }
-
-        [_specifiers addObject:[self createGroupSpecifier:@"SOCIAL_APPS" label:@"Social Apps - All"]];
-        for(NSArray* app in socialApps) {
-            [_specifiers addObject:[self createToggleSpecifier:app[0] bundleId:app[1] installed:[installed containsObject:app[1]]]];
-        }
+        _specifiers = arr;
     }
     return _specifiers;
-}
-
-- (PSSpecifier*)createToggleSpecifier:(NSString*)title bundleId:(NSString*)bundleId installed:(BOOL)installed {
-    PSSpecifier* specifier = [PSSpecifier preferenceSpecifierNamed:title target:self
-        set:@selector(setPreferenceValue:specifier:) get:@selector(readPreferenceValue:)
-        detail:nil cell:PSSwitchCell edit:nil];
-    [specifier setProperty:[@"App_" stringByAppendingString:bundleId] forKey:@"key"];
-    if(!installed) {
-        [specifier setProperty:@"Not installed" forKey:@"footerText"];
-    }
-    return specifier;
-}
-
-- (PSSpecifier*)createGroupSpecifier:(NSString*)key label:(NSString*)label {
-    PSSpecifier* specifier = [PSSpecifier preferenceSpecifierNamed:label target:self set:nil get:nil detail:nil cell:PSGroupCell edit:nil];
-    [specifier setProperty:key forKey:@"id"];
-    return specifier;
-}
-
-- (PSSpecifier*)createNoteSpecifier:(NSString*)text {
-    PSSpecifier* specifier = [PSSpecifier preferenceSpecifierNamed:text target:self set:nil get:nil detail:nil cell:PSStaticTextCell edit:nil];
-    return specifier;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Andromeda";
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    _specifiers = nil;
+    [self reloadSpecifiers];
 }
 
 @end

@@ -163,6 +163,13 @@ static inline BOOL andromeda_isProtectedProcess(void) {
             return NO;
         }
 
+        NSDictionary* perAppCfg = [[AndromedaCore sharedInstance] perAppConfigurationForBundleId:bundleIdentifier];
+        if(perAppCfg) {
+            id enabled = perAppCfg[@"enabled"];
+            if(enabled && [enabled isKindOfClass:[NSNumber class]]) return [enabled boolValue];
+            return YES;
+        }
+
         NSNumber* debugMode = andromeda_prefs()[@"Debug_Mode"];
         if(debugMode && [debugMode isKindOfClass:[NSNumber class]] && [debugMode boolValue]) {
             return YES;

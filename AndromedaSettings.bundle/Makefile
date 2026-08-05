@@ -5,7 +5,7 @@ ARCHS = arm64
 TARGET = iphone:clang:latest:15.0
 
 BUNDLE_NAME = AndromedaSettings
-AndromedaSettings_FILES = RootListController.m AppListController.m
+AndromedaSettings_FILES = RootListController.m AppListController.m AndromedaAppConfigController.m
 AndromedaSettings_FRAMEWORKS = UIKit Foundation
 AndromedaSettings_INSTALL_PATH = /Library/PreferenceBundles
 AndromedaSettings_CFLAGS = -fobjc-arc

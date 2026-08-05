@@ -4,9 +4,9 @@ Pre-Depends: dpkg
 Depends: firmware (>= 15.0), preferenceloader
 Recommends: mobilesubstrate, com.opa334.altlist
 Suggests: com.opa334.choicy
-Version: 4.1.11
+Version: 4.2.0
 Architecture: iphoneos-arm64
-Description: Ultimate jailbreak detection bypass for dating apps & social media. Neutralizes hardware fingerprinting, App Attest, DeviceCheck, anti-debugging, sandbox checks, filesystem detection, dylib enumeration, and behavioral biometrics.
+Description: Ultimate jailbreak detection bypass with per-app configuration. Configure any installed app with its own set of bypass tools: hardware fingerprinting, App Attest, DeviceCheck, anti-debugging, sandbox checks, filesystem detection, dylib enumeration, and behavioral biometrics.
 Maintainer: AndromedaTeam
 Author: AndromedaTeam
 Section: System
