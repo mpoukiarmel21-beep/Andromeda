@@ -276,14 +276,16 @@ static inline BOOL andromeda_anyPerAppBypassEnabled(NSString* bid) {
 }
 
 // True when the per-app config explicitly selects at least one bypass tool
-// (regardless of its value). Detects "the user has taken manual control".
+// as ON. A key present but OFF does NOT count as "explicit selection" — the user
+// hasn't opted into any tool, so defaults mode still applies for the rest.
 static inline BOOL andromeda_hasExplicitTools(NSString* bid) {
     @try {
         NSDictionary* cfg = [[AndromedaCore sharedInstance] perAppConfigurationForBundleId:bid];
         if(![cfg isKindOfClass:[NSDictionary class]]) return NO;
         for(NSString* key in cfg) {
             if([key isKindOfClass:[NSString class]] && ([key hasPrefix:@"Hook_"] || [key hasPrefix:@"Tweak_"])) {
-                return YES;
+                id v = cfg[key];
+                if([v isKindOfClass:[NSNumber class]] && [v boolValue]) return YES;
             }
         }
     } @catch(NSException *e) {}
@@ -357,27 +359,24 @@ static inline NSArray* andromeda_recommendedHookKeys(NSString* bid) {
     return result;
 }
 
-// "Just works" mode: the app is protected but no bypass tool was picked
-// explicitly, so the recommended per-app tool set applies automatically.
-static inline BOOL andromeda_defaultsMode(void) {
-    @try {
-        NSString* bid = [[NSBundle mainBundle] bundleIdentifier];
-        if(!bid.length) return NO;
-        NSDictionary* cfg = [[AndromedaCore sharedInstance] perAppConfigurationForBundleId:bid];
-        if(![cfg isKindOfClass:[NSDictionary class]]) return NO;
-        id enabled = cfg[@"enabled"];
-        if(enabled && [enabled isKindOfClass:[NSNumber class]] && ![enabled boolValue]) return NO;
-        if(andromeda_hasExplicitTools(bid)) return NO;
-        return YES;
-    } @catch(NSException *e) {
-        return NO;
-    }
-}
-
 // In defaults mode, is this specific tool part of the app's recommended set?
+// Explicit per-app choices (check/uncheck) always override defaults.
 static inline BOOL andromeda_recommendedToolOn(NSString* prefKey) {
-    if(!andromeda_defaultsMode()) return NO;
-    return [andromeda_recommendedHookKeys([[NSBundle mainBundle] bundleIdentifier]) containsObject:prefKey];
+    NSString* bid = [[NSBundle mainBundle] bundleIdentifier];
+    @try {
+        NSDictionary* cfg = [[AndromedaCore sharedInstance] perAppConfigurationForBundleId:bid];
+        if([cfg isKindOfClass:[NSDictionary class]]) {
+            // Master switch OFF → all tools off
+            id enabled = cfg[@"enabled"];
+            if(enabled && [enabled isKindOfClass:[NSNumber class]] && ![enabled boolValue]) return NO;
+
+            // Explicit tool toggle → use user's choice
+            id v = cfg[prefKey];
+            if([v isKindOfClass:[NSNumber class]]) return [v boolValue];
+        }
+    } @catch(NSException *e) {}
+    // No explicit choice: ON if in recommended set (full suite)
+    return [andromeda_recommendedHookKeys(bid) containsObject:prefKey];
 }
 
 // Runtime gate for the per-app detection-class hooks (adapted LittleMac).

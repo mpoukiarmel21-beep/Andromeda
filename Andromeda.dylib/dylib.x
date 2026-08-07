@@ -8,8 +8,22 @@
 
 static BOOL andromeda_hookEnabled(NSString* key) {
     NSNumber* val = andromeda_prefs()[key];
-    if(!val) return NO;
-    return [val boolValue];
+    if(val && [val boolValue]) return YES;
+    NSString* bid = [[NSBundle mainBundle] bundleIdentifier];
+    if(bid && andromeda_appTweakEnabled(bid, key)) return YES;
+    return NO;
+}
+
+static BOOL andromeda_toolExplicitlyDisabled(NSString* key) {
+    NSString* bid = [[NSBundle mainBundle] bundleIdentifier];
+    if(!bid) return NO;
+    @try {
+        NSDictionary* perApp = andromeda_prefs()[@"PerApp"];
+        NSDictionary* cfg = perApp[bid];
+        if(![cfg isKindOfClass:[NSDictionary class]]) return NO;
+        id v = cfg[key];
+        return [v isKindOfClass:[NSNumber class]] && ![v boolValue];
+    } @catch(NSException *e) { return NO; }
 }
 
 // Launch diagnostics: the app writes what it saw at load time to a file the
@@ -149,6 +163,8 @@ static void andromeda_applyAppHooks(void) {
 // Manual re-injection: re-reads the config and (re)installs every enabled hook
 // in this running process. Called on each Settings change so a toggled option
 // takes effect immediately without relaunching the app.
+// If a previously-installed tool was explicitly disabled (unchecked in Settings),
+// the process restarts so only the currently-enabled hooks are loaded fresh.
 static void andromeda_reinjectNow(void) {
     @try {
         [_andromeda loadPreferences];
@@ -162,6 +178,29 @@ static void andromeda_reinjectNow(void) {
 
         NSString* bid = [[NSBundle mainBundle] bundleIdentifier];
         NSLog(@"[Andromeda] Manual re-injection applied for %@", bid ?: @"unknown");
+
+        // If protection was disabled (master switch OFF) while hooks are installed, restart
+        if(g_installedHooks && g_installedHooks.count > 0) {
+            BOOL shouldRestart = NO;
+            NSDictionary* cfg = andromeda_prefs()[@"PerApp"][bid];
+            if([cfg isKindOfClass:[NSDictionary class]]) {
+                id enabled = cfg[@"enabled"];
+                if(enabled && [enabled isKindOfClass:[NSNumber class]] && ![enabled boolValue]) {
+                    shouldRestart = YES;
+                    NSLog(@"[Andromeda] Protection disabled for %@, restarting...", bid);
+                }
+            }
+            if(!shouldRestart) {
+                for(NSString* key in [g_installedHooks copy]) {
+                    if(andromeda_toolExplicitlyDisabled(key)) {
+                        shouldRestart = YES;
+                        NSLog(@"[Andromeda] Tool %@ explicitly disabled, restarting app...", key);
+                        break;
+                    }
+                }
+            }
+            if(shouldRestart) exit(0);
+        }
 
         andromeda_updateDiagnostics(^(NSMutableDictionary* diag) {
             diag[@"lastReinject"] = [[NSDate date] description];
