@@ -520,7 +520,7 @@
             @"com.match.Match"
         ],
         @"meetic": @[
-            @"com.meetic.meetic"
+            @"com.meetic.iphone"
         ],
         @"once": @[
             @"com.once.once"
@@ -707,7 +707,7 @@
             @"GRDRSecurityManager", @"BMBLSecurityManager", @"BMBLDeviceChecker",
             @"BMBLIntegrityCheck", @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
-        @"com.meetic.meetic": @[
+        @"com.meetic.iphone": @[
             @"MTCSecurityManager", @"BMBLSecurityManager", @"BMBLDeviceChecker",
             @"BMBLIntegrityCheck", @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
@@ -1055,7 +1055,7 @@
                 @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
-        @"com.meetic.meetic": @{
+        @"com.meetic.iphone": @{
             @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",

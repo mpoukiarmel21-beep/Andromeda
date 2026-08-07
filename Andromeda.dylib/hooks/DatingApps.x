@@ -1842,7 +1842,7 @@ void andromeda_hook_DatingApps(void) {
         else if([bid isEqualToString:@"com.okcupid.okcupid"]) {
             %init(andromeda_okcupid);
         }
-        else if([bid isEqualToString:@"com.meetic.meetic"]) {
+        else if([bid isEqualToString:@"com.meetic.iphone"]) {
             %init(andromeda_meetic);
         }
         else if([bid isEqualToString:@"com.match.Match"]) {
