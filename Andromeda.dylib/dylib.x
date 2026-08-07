@@ -316,6 +316,12 @@ static void andromeda_settingsChanged(CFNotificationCenterRef center, void* obse
 
         andromeda_reinjectNow();
 
+        // Schedule delayed re-injection to avoid UIKit dispatch_once deadlock
+        // during +[UIScreen initialize] for apps like Meetic.
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            andromeda_reinjectNow();
+        });
+
         diag[@"installedHooks"] = g_installedHooks ? [g_installedHooks allObjects] : @[];
         diag[@"skip"] = @"(none)";
         andromeda_writeDiagnostics(diag);
