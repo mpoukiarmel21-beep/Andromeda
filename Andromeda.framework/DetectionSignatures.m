@@ -462,11 +462,11 @@
         @"tinder": @[
             @"com.cardify.tinder",
             @"co.hinge.app",
-            @"com.bumble.app",
-            @"co.hily.app",
-            @"com.badoo.badoo",
-            @"com.ftw-and-co.fruitz",
-            @"com.feels.Feels",
+            @"com.moxco.bumble",
+            @"com.hily.ios",
+            @"com.badoo.Badoo",
+            @"com.flashgap.fruits",
+            @"com.feels-app.feels",
             @"com.happn.happn",
             @"com.match.Match",
             @"com.pof.pof",
@@ -489,20 +489,20 @@
             @"com.turnup.app"
         ],
         @"bumble": @[
-            @"com.bumble.app",
+            @"com.moxco.bumble",
             @"com.bumble.bff"
         ],
         @"badoo": @[
-            @"com.badoo.badoo"
+            @"com.badoo.Badoo"
         ],
         @"hily": @[
-            @"co.hily.app"
+            @"com.hily.ios"
         ],
         @"fruitz": @[
-            @"com.ftw-and-co.fruitz"
+            @"com.flashgap.fruits"
         ],
         @"feels": @[
-            @"com.feels.Feels"
+            @"com.feels-app.feels"
         ],
         @"hinge": @[
             @"co.hinge.app"
@@ -626,7 +626,7 @@
 
 + (NSDictionary<NSString*,NSArray<NSString*>*>*)appSpecificDetectionClasses {
     return [self _mergedDict:@{
-        @"co.hily.app": @[
+        @"com.hily.ios": @[
             @"HLYSecurityManager", @"HLYDeviceIntegrity", @"HLYAppIntegrityCheck",
             @"HLYRuntimeSecurity", @"HLYFingerprintManager", @"HLYTrustEvaluator",
             @"IOSSecuritySuite"
@@ -636,7 +636,7 @@
             @"TNDRUser", @"TNDRDeletionDetector", @"TNDRMetaManager",
             @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
-        @"com.bumble.app": @[
+        @"com.moxco.bumble": @[
             @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
             @"BMBLAccountManager", @"IOSSecuritySuite"
         ],
@@ -644,19 +644,19 @@
             @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
             @"BMBLAccountManager", @"IOSSecuritySuite"
         ],
-        @"com.badoo.badoo": @[
+        @"com.badoo.Badoo": @[
             @"BDODeviceInfo", @"BDOSecurity", @"BDOIntegrityCheck",
             @"BDORuntimeSecurity", @"BDODeviceFingerprint", @"BDOAccountManager",
             @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
             @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
-        @"com.ftw-and-co.fruitz": @[
+        @"com.flashgap.fruits": @[
             @"FRZSecurityCheck", @"FRZIntegrityValidator", @"FRZRuntimeSecurity",
             @"FRZDeviceFingerprint", @"FRZAppIntegrity", @"FRZSecurityManager",
             @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
             @"IOSSecuritySuite", @"flutter_jailbreak_detection"
         ],
-        @"com.feels.Feels": @[
+        @"com.feels-app.feels": @[
             @"FLSSecurityManager", @"FLSIntegrityCheck", @"FLSDeviceFingerprint",
             @"FLSRuntimeSecurity", @"FLSAppIntegrity", @"FLSDeviceSecurity",
             @"BMBLSecurityManager", @"BMBLDeviceChecker", @"BMBLIntegrityCheck",
@@ -827,7 +827,7 @@
 
 + (NSDictionary<NSString*,NSDictionary*>*)appSpecificConfigurations {
     return @{
-        @"co.hily.app": @{
+        @"com.hily.ios": @{
             @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
@@ -887,7 +887,7 @@
                 @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
-        @"com.bumble.app": @{
+        @"com.moxco.bumble": @{
             @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
@@ -911,7 +911,7 @@
                 @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
-        @"com.badoo.badoo": @{
+        @"com.badoo.Badoo": @{
             @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
@@ -923,7 +923,7 @@
                 @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
-        @"com.ftw-and-co.fruitz": @{
+        @"com.flashgap.fruits": @{
             @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",
@@ -935,7 +935,7 @@
                 @"processhiding", @"fridabypass", @"dynamichecker"
             ]
         },
-        @"com.feels.Feels": @{
+        @"com.feels-app.feels": @{
             @"level": @"maximum",
             @"hooks": @[
                 @"filesystem", @"dyld", @"antidebug", @"devicecheck",

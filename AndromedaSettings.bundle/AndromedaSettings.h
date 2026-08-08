@@ -25,11 +25,11 @@ static inline NSSet* AndromedaSettingsBaseBundleIds(void) {
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         base = [NSSet setWithArray:@[
-            @"com.cardify.tinder", @"co.hinge.app", @"com.bumble.app", @"com.bumble.bff",
-            @"co.hily.app", @"com.badoo.badoo", @"com.ftw-and-co.fruitz", @"com.feels.Feels",
+            @"com.cardify.tinder", @"co.hinge.app", @"com.moxco.bumble", @"com.bumble.bff",
+            @"com.hily.ios", @"com.badoo.Badoo", @"com.flashgap.fruits", @"com.feels-app.feels",
             @"com.happn.happn", @"com.match.Match", @"com.pof.pof", @"com.eharmony.eharmony",
             @"com.okcupid.okcupid", @"com.zoosk.zoosk", @"com.lex.lex", @"com.grindrapp.ios",
-            @"com.jackd.ios", @"com.scruff.scruff", @"com.weareher.HER", @"com.meetic.meetic",
+            @"com.jackd.ios", @"com.scruff.scruff", @"com.weareher.HER", @"com.meetic.iphone",
             @"com.adopteunmec.ios", @"com.jaumo.ios", @"com.tantan.ios", @"com.lovoo.ios",
             @"com.hud.ios", @"com.turnup.app", @"com.boo.app", @"com.iris.dating",
             @"com.once.once", @"com.innercircle.ios", @"com.theleague.ios", @"com.clover.ios",

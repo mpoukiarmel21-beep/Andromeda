@@ -67,11 +67,11 @@ static NSArray* AndromedaSpoofFields(void) {
 
 static NSSet* AndromedaDatingBundleIds(void) {
     return [NSSet setWithObjects:
-        @"com.cardify.tinder", @"com.bumble.app", @"com.bumble.bff", @"co.hinge.app",
-        @"co.hily.app", @"com.badoo.badoo", @"com.ftw-and-co.fruitz", @"com.feels.Feels",
+        @"com.cardify.tinder", @"com.moxco.bumble", @"com.bumble.bff", @"co.hinge.app",
+        @"com.hily.ios", @"com.badoo.Badoo", @"com.flashgap.fruits", @"com.feels-app.feels",
         @"com.happn.happn", @"com.match.Match", @"com.okcupid.okcupid", @"com.pof.pof",
         @"com.grindrapp.ios", @"com.jackd.ios", @"com.scruff.scruff", @"com.weareher.HER",
-        @"com.meetic.meetic", @"com.adopteunmec.ios", @"com.jaumo.ios", @"com.tantan.ios",
+        @"com.meetic.iphone", @"com.adopteunmec.ios", @"com.jaumo.ios", @"com.tantan.ios",
         @"com.lovoo.ios", @"com.boo.app", @"com.theleague.ios", @"com.innercircle.ios",
         @"com.once.once", @"com.clover.ios", nil];
 }

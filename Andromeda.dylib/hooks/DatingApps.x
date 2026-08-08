@@ -1744,19 +1744,19 @@ void andromeda_hook_DatingApps(void) {
     BOOL classHooks = andromeda_appBypassActive();
 
     if(classHooks) {
-        if([bid isEqualToString:@"com.bumble.app"]) {
+        if([bid isEqualToString:@"com.moxco.bumble"]) {
             %init(andromeda_bumble);
         }
-        else if([bid isEqualToString:@"co.hily.app"]) {
+        else if([bid isEqualToString:@"com.hily.ios"]) {
             %init(andromeda_hily);
         }
-        else if([bid isEqualToString:@"com.badoo.badoo"]) {
+        else if([bid isEqualToString:@"com.badoo.Badoo"]) {
             %init(andromeda_badoo);
         }
-        else if([bid isEqualToString:@"com.ftw-and-co.fruitz"]) {
+        else if([bid isEqualToString:@"com.flashgap.fruits"]) {
             %init(andromeda_fruitz);
         }
-        else if([bid isEqualToString:@"com.feels.Feels"]) {
+        else if([bid isEqualToString:@"com.feels-app.feels"]) {
             %init(andromeda_feels);
         }
         else if([bid isEqualToString:@"co.hinge.app"]) {
