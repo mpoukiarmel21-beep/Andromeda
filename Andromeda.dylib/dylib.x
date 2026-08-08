@@ -113,7 +113,6 @@ static void andromeda_applyToolHooks(void) {
     andromeda_installSpoofHook(@"Hook_DeviceCheck", ^{ andromeda_hook_DeviceCheck(); }, @"DeviceCheck");
     andromeda_installHook(@"Hook_AppAttest", ^{ andromeda_hook_AppAttestBypass_install(); }, @"AppAttestBypass");
 }
-}
 
 static void andromeda_applyAppHooks(void) {
     NSString* bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
