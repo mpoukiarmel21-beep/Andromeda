@@ -107,31 +107,12 @@ static void andromeda_installTweakHook(NSString* prefKey, void (^block)(void), N
 }
 
 static void andromeda_applyToolHooks(void) {
+    // Only 4 essential hooks — avoid watchdog timeouts and UIKit deadlocks.
     andromeda_installTweakHook(@"Hook_DetectionBypass", ^{ andromeda_hook_DetectionBypass(); }, @"DetectionBypass");
-    andromeda_installTweakHook(@"Hook_Filesystem", ^{ andromeda_hook_Filesystem(); }, @"Filesystem");
-    andromeda_installTweakHook(@"Hook_Dyld", ^{ andromeda_hook_Dyld(); }, @"Dyld");
     andromeda_installTweakHook(@"Hook_AntiDebug", ^{ andromeda_hook_AntiDebug(); }, @"AntiDebug");
     andromeda_installSpoofHook(@"Hook_DeviceCheck", ^{ andromeda_hook_DeviceCheck(); }, @"DeviceCheck");
-    andromeda_installHook(@"Hook_Sandbox", ^{ andromeda_hook_Sandbox(); }, @"Sandbox");
-    andromeda_installHook(@"Hook_SymLookup", ^{ andromeda_hook_SymLookup(); }, @"SymLookup");
-    andromeda_installHook(@"Hook_EnvVars", ^{ andromeda_hook_EnvVars(); }, @"EnvVars");
-    andromeda_installHook(@"Hook_MachBootstrap", ^{ andromeda_hook_MachBootstrap(); }, @"MachBootstrap");
-    andromeda_installHook(@"Hook_ObjCRuntime", ^{ andromeda_hook_ObjCRuntime(); }, @"ObjCRuntime");
-    andromeda_installHook(@"Hook_Syscall", ^{ andromeda_hook_Syscall(); }, @"Syscall");
-    andromeda_installHook(@"Hook_Behavioral", ^{ andromeda_hook_Behavioral(); }, @"Behavioral");
-    andromeda_installHook(@"Hook_UIImage", ^{ andromeda_hook_UIImage(); }, @"UIImage");
-    andromeda_installSpoofHook(@"Hook_HardwareFingerprint", ^{ andromeda_hook_HardwareFingerprint(); }, @"HardwareFingerprint");
-    andromeda_installSpoofHook(@"Hook_IOKit", ^{ andromeda_hook_IOKit(); }, @"IOKit");
-    andromeda_installSpoofHook(@"Hook_MobileGestalt", ^{ andromeda_hook_MobileGestalt(); }, @"MobileGestalt");
-    andromeda_installSpoofHook(@"Hook_NetworkInterface", ^{ andromeda_hook_NetworkInterface(); }, @"NetworkInterface");
-    andromeda_installHook(@"Hook_Sensors", ^{ andromeda_hook_Sensors(); }, @"Sensors");
-    andromeda_installHook(@"Hook_ProcFiles", ^{ andromeda_hook_ProcFiles(); }, @"ProcFiles");
-    andromeda_installHook(@"Hook_IOHID", ^{ andromeda_hook_IOHID(); }, @"IOHID");
-    andromeda_installHook(@"Hook_ProcessHiding", ^{ andromeda_hook_ProcessHiding(); }, @"ProcessHiding");
-    andromeda_installHook(@"Hook_FridaBypass", ^{ andromeda_hook_FridaBypass(); }, @"FridaBypass");
-    andromeda_installHook(@"Hook_DynamicHooker", ^{ andromeda_hook_DynamicHooker(); }, @"DynamicHooker");
     andromeda_installHook(@"Hook_AppAttest", ^{ andromeda_hook_AppAttestBypass_install(); }, @"AppAttestBypass");
-    andromeda_installHook(@"Hook_URLScheme", ^{ andromeda_hook_URLSchemeBypass_install(); }, @"URLSchemeBypass");
+}
 }
 
 static void andromeda_applyAppHooks(void) {
